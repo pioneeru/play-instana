@@ -400,12 +400,6 @@ spec:
     podTemplates:
       - name: clickhouse
         spec:
-          ##### fix for aks:
-          #securityContext:
-          #  runAsUser: 1001
-          #  runAsGroup: 0
-          #  fsGroup: 0
-          ##### end of fix for aks
           containers:
             - name: instana-clickhouse
               image: artifact-public.instana.io/self-hosted-images/k8s/clickhouse:23.3.10.5-1-lts-ibm_v0.29.0

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "Reading config.env"
-source config.env
+echo "Reading credentials.env"
+source ../credentials.env
 
 # download all charts:
 

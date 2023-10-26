@@ -388,23 +388,21 @@ ${KUBECTL} -n instana-core patch deployment/groundskeeper --type=json --patch '
 [
   { 
     "op": "add",
-    "path": "/spec/template/spec/volumes",
-    "value": [
+    "path": "/spec/template/spec/volumes/4",
+    "value":
         {
             "name": "synthetics",
             "persistentVolumeClaim": {"claimName": "synthetics-volume-claim"}
         }
-     ]
   },
   { 
     "op": "add",
-    "path": "/spec/template/spec/containers/0/volumeMounts",
-    "value": [
+    "path": "/spec/template/spec/containers/0/volumeMounts/4",
+    "value":
         {
             "name": "synthetics",
             "mountPath": "/mnt/synthetics"
         }
-     ]
   }
 ]'
 

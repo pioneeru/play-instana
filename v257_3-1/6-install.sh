@@ -255,7 +255,7 @@ cat > core-config.yaml <<-EOF
 dhParams: |
 `sed  's/^/  /' dhparams.pem`
 # The download key you received from us
-downloadKey: ${DOWNLOAD_KEY}
+repositoryPassword: ${DOWNLOAD_KEY}
 # The sales key you received from us
 salesKey: ${SALES_KEY}
 # Seed for creating crypto tokens. Pick a random 12 char string

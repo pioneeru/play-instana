@@ -444,6 +444,7 @@ spec:
     brokers:
       # Update KAFKA_NAMESPACE to the namespace where Kafka is installed
       - instana-kafka-bootstrap.instana-kafka:9092
+    securityProtocol: SASL_PLAINTEXT
     saslMechanism: SCRAM-SHA-512
     saslPasswordCredential:
       secretName: beeinstana-kafka-creds

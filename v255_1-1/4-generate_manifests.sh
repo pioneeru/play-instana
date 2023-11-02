@@ -437,7 +437,7 @@ spec:
   seccompProfile:
     type: RuntimeDefault
   ######
-  version: 1.1.3
+  version: 1.1.5
   adminCredentials:
     secretName: beeinstana-admin-creds
   kafkaSettings:

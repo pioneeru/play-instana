@@ -104,7 +104,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana
 # for k8s and OCP 4.10:
 #helm install beeinstana instana/beeinstana-operator --namespace=beeinstana
 # For a cluster on Red Hat OpenShift 4.11 and later:
-helm install beeinstana instana/beeinstana-operator --namespace=beeinstana \
+helm install beeinstana beeinstana-operator-v1.40.0.tgz --namespace=beeinstana \
   --set operator.securityContext.seccompProfile.type=RuntimeDefault
 ${KUBECTL} create secret generic beeinstana-kafka-creds -n beeinstana \
   --from-literal=username=strimzi-kafka-user \

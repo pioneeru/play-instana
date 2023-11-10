@@ -423,8 +423,6 @@ EOF
 
 
 
-${KUBECTL} create ns beeinstana
-
 cat << EOF > ${MANIFEST_FILENAME_BEEINSTANA}
 apiVersion: beeinstana.instana.com/v1beta1
 kind: BeeInstana
@@ -433,7 +431,6 @@ metadata:
   namespace: beeinstana
 spec:
   ###### For OCP 4.11 and later
-  fsGroup: `${KUBECTL} get namespace beeinstana -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1`
   seccompProfile:
     type: RuntimeDefault
   ######

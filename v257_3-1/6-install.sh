@@ -256,6 +256,7 @@ dhParams: |
 `sed  's/^/  /' dhparams.pem`
 # The download key you received from us
 repositoryPassword: ${DOWNLOAD_KEY}
+downloadKey: ${DOWNLOAD_KEY}
 # The sales key you received from us
 salesKey: ${SALES_KEY}
 # Seed for creating crypto tokens. Pick a random 12 char string

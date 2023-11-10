@@ -361,6 +361,7 @@ licenses: `cat license.json`
 # A list of agent keys. Specifying multiple agent keys enables gradually rotating agent keys.
 agentKeys:
   - ${DOWNLOAD_KEY}
+downloadKey: ${DOWNLOAD_KEY}
 EOF
 
 # Creating secrets

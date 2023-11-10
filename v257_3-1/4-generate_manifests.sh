@@ -508,7 +508,7 @@ spec:
       authEnabled: true
       clustered: true
       hosts:
-      - aggregators.instana-beeinstana.svc
+      - aggregators.beeinstana.svc
       ports:
       - name: tcp
         port: 9998

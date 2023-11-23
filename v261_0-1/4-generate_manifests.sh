@@ -376,18 +376,15 @@ spec:
       logVolumeClaimTemplate: instana-clickhouse-log-volume
   configuration:
     settings:
-      max_concurrent_queries: 150
+      max_concurrent_queries: 200
+      max_table_size_to_drop: 0
+      max_partition_size_to_drop: 0
       remote_servers/all-sharded/secret: "${CLICKHOUSE_ADMIN_PASS}"
       remote_servers/all-replicated/secret: "${CLICKHOUSE_ADMIN_PASS}"
       remote_servers/local/secret: "${CLICKHOUSE_ADMIN_PASS}"
     files:
-      config.d/extra-config-01.xml: |
-        <clickhouse>
-          <max_table_size_to_drop>0</max_table_size_to_drop>
-          <max_partition_size_to_drop>0</max_partition_size_to_drop>
-        </clickhouse>
       config.d/storage.xml: |
-        <yandex>
+        <clickhouse>
           <logger>
             <level>information</level>
           </logger>
@@ -405,7 +402,7 @@ spec:
               </logs_policy>
             </policies>
           </storage_configuration>
-        </yandex>
+        </clickhouse>
     clusters:
       - name: local
         templates:
@@ -422,9 +419,17 @@ spec:
       default/max_execution_time: 100
       default/max_query_size: 1048576
       default/use_uncompressed_cache: 0
+      default/enable_http_compression: 1
       default/load_balancing: random
       default/background_pool_size: 32
       default/background_schedule_pool_size: 32
+      default/distributed_directory_monitor_split_batch_on_failure: 1
+      default/distributed_directory_monitor_batch_inserts: 1
+      default/insert_distributed_sync: 1
+      default/log_queries: 1
+      default/log_query_views: 1
+      default/max_threads: 16
+      default/allow_experimental_database_replicated: 1
     quotas:
       default/interval/duration: 3600
       default/interval/queries: 0
@@ -454,14 +459,6 @@ spec:
     - name: clickhouse
       spec:
         containers:
-          - name: clickhouse-log
-            args:
-            - while true; do sleep 30; done;
-            command:
-            - /bin/sh
-            - -c
-            - --
-            image: registry.access.redhat.com/ubi8/ubi-minimal:latest
           - name: instana-clickhouse
             image: artifact-public.instana.io/self-hosted-images/k8s/clickhouse:23.3.10.5-1-lts-ibm_v0.29.0
             command:
@@ -474,6 +471,14 @@ spec:
               requests:
                 cpu: "1"
                 memory: 2Gi
+          - name: clickhouse-log
+            args:
+            - while true; do sleep 30; done;
+            command:
+            - /bin/sh
+            - -c
+            - --
+            image: registry.access.redhat.com/ubi8/ubi-minimal:latest
         imagePullSecrets:
           - name: clickhouse-image-secret
         ### FIX for K8s

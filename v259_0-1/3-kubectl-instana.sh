@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Reading config.env"
+echo "Reading credentials.env"
 source ../credentials.env
 
 # Kubectl plugin

@@ -372,7 +372,7 @@ ${KUBECTL} create secret tls instana-tls --namespace instana-core \
 
 ${KUBECTL} create secret generic instana-core --namespace instana-core --from-file=config.yaml=core-config.yaml
 
-${KUBECTL} create secret generic tenant0-unit0 --namespace instana-units --from-file=config.yaml=unit-config.yaml
+${KUBECTL} create secret generic ${INSTANA_TENANT_NAME}-${INSTANA_UNIT_NAME} --namespace instana-units --from-file=config.yaml=unit-config.yaml
 
 
 echo "Creating instana-core..."

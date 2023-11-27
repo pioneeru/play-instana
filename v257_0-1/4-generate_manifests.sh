@@ -63,10 +63,10 @@ spec:
           size: 50Gi
           deleteClaim: true
           class: ${RWO_STORAGECLASS}
-    # config:
-    #   offsets.topic.replication.factor: 1
-    #   transaction.state.log.replication.factor: 1
-    #   transaction.state.log.min.isr: 1
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
   zookeeper:
     replicas: 1
     storage:

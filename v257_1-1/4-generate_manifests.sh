@@ -331,7 +331,7 @@ spec:
           podTemplate: clickhouse
         layout:
           shardsCount: 1
-          replicasCount: 1
+          replicasCount: 2
     zookeeper:
       nodes:
         - host: instana-zookeeper-headless.instana-clickhouse
@@ -487,6 +487,13 @@ spec:
     host: ${INSTANA_AGENT_ACCEPTOR}
     port: 443
 
+  # dockerRegistryURI: containers.instana.io
+  imageConfig:
+    registry: artifact-public.instana.io
+
+  imagePullSecrets:
+    - name: instana-registry
+
   datastoreConfigs:
     cassandraConfigs:
     - authEnabled: true
@@ -503,7 +510,7 @@ spec:
       clusterName: onprem_onprem
       defaultIndexReplicas: 0
       defaultIndexRoutingPartitionSize: 1
-      defaultIndexShards: 5
+      defaultIndexShards: 2
       hosts:
       - instana-es-http.instana-elastic.svc.cluster.local
     kafkaConfig:
@@ -520,7 +527,7 @@ spec:
     smtpConfig:
       check_server_identity: false
       from: instana@example.com
-      host: pri-smarthost.eemsg.mail.mil
+      host: test.com
       port: 25
       startTLS: false
       useSSL: false

@@ -253,7 +253,7 @@ cat key.pem cert.pem > sp.pem
 cat > core-config.yaml <<-EOF
 # Diffie-Hellman parameters to use
 # dhParams: |
-# `sed  's/^/  /' dhparams.pem`
+`sed  's/^/#  /' dhparams.pem`
 # The download key you received from us
 repositoryPassword: ${DOWNLOAD_KEY}
 # downloadKey: ${DOWNLOAD_KEY}

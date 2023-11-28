@@ -487,13 +487,6 @@ spec:
     host: ${INSTANA_AGENT_ACCEPTOR}
     port: 443
 
-  # dockerRegistryURI: containers.instana.io
-  imageConfig:
-    registry: artifact-public.instana.io
-
-  imagePullSecrets:
-    - name: instana-registry
-
   datastoreConfigs:
     cassandraConfigs:
     - authEnabled: true

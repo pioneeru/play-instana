@@ -193,13 +193,13 @@ EOF
 ${KUBECTL} apply -f namespaces.yaml
 
 echo "Creating secrets for Instana core and units..."
-${KUBECTL} create secret docker-registry instana-registry \
+${KUBECTL} create secret docker-registry pull-secret-instana-io \
     --namespace=instana-core \
     --docker-username=_ \
     --docker-password=$DOWNLOAD_KEY \
     --docker-server=artifact-public.instana.io
 
-${KUBECTL} create secret docker-registry instana-registry \
+${KUBECTL} create secret docker-registry pull-secret-instana-io \
     --namespace=instana-units \
     --docker-username=_ \
     --docker-password=$DOWNLOAD_KEY \
@@ -256,7 +256,7 @@ cat > core-config.yaml <<-EOF
 `sed  's/^/#  /' dhparams.pem`
 # The download key you received from us
 repositoryPassword: ${DOWNLOAD_KEY}
-downloadKey: ${DOWNLOAD_KEY}
+# downloadKey: ${DOWNLOAD_KEY}
 # The sales key you received from us
 salesKey: ${SALES_KEY}
 # Seed for creating crypto tokens. Pick a random 12 char string
@@ -363,7 +363,7 @@ licenses: `cat license.json`
 # A list of agent keys. Specifying multiple agent keys enables gradually rotating agent keys.
 agentKeys:
   - ${DOWNLOAD_KEY}
-downloadKey: ${DOWNLOAD_KEY}
+# downloadKey: ${DOWNLOAD_KEY}
 EOF
 
 # Creating secrets

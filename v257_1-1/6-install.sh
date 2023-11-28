@@ -95,34 +95,34 @@ ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true pod -lstrimzi.io/com
 ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true pod -lstrimzi.io/component-type=kafka --timeout=3000s
 
 
-echo "Installing Beeinstana..."
-${KUBECTL} create namespace beeinstana
-${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana \
-  --docker-server=artifact-public.instana.io \
-  --docker-username _ \
-  --docker-password=$DOWNLOAD_KEY
-# for k8s and OCP 4.10:
-#helm install beeinstana instana/beeinstana-operator --namespace=beeinstana
-# For a cluster on Red Hat OpenShift 4.11 and later:
-helm install beeinstana beeinstana-operator-v1.40.0.tgz --namespace=beeinstana \
-  --set operator.securityContext.seccompProfile.type=RuntimeDefault
-${KUBECTL} create secret generic beeinstana-kafka-creds -n beeinstana \
-  --from-literal=username=strimzi-kafka-user \
-  --from-literal=password=`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`
-${KUBECTL} create secret generic beeinstana-admin-creds -n beeinstana \
-  --from-literal=username=beeinstana-user \
-  --from-literal=password=${BEEINSTANA_ADMIN_PASS}
+# echo "Installing Beeinstana..."
+# ${KUBECTL} create namespace beeinstana
+# ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana \
+#   --docker-server=artifact-public.instana.io \
+#   --docker-username _ \
+#   --docker-password=$DOWNLOAD_KEY
+# # for k8s and OCP 4.10:
+# #helm install beeinstana instana/beeinstana-operator --namespace=beeinstana
+# # For a cluster on Red Hat OpenShift 4.11 and later:
+# helm install beeinstana beeinstana-operator-v1.40.0.tgz --namespace=beeinstana \
+#   --set operator.securityContext.seccompProfile.type=RuntimeDefault
+# ${KUBECTL} create secret generic beeinstana-kafka-creds -n beeinstana \
+#   --from-literal=username=strimzi-kafka-user \
+#   --from-literal=password=`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`
+# ${KUBECTL} create secret generic beeinstana-admin-creds -n beeinstana \
+#   --from-literal=username=beeinstana-user \
+#   --from-literal=password=${BEEINSTANA_ADMIN_PASS}
 
-${KUBECTL} -n beeinstana apply -f ${MANIFEST_FILENAME_BEEINSTANA}
+# ${KUBECTL} -n beeinstana apply -f ${MANIFEST_FILENAME_BEEINSTANA}
 
-${KUBECTL} -n beeinstana patch beeinstana/instance --type=json --patch '
-[
-  { 
-    "op": "replace",
-    "path": "/spec/fsGroup",
-    "value": '`${KUBECTL} get namespace beeinstana -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1`'
-  }
-]'
+# ${KUBECTL} -n beeinstana patch beeinstana/instance --type=json --patch '
+# [
+#   { 
+#     "op": "replace",
+#     "path": "/spec/fsGroup",
+#     "value": '`${KUBECTL} get namespace beeinstana -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1`'
+#   }
+# ]'
 
 
 echo "Waiting for Elasticsearch to be ready..."
@@ -136,8 +136,8 @@ ${KUBECTL} -n instana-clickhouse wait --for=jsonpath='{.status.status}'=Complete
 ${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lclickhouse.altinity.com/chi=instana --timeout=3000s
 echo "Waiting for Cassandra pods to be running..."
 ${KUBECTL} -n instana-cassandra wait --for=condition=Ready=true pod -lapp.kubernetes.io/name=cassandra --timeout=3000s
-echo "Waiting for Beeinstana pods to be running..."
-${KUBECTL} -n beeinstana wait --for=condition=Ready=true pod -lapp.kubernetes.io/name=beeinstana --timeout=3000s
+# echo "Waiting for Beeinstana pods to be running..."
+# ${KUBECTL} -n beeinstana wait --for=condition=Ready=true pod -lapp.kubernetes.io/name=beeinstana --timeout=3000s
 
 
 ######################
@@ -252,18 +252,19 @@ cat key.pem cert.pem > sp.pem
 
 cat > core-config.yaml <<-EOF
 # Diffie-Hellman parameters to use
-dhParams: |
-`sed  's/^/  /' dhparams.pem`
+# dhParams: |
+# `sed  's/^/  /' dhparams.pem`
 # The download key you received from us
 repositoryPassword: ${DOWNLOAD_KEY}
-downloadKey: ${DOWNLOAD_KEY}
+# downloadKey: ${DOWNLOAD_KEY}
 # The sales key you received from us
 salesKey: ${SALES_KEY}
 # Seed for creating crypto tokens. Pick a random 12 char string
 tokenSecret: ${TOKEN_SECRET}
 # Configuration for raw spans storage
 storageConfigs:
-#  rawSpans:
+  rawSpans:
+    storageClass: nfs-client
 #    # Required if using S3 or compatible storage bucket.
 #    # Credentials should be configured.
 #    # Not required if IRSA on EKS is used.
@@ -284,12 +285,12 @@ serviceProviderConfig:
   pem: |
 `sed  's/^/    /' sp.pem`
 # # Required if a proxy is configured that needs authentication
-# proxyConfig:
+proxyConfig:
 #   # Proxy user
 #   user: myproxyuser
 #   # Proxy password
 #   password: my proxypassword
-# emailConfig:
+emailConfig:
 #   # Required if SMTP is used for sending e-mails and authentication is required
 #   smtpConfig:
 #     user: mysmtpuser
@@ -297,9 +298,9 @@ serviceProviderConfig:
 #   # Required if using for sending e-mail.
 #   # Credentials should be configured.
 #   # Not required if using IRSA on EKS.
-#   sesConfig:
-#     accessKeyId: ...
-#     secretAccessKey: ...
+  sesConfig:
+    accessKeyId: ...
+    secretAccessKey: ...
 # # Optional custom CA certificate to be added to component trust stores
 # # in case internal systems Instana talks to (e.g. LDAP or alert receivers) use a custom CA.
 # customCACert: |
@@ -307,9 +308,9 @@ serviceProviderConfig:
 #   <snip/>
 #   -----END CERTIFICATE-----
 datastoreConfigs:
-  beeInstanaConfig:
-    user: beeinstana-user
-    password: "${BEEINSTANA_ADMIN_PASS}"
+  # beeInstanaConfig:
+  #   user: beeinstana-user
+  #   password: "${BEEINSTANA_ADMIN_PASS}"
   clickhouseConfigs:
     - adminUser: "${CLICKHOUSE_USER}"
       adminPassword: "${CLICKHOUSE_USER_PASS}"
@@ -362,6 +363,7 @@ licenses: `cat license.json`
 # A list of agent keys. Specifying multiple agent keys enables gradually rotating agent keys.
 agentKeys:
   - ${DOWNLOAD_KEY}
+# downloadKey: ${DOWNLOAD_KEY}
 EOF
 
 # Creating secrets
@@ -385,27 +387,27 @@ echo "Waiting for Core components to start..."
 sleep 10
 ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.componentsStatus}'=Progressing core instana-core --timeout=3000s
 sleep 20
-${KUBECTL} -n instana-core patch deployment/groundskeeper --type=json --patch '
-[
-  { 
-    "op": "add",
-    "path": "/spec/template/spec/volumes/4",
-    "value":
-        {
-            "name": "synthetics",
-            "persistentVolumeClaim": {"claimName": "synthetics-volume-claim"}
-        }
-  },
-  { 
-    "op": "add",
-    "path": "/spec/template/spec/containers/0/volumeMounts/4",
-    "value":
-        {
-            "name": "synthetics",
-            "mountPath": "/mnt/synthetics"
-        }
-  }
-]'
+# ${KUBECTL} -n instana-core patch deployment/groundskeeper --type=json --patch '
+# [
+#   { 
+#     "op": "add",
+#     "path": "/spec/template/spec/volumes/4",
+#     "value":
+#         {
+#             "name": "synthetics",
+#             "persistentVolumeClaim": {"claimName": "synthetics-volume-claim"}
+#         }
+#   },
+#   { 
+#     "op": "add",
+#     "path": "/spec/template/spec/containers/0/volumeMounts/4",
+#     "value":
+#         {
+#             "name": "synthetics",
+#             "mountPath": "/mnt/synthetics"
+#         }
+#   }
+# ]'
 
 echo "Waiting for Core to become ready..."
 ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.componentsStatus}'=Ready core instana-core --timeout=3000s

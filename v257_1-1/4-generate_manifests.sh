@@ -423,51 +423,51 @@ EOF
 
 
 
-cat << EOF > ${MANIFEST_FILENAME_BEEINSTANA}
-apiVersion: beeinstana.instana.com/v1beta1
-kind: BeeInstana
-metadata:
-  name: instance
-  namespace: beeinstana
-spec:
-  ###### For OCP 4.11 and later
-  seccompProfile:
-    type: RuntimeDefault
-  ######
-  version: 1.1.5
-  adminCredentials:
-    secretName: beeinstana-admin-creds
-  kafkaSettings:
-    brokers:
-      # Update KAFKA_NAMESPACE to the namespace where Kafka is installed
-      - instana-kafka-bootstrap.instana-kafka:9092
-    securityProtocol: SASL_PLAINTEXT
-    saslMechanism: SCRAM-SHA-512
-    saslPasswordCredential:
-      secretName: beeinstana-kafka-creds
-  config:
-    cpu: 200m
-    memory: 200Mi
-    replicas: 1
-  ingestor:
-    cpu: 2
-    memory: 2Gi
-    limitMemory: true
-    env: on-prem
-    metricsTopic: raw_metrics
-    replicas: 1
-  aggregator:
-    cpu: 2
-    memory: 2Gi
-    limitMemory: true
-    mirrors: 1
-    shards: 1
-    volumes:
-      live:
-        size: 2000Gi
-        # Uncomment the line below to specify your own storage class.
-        storageClass: ${RWO_STORAGECLASS}
-EOF
+# cat << EOF > ${MANIFEST_FILENAME_BEEINSTANA}
+# apiVersion: beeinstana.instana.com/v1beta1
+# kind: BeeInstana
+# metadata:
+#   name: instance
+#   namespace: beeinstana
+# spec:
+#   ###### For OCP 4.11 and later
+#   seccompProfile:
+#     type: RuntimeDefault
+#   ######
+#   version: 1.1.5
+#   adminCredentials:
+#     secretName: beeinstana-admin-creds
+#   kafkaSettings:
+#     brokers:
+#       # Update KAFKA_NAMESPACE to the namespace where Kafka is installed
+#       - instana-kafka-bootstrap.instana-kafka:9092
+#     securityProtocol: SASL_PLAINTEXT
+#     saslMechanism: SCRAM-SHA-512
+#     saslPasswordCredential:
+#       secretName: beeinstana-kafka-creds
+#   config:
+#     cpu: 200m
+#     memory: 200Mi
+#     replicas: 1
+#   ingestor:
+#     cpu: 2
+#     memory: 2Gi
+#     limitMemory: true
+#     env: on-prem
+#     metricsTopic: raw_metrics
+#     replicas: 1
+#   aggregator:
+#     cpu: 2
+#     memory: 2Gi
+#     limitMemory: true
+#     mirrors: 1
+#     shards: 1
+#     volumes:
+#       live:
+#         size: 2000Gi
+#         # Uncomment the line below to specify your own storage class.
+#         storageClass: ${RWO_STORAGECLASS}
+# EOF
 
 
 cat << EOF > ${MANIFEST_FILENAME_CORE}
@@ -487,124 +487,51 @@ spec:
     host: ${INSTANA_AGENT_ACCEPTOR}
     port: 443
 
-  # dockerRegistryURI: containers.instana.io
-  imageConfig:
-    registry: artifact-public.instana.io
-
-  imagePullSecrets:
-    - name: instana-registry
-
-  # URL for downloading the GeoLite2 geo-location data file
-  # geoDbUrl:
-
-  # enableNetworkPolicies: true
-
-  # Datastore configs
   datastoreConfigs:
-    beeInstanaConfig:
-      authEnabled: true
-      clustered: true
-      hosts:
-      - aggregators.beeinstana.svc
-      ports:
-      - name: tcp
-        port: 9998
     cassandraConfigs:
-      - hosts:
-          - instana-cassandra-service.instana-cassandra.svc
-        authEnabled: true
+    - authEnabled: true
+      hosts:
+      - instana-cassandra-service.instana-cassandra.svc.cluster.local
     clickhouseConfigs:
-      - clusterName: local
-        authEnabled: True
-        hosts:
-          - chi-instana-local-0-0.instana-clickhouse
-          # - chi-instana-local-0-1.instana-clickhouse
-        ports:
-          - name: tcp
-            port: 9000
-          - name: http
-            port: 8123
-        schemas:
-          - application
-          - logs
-          - synthetics
+    - authEnabled: true
+      clusterName: local
+      hosts:
+      - chi-instana-local-0-0.instana-clickhouse.svc.cluster.local
+      - chi-instana-local-0-1.instana-clickhouse.svc.cluster.local
     elasticsearchConfig:
+      authEnabled: true
       clusterName: onprem_onprem
       defaultIndexReplicas: 0
       defaultIndexRoutingPartitionSize: 1
-      defaultIndexShards: 1
+      defaultIndexShards: 5
       hosts:
-        - instana-es-http.instana-elastic.svc
-      authEnabled: true
+      - instana-es-http.instana-elastic.svc.cluster.local
     kafkaConfig:
       authEnabled: true
       hosts:
-        - instana-kafka-bootstrap.instana-kafka
+      - instana-kafka-bootstrap.instana-kafka.svc.cluster.local
       replicationFactor: 1
       saslMechanism: SCRAM-SHA-512
     postgresConfigs:
     - authEnabled: true
-      #databases:
-      #  - butlerdb
-      #  - tenantdb
-      #  - sales
       hosts:
-        - postgres.instana-postgres.svc
-
-  featureFlags:
-    - name: beeinstana
-      enabled: true
-    - name: feature.beeinstana.enabled
-      enabled: true
-    - name: feature.beeinstana.infra.metrics.enabled
-      enabled: true
-    - name: feature.infra.explore.presentation.enabled
-      enabled: true
-    # - name: feature.infrastructure.explore.data.enabled
-    #   enabled: true
-    - name: feature.automation.enabled
-      enabled: true
-    - name: feature.infra.metrics.widget.enabled
-      enabled: true
-    # - name: feature.plugin.entity.metric.statistics.enabled
-    #   enabled: true
-    - name: feature.synthetics.enabled
-      enabled: true
-    - name: feature.synthetic.smart.alerts.enabled
-      enabled: true
-    - name: syntheticSmartAlertsEnabled
-      enabled: true
-    - name: feature.synthetic.create.test.advance.mode.enabled
-      enabled: true
-    - name: feature.synthetic.browser.create.test.enabled
-      enabled: true
-    - name: feature.synthetic.browser.script.enabled
-      enabled: true
-    - name: feature.vsphere.enabled
-      enabled: false      
-    - name: feature.automation.enabled
-      enabled: true      
-    - name: feature.action.automation.enabled
-      enabled: true      
-  # Use one of smtpConfig or sesConfig
+      - postgres.instana-postgres.svc.cluster.local
   emailConfig:
     smtpConfig:
       check_server_identity: false
-      from: test@example.com
-      host: example.com
-      port: 465
+      from: instana@example.com
+      host: pri-smarthost.eemsg.mail.mil
+      port: 25
       startTLS: false
       useSSL: false
-
-    # sesConfig:
-    #   from:
-    #   region:
-    #   returnPath:
-
+  imageConfig: {}
+  imagePullSecrets:
+  - name: pull-secret-instana-io
+  operationMode: normal
+  operationScopes:
+  - core
+  - global
   storageConfigs:
-  #   Use either s3Config, gcloudConfig, or pvcConfig
-
-    ## External Storage for raw spans ##
     rawSpans:
       pvcConfig:
         accessModes:
@@ -613,89 +540,7 @@ spec:
           requests:
             storage: 100Gi
         storageClassName: ${RWX_STORAGECLASS}
-  
-    synthetics:
-      pvcConfig:
-        accessModes:
-          - ReadWriteMany
-        resources:
-          requests:
-            storage: 50Gi
-        storageClassName: ${RWX_STORAGECLASS}
-        
-    syntheticsKeystore:
-      pvcConfig:
-        accessModes:
-          - ReadWriteMany
-        resources:
-          requests:
-            storage: 10Gi
-        storageClassName: ${RWX_STORAGECLASS}
-        
-  #     s3Config:
-  #       bucket:
-  #       bucketLongTerm:
-  #       endpoint:
-  #       prefix:
-  #       prefixLongTerm:
-  #       region:
-  #       storageClass:
-  #       storageClassLongTerm:
-  #       accessKeyId:
-  #       secretAccessKey:
-
-  #     gcloudConfig:
-  #       bucket:
-  #       bucketLongTerm:
-  #       prefix:
-  #       prefixLongTerm:
-  #       storageClass:
-  #       storageClassLongTerm:
-  #       serviceAccountKey:
-
-  #     pvcConfig:
-  #       accessModes:
-  #         - ReadWriteMany
-  #       resources:
-  #         requests:
-  #           storage: 100Gi
-  #       storageClassName: my-fast-storage
-
-    #   ## External Storage for synthetics test results ##
-  #   synthetics:
-  #     s3Config:
-  #       bucket:
-  #       bucketLongTerm:
-  #       endpoint:
-  #       prefix:
-  #       prefixLongTerm:
-  #       region:
-  #       storageClass:
-  #       storageClassLongTerm:
-  #       accessKeyId:
-  #       secretAccessKey:
-
-  #     gcloudConfig:
-  #       bucket:
-  #       bucketLongTerm:
-  #       prefix:
-  #       prefixLongTerm:
-  #       storageClass:
-  #       storageClassLongTerm:
-  #       serviceAccountKey:
-
-
-
-  # Service provider configs for SAML or OIDC
-  # serviceProviderConfig:
-    # Base URL (defaults to "/auth")
-    # basePath:
-
-    # The maximum IDP metadata size (defaults to 200000)
-    # maxAuthenticationLifetimeSeconds:
-
-    # The maximum authentication lifetime (defaults to 604800)
-    # maxIDPMetadataSizeInBytes:
+  resourceProfile: small
 EOF
 
 

@@ -41,7 +41,7 @@ metadata:
 spec:
   kafka:
     version: 3.4.0
-    replicas: 1
+    replicas: 3
     listeners:
       - name: scram
         port: 9092
@@ -63,10 +63,10 @@ spec:
           size: 50Gi
           deleteClaim: true
           class: ${RWO_STORAGECLASS}
-    # config:
-    #   offsets.topic.replication.factor: 1
-    #   transaction.state.log.replication.factor: 1
-    #   transaction.state.log.min.isr: 1
+    config:
+      offsets.topic.replication.factor: 3
+      transaction.state.log.replication.factor: 3
+      transaction.state.log.min.isr: 1
   zookeeper:
     replicas: 1
     storage:

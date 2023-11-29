@@ -223,10 +223,10 @@ fi
 
 # Preparing instana-core config
 echo "Generating instana-core config..."
-openssl dhparam -out dhparams.pem 4096
+# openssl dhparam -out dhparams.pem 4096
 # openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096 # Doesn't work for FIPS
-openssl genrsa -aes256 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
-# openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
+# openssl genrsa -aes256 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096 # Doesn't work for FIPS
+openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096 # FIPS
 
 cat > internal_csr_details.txt <<-EOF
 [req]

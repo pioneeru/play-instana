@@ -232,7 +232,7 @@ cat > internal_csr_details.txt <<-EOF
 [req]
 default_bits = 4096
 prompt = no
-default_md = sha256
+default_md = aes256
 distinguished_name = dn
 
 [dn]

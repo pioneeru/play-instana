@@ -282,7 +282,7 @@ serviceProviderConfig:
   # The combined key/cert file
 #  pem: !binary |
    pkcs12: |
-`sed  's/^/#    /' CERT`
+`sed  's/^/    /' CERT`
 #`sed  's/^/#    /' sp.pem`
 # # Required if a proxy is configured that needs authentication
 # proxyConfig:

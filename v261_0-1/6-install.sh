@@ -223,11 +223,11 @@ fi
 
 # Preparing instana-core config
 echo "Generating instana-core config..."
-openssl dhparam -out dhparams.pem 4096
+# openssl dhparam -out dhparams.pem 4096
 openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
 # openssl genrsa -aes256 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
 
-openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
+# openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
 
 cat > internal_csr_details.txt <<-EOF
 [req]
@@ -255,8 +255,8 @@ cat key.pem cert.pem > sp.pem
 
 cat > core-config.yaml <<-EOF
 # Diffie-Hellman parameters to use
-dhParams: |
-`sed  's/^/  /' dhparams.pem`
+#dhParams: |
+`sed  's/^/#  /' dhparams.pem`
 # The download key you received from us
 repositoryPassword: ${DOWNLOAD_KEY}
 # The sales key you received from us

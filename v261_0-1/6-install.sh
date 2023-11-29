@@ -212,7 +212,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
 # Generate certificate files
 if [[ ${TLS_CERTIFICATE_GENERATE} == "YES" ]]; then
     echo "Generating SSL certificates tls.csr/tls.key ..."
-    openssl genrsa -out ca.key 2048
+    openssl genrsa -out ca.key 4096
     openssl req -new -x509 -days 365 -key ca.key \
         -subj "/C=CN/ST=GD/L=SZ/O=IBM/CN=IBM Root CA" -out ca.crt
     openssl req -newkey rsa:2048 -nodes -keyout tls.key \
@@ -223,11 +223,11 @@ fi
 
 # Preparing instana-core config
 echo "Generating instana-core config..."
-openssl dhparam -out dhparams.pem 2048
-#openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 2048
-openssl genrsa -aes256 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 2048
+openssl dhparam -out dhparams.pem 4096
+openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
+# openssl genrsa -aes256 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
 
-openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 2048
+openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
 
 cat > internal_csr_details.txt <<-EOF
 [req]

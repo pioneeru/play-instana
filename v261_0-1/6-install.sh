@@ -223,8 +223,8 @@ fi
 
 # Preparing instana-core config
 echo "Generating instana-core config..."
-openssl dhparam -out dhparams.pem 2048
-openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 2048
+openssl dhparam -out dhparams.pem 4096
+openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
 
 cat > internal_csr_details.txt <<-EOF
 [req]
@@ -280,8 +280,7 @@ serviceProviderConfig:
   # Password for the key/cert file
   keyPassword: ${KEY_PEM_PASSWORD}
   # The combined key/cert file
-#  pem: !binary |
-   pkcs12: |
+  pem: !binary |
 `sed  's/^/    /' CERT`
 #`sed  's/^/#    /' sp.pem`
 # # Required if a proxy is configured that needs authentication

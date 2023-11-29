@@ -281,9 +281,8 @@ serviceProviderConfig:
   # Password for the key/cert file
   keyPassword: ${KEY_PEM_PASSWORD}
   # The combined key/cert file
-  pem: !binary |
-`sed  's/^/    /' CERT`
-#`sed  's/^/#    /' sp.pem`
+  pem: |
+`sed  's/^/    /' sp.pem`
 # # Required if a proxy is configured that needs authentication
 # proxyConfig:
 #   # Proxy user

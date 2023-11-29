@@ -226,7 +226,8 @@ echo "Generating instana-core config..."
 # openssl dhparam -out dhparams.pem 4096
 # openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
 # openssl genrsa -aes256 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
-openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
+openssl genrsa -des3 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
+# openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
 
 cat > internal_csr_details.txt <<-EOF
 [req]

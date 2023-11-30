@@ -166,9 +166,9 @@ serviceProviderConfig:
 #   <snip/>
 #   -----END CERTIFICATE-----
 datastoreConfigs:
-  beeInstanaConfig:
-    user: beeinstana-user
-    password: "${BEEINSTANA_ADMIN_PASS}"
+  # beeInstanaConfig:
+  #   user: beeinstana-user
+  #   password: "${BEEINSTANA_ADMIN_PASS}"
   clickhouseConfigs:
     - adminUser: "${CLICKHOUSE_USER}"
       adminPassword: "${CLICKHOUSE_USER_PASS}"

@@ -231,7 +231,7 @@ cat > internal_csr_details.txt <<-EOF
 [req]
 default_bits = 4096
 prompt = no
-default_md = aes256
+default_md = sha256
 distinguished_name = dn
 
 [dn]
@@ -263,9 +263,9 @@ salesKey: ${SALES_KEY}
 # Seed for creating crypto tokens. Pick a random 12 char string
 tokenSecret: ${TOKEN_SECRET}
 # Configuration for raw spans storage
-storageConfigs:
-  rawSpans:
-    storageClass: nfs-client
+# storageConfigs:
+#   rawSpans:
+#     storageClass: nfs-client
 #    # Required if using S3 or compatible storage bucket.
 #    # Credentials should be configured.
 #    # Not required if IRSA on EKS is used.
@@ -286,12 +286,12 @@ serviceProviderConfig:
   pem: |
 `sed  's/^/    /' sp.pem`
 # # Required if a proxy is configured that needs authentication
-proxyConfig:
+# proxyConfig:
 #   # Proxy user
 #   user: myproxyuser
 #   # Proxy password
 #   password: my proxypassword
-emailConfig:
+# emailConfig:
 #   # Required if SMTP is used for sending e-mails and authentication is required
 #   smtpConfig:
 #     user: mysmtpuser
@@ -299,9 +299,9 @@ emailConfig:
 #   # Required if using for sending e-mail.
 #   # Credentials should be configured.
 #   # Not required if using IRSA on EKS.
-  sesConfig:
-    accessKeyId: ...
-    secretAccessKey: ...
+  # sesConfig:
+  #   accessKeyId: ...
+  #   secretAccessKey: ...
 # # Optional custom CA certificate to be added to component trust stores
 # # in case internal systems Instana talks to (e.g. LDAP or alert receivers) use a custom CA.
 # customCACert: |

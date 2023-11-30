@@ -518,7 +518,7 @@ spec:
         authEnabled: True
         hosts:
           - chi-instana-local-0-0.instana-clickhouse
-          # - chi-instana-local-0-1.instana-clickhouse
+          - chi-instana-local-0-1.instana-clickhouse
         ports:
           - name: tcp
             port: 9000

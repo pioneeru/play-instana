@@ -526,7 +526,7 @@ spec:
       useSSL: false
   imageConfig: {}
   imagePullSecrets:
-  - name: instana-registry
+  - name: pull-secret-instana-io
   operationMode: normal
   operationScopes:
   - core

@@ -148,7 +148,7 @@ ${KUBECTL} -n instana-cassandra wait --for=condition=Ready=true pod -lapp.kubern
 echo "Installing instana-operator"
 ${KUBECTL} create ns instana-operator
 
-${KUBECTL} create secret docker-registry instana-registry \
+${KUBECTL} create secret docker-registry pull-secret-instana-io \
     --namespace=instana-operator \
     --docker-username=_ \
     --docker-password=$DOWNLOAD_KEY \
@@ -158,7 +158,7 @@ cat << EOF > instana-operator-values.yaml
 #image:
 #  registry: my.registry.com
 imagePullSecrets:
-  - name: instana-registry
+  - name: pull-secret-instana-io
 EOF
 
 ${KUBECTL} instana operator --namespace=instana-operator apply --values instana-operator-values.yaml

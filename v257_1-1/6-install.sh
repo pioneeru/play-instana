@@ -212,10 +212,10 @@ ${KUBECTL} instana license download --sales-key $SALES_KEY
 # Generate certificate files
 if [[ ${TLS_CERTIFICATE_GENERATE} == "YES" ]]; then
     echo "Generating SSL certificates tls.csr/tls.key ..."
-    openssl genrsa -out ca.key 2048
+    openssl genrsa -out ca.key 4096
     openssl req -new -x509 -days 365 -key ca.key \
         -subj "/C=CN/ST=GD/L=SZ/O=IBM/CN=IBM Root CA" -out ca.crt
-    openssl req -newkey rsa:2048 -nodes -keyout tls.key \
+    openssl req -newkey rsa:4096 -nodes -keyout tls.key \
         -subj "/C=CN/ST=GD/L=SZ/O=IBM./CN=*.${INSTANA_BASE_DOMAIN}" -out tls.csr
     openssl x509 -req -extfile <(printf "subjectAltName=DNS:${INSTANA_BASE_DOMAIN},DNS:${INSTANA_TENANT_DOMAIN},DNS:${INSTANA_AGENT_ACCEPTOR}") \
         -days 365 -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out tls.crt
@@ -223,14 +223,15 @@ fi
 
 # Preparing instana-core config
 echo "Generating instana-core config..."
-openssl dhparam -out dhparams.pem 2048
-openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 2048
+# openssl dhparam -out dhparams.pem 2048
+#openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 2048
+openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
 
 cat > internal_csr_details.txt <<-EOF
 [req]
-default_bits = 2048
+default_bits = 4096
 prompt = no
-default_md = sha256
+default_md = aes256
 distinguished_name = dn
 
 [dn]

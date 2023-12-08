@@ -223,7 +223,7 @@ fi
 
 # Preparing instana-core config
 echo "Generating instana-core config..."
-openssl dhparam -out dhparams.pem 2048
+# openssl dhparam -out dhparams.pem 2048
 # openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 2048
 openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096   ### FIPS
 

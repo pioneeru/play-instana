@@ -15,11 +15,11 @@ helm repo add instana https://helm.instana.io/artifactory/rel-helm-customer-virt
 helm repo update
 
 helm pull pravega/zookeeper-operator --version=0.2.15
-helm pull strimzi/strimzi-kafka-operator --version 0.38.0
+helm pull strimzi/strimzi-kafka-operator --version 0.36.0
 helm pull elastic/eck-operator --version=2.8.0
 helm pull postgres/postgres-operator --version=1.10.0
 helm pull k8ssandra/cass-operator --version=0.42.0
 helm pull clickhouse-operator/altinity-clickhouse-operator --version=0.21.3
-helm pull instana/beeinstana-operator --version=v1.40.0
+helm pull instana/beeinstana-operator --version=v1.47.0
 
 ${KUBECTL} instana license download --sales-key ${SALES_KEY}

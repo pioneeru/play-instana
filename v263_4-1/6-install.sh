@@ -7,7 +7,6 @@ source ../credentials.env
 
 echo "Installing zookeeper..."
 ${KUBECTL} create namespace instana-zookeeper
-
 ${KUBECTL} create secret docker-registry docker-image-secret \
   --namespace=instana-zookeeper \
   --docker-username=${DOCKER_USERNAME} \
@@ -35,9 +34,9 @@ ${KUBECTL} apply -f ${MANIFEST_FILENAME_ZOOKEEPER} -n instana-clickhouse
 
 
 echo "Installing kafka..."
-# helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-kafka \
-#   --set "securityContext.seccompProfile.type=RuntimeDefault" \
-#   --create-namespace
+helm install strimzi strimzi-kafka-operator-helm-3-chart-0.36.0.tgz -n instana-kafka \
+  --set "securityContext.seccompProfile.type=RuntimeDefault" \
+  --create-namespace
 
 ${KUBECTL} create namespace instana-kafka
 ${KUBECTL} create secret docker-registry instana-registry \
@@ -46,15 +45,16 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${DOWNLOAD_KEY} \
   --docker-server=artifact-public.instana.io
 
-helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-kafka \
-  --set image.registry=artifact-public.instana.io \
-  --set image.repository=self-hosted-images/3rd-party/strimzi \
-  --set image.name=operator \
-  --set image.tag=0.38.0_v0.3.0 \
-  --set image.imagePullSecrets[0].name="instana-registry" \
-  --set kafka.image.registry=artifact-public.instana.io \
-  --set kafka.image.repository=self-hosted-images/3rd-party/strimzi \
-  --set kafka.image.name=kafka --set kafka.image.tag=3.6.0_v0.3.0
+# helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-kafka \
+#   --set image.registry=artifact-public.instana.io \
+#   --set image.repository=self-hosted-images/3rd-party/strimzi \
+#   --set image.name=operator \
+#   --set image.tag=0.38.0_v0.3.0 \
+#   --set image.imagePullSecrets[0].name="instana-registry" \
+#   --set kafka.image.registry=artifact-public.instana.io \
+#   --set kafka.image.repository=self-hosted-images/3rd-party/strimzi \
+#   --set kafka.image.name=kafka --set kafka.image.tag=3.6.0_v0.3.0
+
 
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA} -n instana-kafka
 
@@ -104,7 +104,7 @@ ${KUBECTL} create secret docker-registry docker-image-secret \
   --docker-username=${DOCKER_USERNAME} \
   --docker-password=${DOCKER_PASSWORD} \
   --docker-server=docker.io
-# ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
+${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE}
 
 
@@ -124,7 +124,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana
 # for k8s and OCP 4.10:
 #helm install beeinstana instana/beeinstana-operator --namespace=beeinstana
 # For a cluster on Red Hat OpenShift 4.11 and later:
-helm install beeinstana beeinstana-operator-v1.40.0.tgz --namespace=beeinstana \
+helm install beeinstana beeinstana-operator-v1.47.0.tgz --namespace=beeinstana \
   --set operator.securityContext.seccompProfile.type=RuntimeDefault
 ${KUBECTL} create secret generic beeinstana-kafka-creds -n beeinstana \
   --from-literal=username=strimzi-kafka-user \
@@ -271,8 +271,8 @@ cat key.pem cert.pem > sp.pem
 
 cat > core-config.yaml <<-EOF
 # Diffie-Hellman parameters to use
-dhParams: |
-`sed  's/^/  /' dhparams.pem`
+#dhParams: |
+#`#sed  's/^/  /' dhparams.pem`
 # The download key you received from us
 repositoryPassword: ${DOWNLOAD_KEY}
 # The sales key you received from us
@@ -297,10 +297,10 @@ storageConfigs:
 # SAML/OIDC configuration
 serviceProviderConfig:
   # Password for the key/cert file
-  keyPassword: ${KEY_PEM_PASSWORD}
+  #keyPassword: ${KEY_PEM_PASSWORD}
   # The combined key/cert file
-  pem: |
-`sed  's/^/    /' sp.pem`
+  #pem: |
+#`#sed  's/^/    /' sp.pem`
 # # Required if a proxy is configured that needs authentication
 # proxyConfig:
 #   # Proxy user

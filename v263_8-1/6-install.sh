@@ -34,7 +34,7 @@ ${KUBECTL} apply -f ${MANIFEST_FILENAME_ZOOKEEPER} -n instana-clickhouse
 
 
 echo "Installing kafka..."
-helm install strimzi strimzi-kafka-operator-helm-3-chart-0.36.0.tgz -n instana-kafka \
+helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-kafka \
   --set "securityContext.seccompProfile.type=RuntimeDefault" \
   --create-namespace
 

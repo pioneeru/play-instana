@@ -50,7 +50,8 @@ metadata:
   labels:
     strimzi.io/cluster: instana
 spec:
-  cruiseControl: {}
+  # Cruise Control needs more than 1 kafka node
+  # cruiseControl: {}
   kafka:
     version: 3.6.0
     replicas: 1

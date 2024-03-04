@@ -22,7 +22,6 @@ spec:
         cpu: 1
         memory: 1500Mi
       limits:
-        cpu: 2
         memory: 2Gi
   config:
     tickTime: 2000
@@ -89,7 +88,6 @@ spec:
     replicas: 1
     resources:
       limits:
-        cpu: "1"
         memory: 1Gi
       requests:
         cpu: "1"
@@ -195,7 +193,6 @@ spec:
           name: elasticsearch
           resources:
             limits:
-              cpu: "3"
               memory: 4Gi
             requests:
               cpu: "1"
@@ -266,7 +263,6 @@ spec:
       shared_buffers: "32MB"
   resources:
     limits:
-      cpu: 1000m
       memory: 1Gi
     requests:
       cpu: 500m
@@ -322,7 +318,6 @@ spec:
       cpu: 1000m
       memory: 2Gi
     limits:
-      cpu: 4000m
       memory: 3Gi
   storageConfig:
     cassandraDataVolumeClaimSpec:
@@ -484,7 +479,6 @@ spec:
               - --config-file=/etc/clickhouse-server/config.xml
             resources:
               limits:
-                cpu: "4"
                 memory: 3Gi
               requests:
                 cpu: "1"
@@ -612,8 +606,6 @@ spec:
 
   # URL for downloading the GeoLite2 geo-location data file
   # geoDbUrl:
-
-  enableNetworkPolicies: false
 
   properties:
     - name: retention.metrics.rollup5

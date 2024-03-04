@@ -1,11 +1,11 @@
-# play-instana
+# Deploying Instana backend v263_8-1
 
 
 1. copy `credentials.env.template` to `credentials.env`:
 ```bash
 cd play-instana
 cp credentials.env.template credentials.env
-cd v259_1-1
+cd ocp
 ```
 2. populate credentials env with your params:
 ```bash

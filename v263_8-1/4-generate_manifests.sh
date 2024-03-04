@@ -99,12 +99,12 @@ spec:
       size: 5Gi
       deleteClaim: true
       class: ${RWO_STORAGECLASS}
-  # entityOperator:
-  #   template:
-  #     pod:
-  #       tmpDirSizeLimit: 100Mi
-  #   topicOperator: {}
-  #   userOperator: {}
+  entityOperator:
+    template:
+      pod:
+        tmpDirSizeLimit: 100Mi
+    topicOperator: {}
+    userOperator: {}
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser

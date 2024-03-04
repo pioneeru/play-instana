@@ -50,9 +50,9 @@ metadata:
   labels:
     strimzi.io/cluster: instana
 spec:
-  # cruiseControl: {}
+  cruiseControl: {}
   kafka:
-    version: 3.4.0
+    version: 3.6.0
     replicas: 1
     listeners:
     - name: scram

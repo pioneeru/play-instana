@@ -50,37 +50,37 @@ metadata:
   labels:
     strimzi.io/cluster: instana
 spec:
+  # cruiseControl: {}
   kafka:
-    cruiseControl: {}
     version: 3.4.0
     replicas: 1
     listeners:
-      - name: scram
-        port: 9092
-        type: internal
-        tls: false
-        authentication:
-          type: scram-sha-512
-        configuration:
-          useServiceDnsDomain: true
+    - name: scram
+      port: 9092
+      type: internal
+      tls: false
+      authentication:
+        type: scram-sha-512
+      configuration:
+        useServiceDnsDomain: true
     authorization:
       type: simple
       superUsers:
-        - strimzi-kafka-user
+      - strimzi-kafka-user
     storage:
       type: jbod
       volumes:
-        - id: 0
-          type: persistent-claim
-          size: 50Gi
-          deleteClaim: true
-          class: ${RWO_STORAGECLASS}
-    config:
-      default.replication.factor: 1
-      min.insync.replicas: 1
-      offsets.topic.replication.factor: 1
-      transaction.state.log.min.isr: 1
-      transaction.state.log.replication.factor: 1
+      - id: 0
+        type: persistent-claim
+        size: 50Gi
+        deleteClaim: true
+        class: ${RWO_STORAGECLASS}
+    # config:
+    #   default.replication.factor: 1
+    #   min.insync.replicas: 1
+    #   offsets.topic.replication.factor: 1
+    #   transaction.state.log.min.isr: 1
+    #   transaction.state.log.replication.factor: 1
     jvmOptions:
       -Xms: 1G
       -Xmx: 1G
@@ -98,17 +98,18 @@ spec:
       size: 5Gi
       deleteClaim: true
       class: ${RWO_STORAGECLASS}
-  entityOperator:
-    template:
-      pod:
-        tmpDirSizeLimit: 100Mi
-    topicOperator: {}
-    userOperator: {}
+  # entityOperator:
+  #   template:
+  #     pod:
+  #       tmpDirSizeLimit: 100Mi
+  #   topicOperator: {}
+  #   userOperator: {}
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
   name: strimzi-kafka-user
+  namespace: instana-kafka
   labels:
     strimzi.io/cluster: instana
 spec:
@@ -117,20 +118,32 @@ spec:
   authorization:
     type: simple
     acls:
-      - resource:
-          type: topic
-          name: '*'
-          patternType: literal
-        operation: All
-        host: "*"
-      - resource:
-          type: group
-          name: '*'
-          patternType: literal
-        operation: All
-        host: "*"
+    - resource:
+        type: topic
+        name: '*'
+        patternType: literal
+      operations:
+      - All
+      host: "*"
+    - resource:
+        type: group
+        name: '*'
+        patternType: literal
+      operations:
+      - All
+      host: "*"
 EOF
 
+cat << EOF > kafka-rebalance.yaml
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaRebalance
+metadata:
+  name: my-rebalance
+  labels:
+    strimzi.io/cluster: instana
+# no goals specified, using the default goals from the Cruise Control configuration
+spec: {}
+EOF
 
 cat << EOF > ${MANIFEST_FILENAME_ELASTICSEARCH}
 apiVersion: elasticsearch.k8s.elastic.co/v1
@@ -139,7 +152,6 @@ metadata:
   name: instana
   namespace: instana-elastic
 spec:
-  auth: {}
   http:
     service:
       metadata: {}
@@ -359,6 +371,7 @@ allowHostIPC: true
 allowHostPID: true
 readOnlyRootFilesystem: false
 users:
+  - system:serviceaccount:instana-clickhouse:clickhouse-operator
   - system:serviceaccount:instana-clickhouse:clickhouse-operator-altinity-clickhouse-operator
   - system:serviceaccount:instana-clickhouse:default
 EOF
@@ -374,20 +387,18 @@ spec:
     templates:
       dataVolumeClaimTemplate: instana-clickhouse-data-volume
       logVolumeClaimTemplate: instana-clickhouse-log-volume
+      serviceTemplate: service-template
   configuration:
     settings:
-      max_concurrent_queries: 150
+      max_concurrent_queries: 200
+      max_table_size_to_drop: 0
+      max_partition_size_to_drop: 0
       remote_servers/all-sharded/secret: "${CLICKHOUSE_ADMIN_PASS}"
       remote_servers/all-replicated/secret: "${CLICKHOUSE_ADMIN_PASS}"
       remote_servers/local/secret: "${CLICKHOUSE_ADMIN_PASS}"
     files:
-      config.d/extra-config-01.xml: |
-        <clickhouse>
-          <max_table_size_to_drop>0</max_table_size_to_drop>
-          <max_partition_size_to_drop>0</max_partition_size_to_drop>
-        </clickhouse>
       config.d/storage.xml: |
-        <yandex>
+        <clickhouse>
           <logger>
             <level>information</level>
           </logger>
@@ -405,26 +416,37 @@ spec:
               </logs_policy>
             </policies>
           </storage_configuration>
-        </yandex>
+        </clickhouse>
     clusters:
       - name: local
         templates:
           podTemplate: clickhouse
         layout:
           shardsCount: 1
-          replicasCount: 1
+          replicasCount: 2  # The the replication count of 2 is fixed for Instana backend installations
+        schemaPolicy:
+          replica: None
+          shard: None
     zookeeper:
       nodes:
         - host: instana-zookeeper-headless.instana-clickhouse
     profiles:
-      default/max_memory_usage: 1500000000
+      default/max_memory_usage: 1000000000
       default/joined_subquery_requires_alias: 0
       default/max_execution_time: 100
       default/max_query_size: 1048576
       default/use_uncompressed_cache: 0
+      default/enable_http_compression: 1
       default/load_balancing: random
       default/background_pool_size: 32
       default/background_schedule_pool_size: 32
+      default/distributed_directory_monitor_split_batch_on_failure: 1
+      default/distributed_directory_monitor_batch_inserts: 1
+      default/insert_distributed_sync: 1
+      default/log_queries: 1
+      default/log_query_views: 1
+      default/max_threads: 16
+      default/allow_experimental_database_replicated: 1
     quotas:
       default/interval/duration: 3600
       default/interval/queries: 0
@@ -466,6 +488,14 @@ spec:
               requests:
                 cpu: "1"
                 memory: 2Gi
+          - name: clickhouse-log
+            args:
+            - while true; do sleep 30; done;
+            command:
+            - /bin/sh
+            - -c
+            - --
+            image: registry.access.redhat.com/ubi9/ubi-minimal:latest
         imagePullSecrets:
           - name: clickhouse-image-secret
         ### FIX for K8s
@@ -493,6 +523,7 @@ spec:
           storageClassName: ${RWO_STORAGECLASS}
     serviceTemplates:
       - name: service-template
+        generateName: "clickhouse-{chi}"
         spec:
           ports:
             - name: http
@@ -512,10 +543,11 @@ metadata:
   namespace: beeinstana
 spec:
   ###### For OCP 4.11 and later
+  # fsGroup: <GROUP_ID> # Will be set by install script
   seccompProfile:
     type: RuntimeDefault
   ######
-  version: 1.1.5
+  version: 1.4.0
   adminCredentials:
     secretName: beeinstana-admin-creds
   kafkaSettings:
@@ -548,6 +580,8 @@ spec:
         size: 2000Gi
         # Uncomment the line below to specify your own storage class.
         storageClass: ${RWO_STORAGECLASS}
+  # Should set useMultiArchImages to true for s390x and ppc64le
+  useMultiArchImages: false
 EOF
 
 
@@ -578,8 +612,21 @@ spec:
   # URL for downloading the GeoLite2 geo-location data file
   # geoDbUrl:
 
-  # enableNetworkPolicies is deprecated, use
-  #enableNetworkPolicies: false
+  enableNetworkPolicies: false
+
+  properties:
+    - name: retention.metrics.rollup5
+      value: "86400"
+    - name: retention.metrics.rollup60
+      value: "2678400"
+    - name: retention.metrics.rollup300
+      value: "8035200"
+    - name: retention.metrics.rollup3600
+      value: "34214400"
+    - name: config.appdata.shortterm.retention.days
+      value: "7"
+    - name: config.synthetics.retention.days
+      value: "7"
 
   # Datastore configs
   datastoreConfigs:
@@ -594,24 +641,25 @@ spec:
     cassandraConfigs:
     - hosts:
       - instana-cassandra-service.instana-cassandra.svc
+      datacenter: cassandra
       authEnabled: true
     clickhouseConfigs:
     - clusterName: local
       authEnabled: true
       hosts:
-        - chi-instana-local-0-0.instana-clickhouse
-        # - chi-instana-local-0-1.instana-clickhouse
-      ports:
-        - name: tcp
-          port: 9000
-        - name: http
-          port: 8123
-      schemas:
-        - application
-        - logs
-        - synthetics
+        - chi-instana-local-0-0.instana-clickhouse.svc
+        - chi-instana-local-0-1.instana-clickhouse.svc
+      # ports:
+      #   - name: tcp
+      #     port: 9000
+      #   - name: http
+      #     port: 8123
+      # schemas:
+      #   - application
+      #   - logs
+      #   - synthetics
     elasticsearchConfig:
-      clusterName: onprem_onprem
+      clusterName: instana
       defaultIndexReplicas: 0
       defaultIndexRoutingPartitionSize: 1
       defaultIndexShards: 1
@@ -621,7 +669,7 @@ spec:
     kafkaConfig:
       authEnabled: true
       hosts:
-      - instana-kafka-bootstrap.instana-kafka
+      - instana-kafka-bootstrap.instana-kafka.svc
       replicationFactor: 1
       saslMechanism: SCRAM-SHA-512
     postgresConfigs:

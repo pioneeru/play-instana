@@ -1,4 +1,4 @@
-# Deploying Instana backend v263_8-1
+# Deploying Instana backend v265_4-1
 
 
 1. copy `credentials.env.template` to `credentials.env`:

@@ -24,7 +24,7 @@ yum install -y 'dnf-command(versionlock)'
 # yum --showduplicates list instana-kubectl | expand
 
 yum versionlock delete instana-kubectl
-yum install -y instana-kubectl-263_8-1.x86_64
+yum install -y instana-kubectl-265_4-1.x86_64
 yum versionlock add instana-kubectl
 
 kubectl instana --version

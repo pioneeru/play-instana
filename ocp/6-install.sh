@@ -7,15 +7,27 @@ source ../credentials.env
 
 echo "Installing zookeeper..."
 ${KUBECTL} create namespace instana-zookeeper
-${KUBECTL} create secret docker-registry docker-image-secret \
+# ${KUBECTL} create secret docker-registry instana-registry \
+#   --namespace=instana-zookeeper \
+#   --docker-username=${DOCKER_USERNAME} \
+#   --docker-password=${DOCKER_PASSWORD} \
+#   --docker-server=docker.io
+
+${KUBECTL} create secret docker-registry instana-registry \
   --namespace=instana-zookeeper \
-  --docker-username=${DOCKER_USERNAME} \
-  --docker-password=${DOCKER_PASSWORD} \
-  --docker-server=docker.io
+  --docker-username=_ \
+  --docker-password=${DOWNLOAD_KEY} \
+  --docker-server=artifact-public.instana.io
 
 helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
-  --set "global.imagePullSecrets={docker-image-secret}" \
-  --create-namespace
+  --create-namespace \
+  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/zookeeper-operator \
+  --set image.tag=0.2.15_v0.2.0 \
+  --set global.imagePullSecrets={"instana-registry"}
+
+# helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
+#   --set "global.imagePullSecrets={docker-image-secret}" \
+#   --create-namespace
 
   # --set "securityContext.allowPrivilegeEscalation=false" \
   # --set "securityContext.runAsNonRoot=true" \
@@ -33,10 +45,14 @@ ${KUBECTL} create namespace instana-clickhouse
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_ZOOKEEPER} -n instana-clickhouse
 
 
+
+
+
+
 echo "Installing kafka..."
-helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-kafka \
-  --set "securityContext.seccompProfile.type=RuntimeDefault" \
-  --create-namespace
+# helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-kafka \
+#   --set "securityContext.seccompProfile.type=RuntimeDefault" \
+#   --create-namespace
 
 ${KUBECTL} create namespace instana-kafka
 ${KUBECTL} create secret docker-registry instana-registry \
@@ -45,41 +61,114 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${DOWNLOAD_KEY} \
   --docker-server=artifact-public.instana.io
 
-# helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-kafka \
-#   --set image.registry=artifact-public.instana.io \
-#   --set image.repository=self-hosted-images/3rd-party/strimzi \
-#   --set image.name=operator \
-#   --set image.tag=0.38.0_v0.3.0 \
-#   --set image.imagePullSecrets[0].name="instana-registry" \
-#   --set kafka.image.registry=artifact-public.instana.io \
-#   --set kafka.image.repository=self-hosted-images/3rd-party/strimzi \
-#   --set kafka.image.name=kafka --set kafka.image.tag=3.6.0_v0.3.0
+helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-kafka \
+  --version 0.38.0 \
+  --set image.registry=artifact-public.instana.io \
+  --set image.repository=self-hosted-images/3rd-party/strimzi \
+  --set image.name=operator \
+  --set image.tag=0.38.0_v0.3.0 \
+  --set image.imagePullSecrets[0].name="instana-registry" \
+  --set kafka.image.registry=artifact-public.instana.io \
+  --set kafka.image.repository=self-hosted-images/3rd-party/strimzi \
+  --set kafka.image.name=kafka \
+  --set kafka.image.tag=3.6.0_v0.3.0
 
 
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA} -n instana-kafka
 
 
+
+
+
 echo "Installing Elasticsearch..."
-helm install elastic-operator eck-operator-2.8.0.tgz -n instana-elastic \
-  --set "securityContext.seccompProfile.type=RuntimeDefault" \
-  --create-namespace
+${KUBECTL} create namespace instana-elastic
+${KUBECTL} create secret docker-registry instana-registry \
+  --namespace=instana-elastic \
+  --docker-username=_ \
+  --docker-password=${DOWNLOAD_KEY} \
+  --docker-server=artifact-public.instana.io
+
+# helm install elastic-operator eck-operator-2.8.0.tgz -n instana-elastic \
+#   --set "securityContext.seccompProfile.type=RuntimeDefault" \
+#   --create-namespace
+helm install elastic-operator eck-operator-2.9.0.tgz -n instana-elastic \
+  --version=2.9.0 \
+  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/elasticsearch-operator \
+  --set image.tag=2.9.0_v0.3.0 \
+  --set imagePullSecrets[0].name="instana-registry"
+
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_ELASTICSEARCH} -n instana-elastic
 
 
+
+
 echo "Installing Postgres..."
-helm install postgres-operator postgres-operator-1.10.0.tgz -n instana-postgres \
-  --set configGeneral.kubernetes_use_configmaps=true \
-  --set securityContext.runAsUser=101 \
-  --create-namespace 
-${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES_SCC}
+${KUBECTL} create namespace instana-postgres
+${KUBECTL} create secret docker-registry instana-registry --namespace=instana-postgres \
+  --docker-server=artifact-public.instana.io \
+  --docker-username _ \
+  --docker-password=$DOWNLOAD_KEY
+
+# helm install postgres-operator postgres-operator-1.10.0.tgz -n instana-postgres \
+#   --set configGeneral.kubernetes_use_configmaps=true \
+#   --set securityContext.runAsUser=101 \
+#   --create-namespace 
+
+helm install cnpg cloudnative-pg-0.20.0.tgz -n instana-postgres\
+  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/cloudnative-pg-operator \
+  --set image.tag=1.21.1_v0.1.0 \
+  --version=0.20.0 \
+  --set imagePullSecrets[0].name=instana-registry \
+  --set containerSecurityContext.runAsUser=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
+  --set containerSecurityContext.runAsGroup=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` 
+
+# ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES_SCC}
+
+cat << EOF > postgres-secret.yaml
+kind: Secret
+apiVersion: v1
+metadata:
+   name: instanaadmin
+   namespace: instana-postgres
+type: Opaque
+stringData:
+   username: instanaadmin
+   password: `openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
+EOF
+
+${KUBECTL} apply -f postgres-secret.yaml
+
 ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES}
 
 
-echo "Installing Cassandra..."
-helm install cass-operator cass-operator-0.42.0.tgz -n instana-cassandra \
+
+
+
+
+echo "Installing Cassandra..."sleep 30
+${KUBECTL} create namespace instana-cassandra
+${KUBECTL} create secret docker-registry instana-registry --namespace=instana-cassandra \
+  --docker-server=artifact-public.instana.io \
+  --docker-username _ \
+  --docker-password=$DOWNLOAD_KEY
+
+# helm install cass-operator cass-operator-0.42.0.tgz -n instana-cassandra \
+#   --set securityContext.runAsGroup=999 \
+#   --set securityContext.runAsUser=999 \
+#   --create-namespace
+
+helm install cass-operator cass-operator-0.45.2.tgz -n instana-cassandra \
+  --version=0.45.2 \
   --set securityContext.runAsGroup=999 \
   --set securityContext.runAsUser=999 \
-  --create-namespace
+  --set image.registry=artifact-public.instana.io \
+  --set image.repository=self-hosted-images/3rd-party/cass-operator \
+  --set image.tag=1.18.2_v0.1.0 \
+  --set imagePullSecrets[0].name=instana-registry \
+  --set appVersion=1.18.2 \
+  --set imageConfig.systemLogger=artifact-public.instana.io/self-hosted-images/3rd-party/system-logger:1.18.2_v0.1.0  \
+  --set imageConfig.k8ssandraClient=artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-k8ssandra-client:0.2.2_v0.1.0
+
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA_SCC}
 sleep 30
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA} 
@@ -92,8 +181,7 @@ ${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lrelease=i
 
 
 echo "Installing Clickhouse..."
-helm install clickhouse-operator altinity-clickhouse-operator-0.21.3.tgz -n instana-clickhouse \
-  --create-namespace
+# ${KUBECTL} create namespace instana-clickhouse
 ${KUBECTL} create secret docker-registry clickhouse-image-secret \
   --namespace=instana-clickhouse \
   --docker-username=_ \
@@ -104,6 +192,17 @@ ${KUBECTL} create secret docker-registry docker-image-secret \
   --docker-username=${DOCKER_USERNAME} \
   --docker-password=${DOCKER_PASSWORD} \
   --docker-server=docker.io
+
+# helm install clickhouse-operator altinity-clickhouse-operator-0.21.3.tgz -n instana-clickhouse \
+#   --create-namespace
+
+helm install clickhouse-operator ibm-clickhouse-operator-v0.1.2.tgz \
+  -n instana-clickhouse \
+  --version=v0.1.2 \
+  --set operator.image.repository=artifact-public.instana.io/clickhouse-operator \
+  --set operator.image.tag=v0.1.2 \
+  --set imagePullSecrets[0].name=“instana-registry”
+
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE}
 
@@ -328,26 +427,6 @@ datastoreConfigs:
   beeInstanaConfig:
     user: beeinstana-user
     password: "${BEEINSTANA_ADMIN_PASS}"
-  clickhouseConfigs:
-    - adminUser: "${CLICKHOUSE_USER}"
-      adminPassword: "${CLICKHOUSE_USER_PASS}"
-      user: "${CLICKHOUSE_USER}"
-      password: "${CLICKHOUSE_USER_PASS}"
-  cassandraConfigs:
-    - adminUser: instana-superuser
-      adminPassword: "`${KUBECTL} get secret instana-superuser -n instana-cassandra --template='{{index .data.password | base64decode}}'`"
-      user: instana-superuser
-      password: "`${KUBECTL} get secret instana-superuser -n instana-cassandra --template='{{index .data.password | base64decode}}'`"
-  postgresConfigs:
-    - adminUser: postgres
-      adminPassword: "`${KUBECTL} get secret postgres.postgres.credentials.postgresql.acid.zalan.do -n instana-postgres --template='{{index .data.password | base64decode}}'`"
-      user: postgres
-      password: "`${KUBECTL} get secret postgres.postgres.credentials.postgresql.acid.zalan.do -n instana-postgres --template='{{index .data.password | base64decode}}'`"
-  elasticsearchConfig:
-    adminUser: elastic
-    adminPassword: "`${KUBECTL} get secret instana-es-elastic-user -n instana-elastic -o go-template='{{.data.elastic | base64decode}}'`"
-    user: elastic
-    password: "`${KUBECTL} get secret instana-es-elastic-user -n instana-elastic -o go-template='{{.data.elastic | base64decode}}'`"
   kafkaConfig:
     adminUser: strimzi-kafka-user
     adminPassword: "`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`"
@@ -355,6 +434,27 @@ datastoreConfigs:
     consumerPassword: "`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`"
     producerUser: strimzi-kafka-user
     producerPassword: "`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`"
+   elasticsearchConfig:
+    adminUser: elastic
+    adminPassword: "`${KUBECTL} get secret instana-es-elastic-user -n instana-elastic -o go-template='{{.data.elastic | base64decode}}'`"
+    user: elastic
+    password: "`${KUBECTL} get secret instana-es-elastic-user -n instana-elastic -o go-template='{{.data.elastic | base64decode}}'`"
+  postgresConfigs:
+    - adminUser: instanaadmin
+      adminPassword: "`${KUBECTL} get secret instanaadmin -n instana-postgres --template='{{index .data.password | base64decode}}'`"
+      user: instanaadmin
+      password: "`${KUBECTL} get secret instanaadmin -n instana-postgres --template='{{index .data.password | base64decode}}'`"
+  cassandraConfigs:
+    - adminUser: instana-superuser
+      adminPassword: "`${KUBECTL} get secret instana-superuser -n instana-cassandra --template='{{index .data.password | base64decode}}'`"
+      user: instana-superuser
+      password: "`${KUBECTL} get secret instana-superuser -n instana-cassandra --template='{{index .data.password | base64decode}}'`"
+  clickhouseConfigs:
+    - adminUser: "${CLICKHOUSE_USER}"
+      adminPassword: "${CLICKHOUSE_USER_PASS}"
+      user: "${CLICKHOUSE_USER}"
+      password: "${CLICKHOUSE_USER_PASS}"
+
 EOF
 
 

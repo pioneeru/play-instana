@@ -8,12 +8,16 @@ cat << EOF > ${MANIFEST_FILENAME_ZOOKEEPER}
 apiVersion: "zookeeper.pravega.io/v1beta1"
 kind: "ZookeeperCluster"
 metadata:
-  name: instana-zookeeper
-  namespace: instana-clickhouse
+  name: "instana-zookeeper"
 spec:
   # For all params and defaults, see https://github.com/pravega/zookeeper-operator/tree/master/charts/zookeeper#configuration
   replicas: 1
+  image:
+    repository: artifact-public.instana.io/self-hosted-images/3rd-party/zookeeper
+    tag: 3.8.3_v0.2.0
   pod:
+    imagePullSecrets: [name: "instana-registry"]
+    serviceAccountName: "zookeeper"
     env:
     - name: ZK_SERVER_HEAP
       value: "1000"
@@ -102,7 +106,8 @@ spec:
       pod:
         tmpDirSizeLimit: 100Mi
     topicOperator: {}
-    userOperator: {}
+    userOperator:
+      image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/operator:0.38.0_v0.3.0
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
@@ -159,10 +164,11 @@ spec:
       certificate: {}
       selfSignedCertificate:
         disabled: true
+  image: artifact-public.instana.io/self-hosted-images/3rd-party/elasticsearch:7.17.14_v0.2.0
   monitoring:
     logs: {}
     metrics: {}
-  version: 7.17.12
+  version: 7.17.14
   nodeSets:
   - name: default
     count: 1
@@ -171,19 +177,20 @@ spec:
       node.data: true
       node.ingest: true
       node.store.allow_mmap: false
-    ### FIX for K8s with securityContext
     podTemplate:
-    #  spec:
-    #    securityContext:
-    #      runAsUser: 1000
-    #      runAsGroup: 1000
-    #      fsGroup: 1000
-    ### END OF FIX
       metadata:
         creationTimestamp: null
       spec:
+        imagePullSecrets:
+          - name: instana-registry
         # nodeSelector:
         #   deploy-env: bank-prod
+        ### FIX for K8s with securityContext
+        # securityContext:
+        #   runAsUser: 1000
+        #   runAsGroup: 1000
+        #   fsGroup: 1000
+        ### END OF FIX
         containers:
         - env:
           - name: ES_JAVA_OPTS
@@ -210,40 +217,49 @@ spec:
 EOF
 
 
-cat << EOF > ${MANIFEST_FILENAME_POSTGRES_SCC}
-apiVersion: security.openshift.io/v1
-kind: SecurityContextConstraints
-metadata:
-  name: postgres-scc
-runAsUser:
-  type: MustRunAs
-  uid: 101
-seLinuxContext:
-  type: RunAsAny
-fsGroup:
-  type: RunAsAny
-allowHostDirVolumePlugin: false
-allowHostNetwork: true
-allowHostPorts: true
-allowPrivilegedContainer: false
-allowHostIPC: true
-allowHostPID: true
-readOnlyRootFilesystem: false
-users:
-  - system:serviceaccount:instana-postgres:postgres-operator
-  - system:serviceaccount:instana-postgres:postgres-pod
-  - system:serviceaccount:instana-postgres:default
-EOF
+# cat << EOF > ${MANIFEST_FILENAME_POSTGRES_SCC}
+# apiVersion: security.openshift.io/v1
+# kind: SecurityContextConstraints
+# metadata:
+#   name: postgres-scc
+# runAsUser:
+#   type: MustRunAs
+#   uid: 101
+# seLinuxContext:
+#   type: RunAsAny
+# fsGroup:
+#   type: RunAsAny
+# allowHostDirVolumePlugin: false
+# allowHostNetwork: true
+# allowHostPorts: true
+# allowPrivilegedContainer: false
+# allowHostIPC: true
+# allowHostPID: true
+# readOnlyRootFilesystem: false
+# users:
+#   - system:serviceaccount:instana-postgres:postgres-operator
+#   - system:serviceaccount:instana-postgres:postgres-pod
+#   - system:serviceaccount:instana-postgres:default
+# EOF
 
 
 cat << EOF > ${MANIFEST_FILENAME_POSTGRES}
-apiVersion: "acid.zalan.do/v1"
-kind: postgresql
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
 metadata:
   name: postgres
   namespace: instana-postgres
 spec:
-  patroni:
+  instances: 3
+  imageName: artifact-public.instana.io/self-hosted-images/3rd-party/cnpg-containers:15_v0.1.0
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets:
+  - name: instana-registry
+  postgresql:
+    parameters:
+      shared_buffers: 32MB
+      pg_stat_statements.track: all
+      auto_explain.log_min_duration: '10s'
     pg_hba:
       - local     all          all                            trust
       - host      all          all          0.0.0.0/0         md5
@@ -251,25 +267,32 @@ spec:
       - hostssl   replication  standby      all               md5
       - hostnossl all          all          all               reject
       - hostssl   all          all          all               md5
-  dockerImage: ghcr.io/zalando/spilo-15:3.0-p1
-  teamId: instana
-  numberOfInstances: 1
-  spiloRunAsUser: 101
-  spiloFSGroup: 103
-  spiloRunAsGroup: 103
-  postgresql:
-    version: "15"
-    parameters:  # Expert section
-      shared_buffers: "32MB"
+  managed:
+    roles:
+    - name: instanaadmin
+      login: true
+      superuser: true
+      createdb: true
+      createrole: true
+      passwordSecret:
+        name: instanaadmin
+  bootstrap:
+    initdb:
+      database: instanaadmin
+      owner: instanaadmin
+      secret:
+        name: instanaadmin
   resources:
     limits:
       memory: 1Gi
     requests:
       cpu: 500m
       memory: 500Mi
-  volume:
-    size: 10Gi
-    storageClass: ${RWO_STORAGECLASS}    # Optional field. You can assign a non-default StorageClass available in the cluster as needed. If you don't add this field, the default StorageClass is used.
+  superuserSecret:
+    name: instanaadmin
+  storage:
+    size: 5Gi
+    storageClass: ${RWO_STORAGECLASS}
 EOF
 
 
@@ -307,12 +330,22 @@ metadata:
 spec:
   clusterName: instana
   serverType: cassandra
-  configBuilderImage: docker.io/datastax/cass-config-builder:1.0-ubi7
+  # configBuilderImage: docker.io/datastax/cass-config-builder:1.0-ubi7
+  serverImage: artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-management-api-for-apache-cassandra:4.1.2_v0.2.0
+  systemLoggerImage: artifact-public.instana.io/self-hosted-images/3rd-party/system-logger:1.18.2_v0.1.0
+  k8ssandraClientImage: artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-k8ssandra-client:0.2.2_v0.1.0
   serverVersion: "4.1.2"
   managementApiAuth:
     insecure: {}
   size: 1
   allowMultipleNodesPerWorker: false
+  imagePullPolicy: Always
+  podTemplateSpec:
+    spec:
+      imagePullSecrets:
+      - name: instana-registry
+      containers:
+      - name: cassandra
   resources:
     requests:
       cpu: 1000m
@@ -343,7 +376,7 @@ spec:
       otc_coalescing_strategy: DISABLED
       memtable_allocation_type: offheap_objects
       num_tokens: 256
-      enable_drop_compact_storage: true
+      drop_compact_storage_enabled: true
 EOF
 
 cat << EOF > ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
@@ -473,7 +506,7 @@ spec:
       spec:
         containers:
           - name: instana-clickhouse
-            image: artifact-public.instana.io/self-hosted-images/k8s/clickhouse:23.3.10.5-1-lts-ibm_v0.29.0
+            image: artifact-public.instana.io/clickhouse-openssl:23.3.19.32-1-lts-ibm
             command:
               - clickhouse-server
               - --config-file=/etc/clickhouse-server/config.xml
@@ -484,13 +517,13 @@ spec:
                 cpu: "1"
                 memory: 2Gi
           - name: clickhouse-log
+            image: registry.access.redhat.com/ubi9/ubi-minimal:latest
             args:
             - while true; do sleep 30; done;
             command:
             - /bin/sh
             - -c
             - --
-            image: registry.access.redhat.com/ubi9/ubi-minimal:latest
         imagePullSecrets:
           - name: clickhouse-image-secret
         ### FIX for K8s
@@ -642,15 +675,6 @@ spec:
       hosts:
         - chi-instana-local-0-0.instana-clickhouse.svc
         - chi-instana-local-0-1.instana-clickhouse.svc
-      # ports:
-      #   - name: tcp
-      #     port: 9000
-      #   - name: http
-      #     port: 8123
-      # schemas:
-      #   - application
-      #   - logs
-      #   - synthetics
     elasticsearchConfig:
       clusterName: instana
       defaultIndexReplicas: 0
@@ -667,10 +691,6 @@ spec:
       saslMechanism: SCRAM-SHA-512
     postgresConfigs:
     - authEnabled: true
-      #databases:
-      #  - butlerdb
-      #  - tenantdb
-      #  - sales
       hosts:
         - postgres.instana-postgres.svc
 

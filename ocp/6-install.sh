@@ -399,11 +399,11 @@ storageConfigs:
 #      serviceAccountKey: ...
 
 # SAML/OIDC configuration
-serviceProviderConfig:
-  # Password for the key/cert file
-  keyPassword: ${KEY_PEM_PASSWORD}
-  # The combined key/cert file
-#  pem: |
+# serviceProviderConfig:
+#   # Password for the key/cert file
+#   keyPassword: ${KEY_PEM_PASSWORD}
+#   # The combined key/cert file
+#   pem: |
 #`#sed  's/^/    /' sp.pem`
 # # Required if a proxy is configured that needs authentication
 # proxyConfig:

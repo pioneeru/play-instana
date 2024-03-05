@@ -18,6 +18,11 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-username=_ \
   --docker-password=${DOWNLOAD_KEY} \
   --docker-server=artifact-public.instana.io
+${KUBECTL} create secret docker-registry instana-registry \
+  --namespace=instana-clickhouse \
+  --docker-username=_ \
+  --docker-password=${DOWNLOAD_KEY} \
+  --docker-server=artifact-public.instana.io
 
 helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
   --create-namespace \
@@ -137,7 +142,7 @@ stringData:
 EOF
 
 ${KUBECTL} apply -f postgres-secret.yaml
-
+sleep 30
 ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES}
 
 
@@ -145,7 +150,7 @@ ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES}
 
 
 
-echo "Installing Cassandra..."sleep 30
+echo "Installing Cassandra..."
 ${KUBECTL} create namespace instana-cassandra
 ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-cassandra \
   --docker-server=artifact-public.instana.io \
@@ -201,7 +206,7 @@ helm install clickhouse-operator ibm-clickhouse-operator-v0.1.2.tgz \
   --version=v0.1.2 \
   --set operator.image.repository=artifact-public.instana.io/clickhouse-operator \
   --set operator.image.tag=v0.1.2 \
-  --set imagePullSecrets[0].name=“instana-registry”
+  --set imagePullSecrets[0].name="instana-registry"
 
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE}
@@ -340,7 +345,7 @@ fi
 
 # Preparing instana-core config
 echo "Generating instana-core config..."
-# openssl dhparam -out dhparams.pem 2048
+openssl dhparam -out dhparams.pem 2048
 # openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 2048
 openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096   ### FIPS
 
@@ -396,9 +401,9 @@ storageConfigs:
 # SAML/OIDC configuration
 serviceProviderConfig:
   # Password for the key/cert file
-  #keyPassword: ${KEY_PEM_PASSWORD}
+  keyPassword: ${KEY_PEM_PASSWORD}
   # The combined key/cert file
-  #pem: |
+  pem: |
 #`#sed  's/^/    /' sp.pem`
 # # Required if a proxy is configured that needs authentication
 # proxyConfig:
@@ -434,7 +439,7 @@ datastoreConfigs:
     consumerPassword: "`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`"
     producerUser: strimzi-kafka-user
     producerPassword: "`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`"
-   elasticsearchConfig:
+  elasticsearchConfig:
     adminUser: elastic
     adminPassword: "`${KUBECTL} get secret instana-es-elastic-user -n instana-elastic -o go-template='{{.data.elastic | base64decode}}'`"
     user: elastic
@@ -454,7 +459,6 @@ datastoreConfigs:
       adminPassword: "${CLICKHOUSE_USER_PASS}"
       user: "${CLICKHOUSE_USER}"
       password: "${CLICKHOUSE_USER_PASS}"
-
 EOF
 
 

@@ -250,7 +250,7 @@ metadata:
   name: postgres
   namespace: instana-postgres
 spec:
-  instances: 3
+  instances: 1
   imageName: artifact-public.instana.io/self-hosted-images/3rd-party/cnpg-containers:15_v0.1.0
   imagePullPolicy: IfNotPresent
   imagePullSecrets:

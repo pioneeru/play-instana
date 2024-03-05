@@ -18,11 +18,6 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-username=_ \
   --docker-password=${DOWNLOAD_KEY} \
   --docker-server=artifact-public.instana.io
-${KUBECTL} create secret docker-registry instana-registry \
-  --namespace=instana-clickhouse \
-  --docker-username=_ \
-  --docker-password=${DOWNLOAD_KEY} \
-  --docker-server=artifact-public.instana.io
 
 helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
   --create-namespace \
@@ -47,6 +42,11 @@ ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --time
 # ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.componentsStatus}'=Ready core instana-core --timeout=3000s
 
 ${KUBECTL} create namespace instana-clickhouse
+${KUBECTL} create secret docker-registry instana-registry \
+  --namespace=instana-clickhouse \
+  --docker-username=_ \
+  --docker-password=${DOWNLOAD_KEY} \
+  --docker-server=artifact-public.instana.io
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_ZOOKEEPER} -n instana-clickhouse
 
 
@@ -214,7 +214,7 @@ ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE}
 
 
 echo "Waiting for Kafka pods to be running..."
-${KUBECTL} -n instana-kafka wait --for=condition=Ready=true -f ${MANIFEST_FILENAME_KAFKA} --timeout=3000s
+# ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true -f ${MANIFEST_FILENAME_KAFKA} --timeout=3000s
 ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true pod -lstrimzi.io/component-type=zookeeper --timeout=3000s
 ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true pod -lstrimzi.io/component-type=kafka --timeout=3000s
 
@@ -403,7 +403,7 @@ serviceProviderConfig:
   # Password for the key/cert file
   keyPassword: ${KEY_PEM_PASSWORD}
   # The combined key/cert file
-  pem: |
+#  pem: |
 #`#sed  's/^/    /' sp.pem`
 # # Required if a proxy is configured that needs authentication
 # proxyConfig:

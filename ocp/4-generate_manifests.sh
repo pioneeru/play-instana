@@ -692,7 +692,7 @@ spec:
     postgresConfigs:
     - authEnabled: true
       hosts:
-        - postgres.instana-postgres.svc
+        - postgres-r.instana-postgres.svc
 
   featureFlags:
     - name: beeinstana

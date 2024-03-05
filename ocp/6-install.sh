@@ -345,36 +345,39 @@ fi
 
 # Preparing instana-core config
 echo "Generating instana-core config..."
-openssl dhparam -out dhparams.pem 2048
-# openssl genrsa -aes128 -out key.pem -passout pass:${KEY_PEM_PASSWORD} 2048
-openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096   ### FIPS
 
-cat > internal_csr_details.txt <<-EOF
-[req]
-default_bits = 4096
-prompt = no
-default_md = sha256
-distinguished_name = dn
+# Diffie-Hellman parameters to use (optional)
+#openssl dhparam -out dhparams.pem 2048
+#openssl genrsa -out key.pem -passout pass:${KEY_PEM_PASSWORD} 4096
 
-[dn]
-C=US
-ST=TX
-L=Austin
-O=IBM
-OU=Instana
-emailAddress=my@email.ibm.com
-CN=${INSTANA_BASE_DOMAIN}
-EOF
 
-openssl req -new -x509 -key key.pem -days 365 \
-	-passin pass:${KEY_PEM_PASSWORD} -out cert.pem \
-	-config internal_csr_details.txt
+# SAML/OIDC keys generation (optional)
+# cat > internal_csr_details.txt <<-EOF
+# [req]
+# default_bits = 4096
+# prompt = no
+# default_md = sha256
+# distinguished_name = dn
 
-cat key.pem cert.pem > sp.pem
+# [dn]
+# C=US
+# ST=TX
+# L=Austin
+# O=IBM
+# OU=Instana
+# emailAddress=my@email.ibm.com
+# CN=${INSTANA_BASE_DOMAIN}
+# EOF
+
+# openssl req -new -x509 -key key.pem -days 365 \
+# 	-passin pass:${KEY_PEM_PASSWORD} -out cert.pem \
+# 	-config internal_csr_details.txt
+
+# cat key.pem cert.pem > sp.pem
 
 
 cat > core-config.yaml <<-EOF
-# Diffie-Hellman parameters to use
+# Diffie-Hellman parameters to use (Optional)
 #dhParams: |
 #`#sed  's/^/  /' dhparams.pem`
 # The download key you received from us

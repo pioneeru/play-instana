@@ -105,7 +105,6 @@ spec:
     template:
       pod:
         tmpDirSizeLimit: 100Mi
-    topicOperator: {}
     userOperator:
       image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/operator:0.38.0_v0.3.0
 ---

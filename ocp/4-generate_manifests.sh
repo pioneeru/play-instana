@@ -9,6 +9,7 @@ apiVersion: "zookeeper.pravega.io/v1beta1"
 kind: "ZookeeperCluster"
 metadata:
   name: "instana-zookeeper"
+  namespace: instana-clickhouse
 spec:
   # For all params and defaults, see https://github.com/pravega/zookeeper-operator/tree/master/charts/zookeeper#configuration
   replicas: 1
@@ -57,7 +58,7 @@ spec:
   # cruiseControl: {}
   kafka:
     version: 3.6.0
-    replicas: 1
+    replicas: 3
     listeners:
     - name: scram
       port: 9092

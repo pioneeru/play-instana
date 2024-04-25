@@ -22,7 +22,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
 helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
   --create-namespace \
   --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/zookeeper-operator \
-  --set image.tag=0.2.15_v0.2.0 \
+  --set image.tag=0.2.15_v0.4.0 \
   --set global.imagePullSecrets={"instana-registry"}
 
 # helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
@@ -70,12 +70,12 @@ helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-k
   --set image.registry=artifact-public.instana.io \
   --set image.repository=self-hosted-images/3rd-party/strimzi \
   --set image.name=operator \
-  --set image.tag=0.38.0_v0.3.0 \
+  --set image.tag=0.38.0_v0.5.0 \
   --set image.imagePullSecrets[0].name="instana-registry" \
   --set kafka.image.registry=artifact-public.instana.io \
   --set kafka.image.repository=self-hosted-images/3rd-party/strimzi \
   --set kafka.image.name=kafka \
-  --set kafka.image.tag=3.6.0_v0.3.0
+  --set kafka.image.tag=3.6.0_v0.5.0
 
 
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA} -n instana-kafka
@@ -98,7 +98,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
 helm install elastic-operator eck-operator-2.9.0.tgz -n instana-elastic \
   --version=2.9.0 \
   --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/elasticsearch-operator \
-  --set image.tag=2.9.0_v0.3.0 \
+  --set image.tag=2.9.0_v0.4.0 \
   --set imagePullSecrets[0].name="instana-registry"
 
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_ELASTICSEARCH} -n instana-elastic
@@ -167,11 +167,11 @@ helm install cass-operator cass-operator-0.45.2.tgz -n instana-cassandra \
   --set securityContext.runAsUser=999 \
   --set image.registry=artifact-public.instana.io \
   --set image.repository=self-hosted-images/3rd-party/cass-operator \
-  --set image.tag=1.18.2_v0.1.0 \
+  --set image.tag=1.18.2_v0.2.0 \
   --set imagePullSecrets[0].name=instana-registry \
   --set appVersion=1.18.2 \
-  --set imageConfig.systemLogger=artifact-public.instana.io/self-hosted-images/3rd-party/system-logger:1.18.2_v0.1.0  \
-  --set imageConfig.k8ssandraClient=artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-k8ssandra-client:0.2.2_v0.1.0
+  --set imageConfig.systemLogger=artifact-public.instana.io/self-hosted-images/3rd-party/system-logger:1.18.2_v0.2.0  \
+  --set imageConfig.k8ssandraClient=artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-k8ssandra-client:0.2.2_v0.2.0
 
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA_SCC}
 sleep 30

@@ -36,7 +36,7 @@ ${KUBECTL} -n instana-elastic delete es instana --wait=false
 
 ### Postgres
 echo "Deleteing pg postgres..."
-${KUBECTL} -n instana-postgres delete pg postgres --wait=false
+${KUBECTL} -n instana-postgres delete cluster postgres --wait=false
 
 ### Kafka
 echo "Deleteing k instana..."
@@ -64,7 +64,7 @@ echo "Waiting for Clickhouse pods deletion..."
 ${KUBECTL} -n instana-clickhouse wait --for=delete pod -lclickhouse.altinity.com/chi=instana --timeout=3000s
 
 echo "Waiting for Postgres pods deletion..."
-${KUBECTL} -n instana-postgres wait --for=delete pod -lcluster-name=postgres --timeout=3000s
+${KUBECTL} -n instana-postgres wait --for=delete pod -lcnpg.io/cluster=postgres --timeout=3000s
 
 echo "Waiting for Kafka pods deletion..."
 ${KUBECTL} -n instana-kafka wait --for=delete pod -lstrimzi.io/cluster=instana --timeout=3000s
@@ -87,7 +87,7 @@ echo "Uninstaling strimzi-operator..."
 helm uninstall strimzi -n instana-kafka 
 
 echo "Uninstaling postgres-operator..."
-helm uninstall postgres-operator -n instana-postgres 
+helm uninstall cnpg -n instana-postgres 
 
 echo "Uninstaling clickhouse-operator..."
 helm uninstall clickhouse-operator -n instana-clickhouse 

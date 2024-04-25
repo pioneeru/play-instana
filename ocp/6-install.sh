@@ -229,6 +229,9 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana
 # For a cluster on Red Hat OpenShift 4.11 and later:
 helm install beeinstana beeinstana-operator-v1.47.0.tgz --namespace=beeinstana \
   --set operator.securityContext.seccompProfile.type=RuntimeDefault
+
+while ! ${KUBECTL} get secret strimzi-kafka-user -n instana-kafka; do echo "Waiting for strimzi-kafka-user secret in instana-kafka. CTRL-C to exit."; sleep 10; done
+
 ${KUBECTL} create secret generic beeinstana-kafka-creds -n beeinstana \
   --from-literal=username=strimzi-kafka-user \
   --from-literal=password=`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`

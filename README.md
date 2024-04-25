@@ -1,4 +1,4 @@
-# Deploying Instana backend v267_2-1
+# Deploying Instana backend v269_2-1
 
 1. copy `credentials.env.template` to `credentials.env`:
 
@@ -43,8 +43,9 @@ vi ../credentials.env
 ```bash
 ./4-generate_manifests.sh
 ```
+This is the time to edit generated manifests (in the project replicas and resources given for tiny deployment just enough to test installation).
 
-8. Download charts for installation:
+1. Download charts for installation:
 
 ```bash
 ./5-pull_datastore_charts.sh

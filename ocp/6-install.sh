@@ -27,16 +27,15 @@ helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
 
 # helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
 #   --set "global.imagePullSecrets={docker-image-secret}" \
-#   --create-namespace
-
-  # --set "securityContext.allowPrivilegeEscalation=false" \
-  # --set "securityContext.runAsNonRoot=true" \
-  # --set "securityContext.seccompProfile.type=RuntimeDefault" \
-  # --set "securityContext.capabilities.drop[0]=ALL" \
-  # --set "hooks.securityContext.seccompProfile.type=RuntimeDefault" \
-  # --set "hooks.securityContext.runAsNonRoot=true" \
-  # --set "hooks.securityContext.allowPrivilegeEscalation=false" \
-  # --set "hooks.securityContext.capabilities.drop[0]=ALL" \
+#   --create-namespace \
+#   --set "securityContext.allowPrivilegeEscalation=false" \
+#   --set "securityContext.runAsNonRoot=true" \
+#   --set "securityContext.seccompProfile.type=RuntimeDefault" \
+#   --set "securityContext.capabilities.drop[0]=ALL" \
+#   --set "hooks.securityContext.seccompProfile.type=RuntimeDefault" \
+#   --set "hooks.securityContext.runAsNonRoot=true" \
+#   --set "hooks.securityContext.allowPrivilegeEscalation=false" \
+#   --set "hooks.securityContext.capabilities.drop[0]=ALL" \
 
 ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s
 # ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.componentsStatus}'=Ready core instana-core --timeout=3000s
@@ -254,7 +253,7 @@ ${KUBECTL} -n instana-elastic wait --for=jsonpath='{.status.phase}'=Ready es ins
 echo "Waiting for Elasticsearch pods to be running..."
 ${KUBECTL} -n instana-elastic wait --for=condition=Ready=true pod -lelasticsearch.k8s.elastic.co/cluster-name=instana --timeout=3000s
 echo "Waiting for Postgres pods to be running..."
-${KUBECTL} -n instana-postgres wait --for=condition=Ready=true pod -lcluster-name=postgres --timeout=3000s
+${KUBECTL} -n instana-postgres wait --for=condition=Ready=true pod -lcnpg.io/cluster=postgres --timeout=3000s
 echo "Waiting for Clickhouse pods to be running..."
 ${KUBECTL} -n instana-clickhouse wait --for=jsonpath='{.status.status}'=Completed chi instana --timeout=3000s
 ${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lclickhouse.altinity.com/chi=instana --timeout=3000s

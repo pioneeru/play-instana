@@ -506,7 +506,7 @@ spec:
       spec:
         containers:
           - name: instana-clickhouse
-            image: artifact-public.instana.io/clickhouse-openssl:23.3.19.32-1-lts-ibm
+            image: artifact-public.instana.io/clickhouse-openssl:23.8.9.54-1-lts-ibm
             command:
               - clickhouse-server
               - --config-file=/etc/clickhouse-server/config.xml

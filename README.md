@@ -45,7 +45,7 @@ vi ../credentials.env
 ```
 This is the time to edit generated manifests (in the project replicas and resources given for tiny deployment just enough to test installation).
 
-1. Download charts for installation:
+8. Download charts for installation:
 
 ```bash
 ./5-pull_datastore_charts.sh

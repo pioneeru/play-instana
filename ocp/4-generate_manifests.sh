@@ -683,7 +683,7 @@ spec:
       - instana-cassandra-service.instana-cassandra.svc
       datacenter: cassandra
       authEnabled: true
-      replicationFactor: 2
+      replicationFactor: 1
     clickhouseConfigs:
     - clusterName: local
       authEnabled: true

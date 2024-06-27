@@ -192,7 +192,7 @@ helm install clickhouse-operator ibm-clickhouse-operator-v0.1.2.tgz \
 
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE}
-
+sleep 5
 
 
 echo "Waiting for Kafka pods to be running..."
@@ -240,11 +240,11 @@ echo "Waiting for Elasticsearch pods to be running..."
 ${KUBECTL} -n instana-elastic wait --for=condition=Ready=true pod -lelasticsearch.k8s.elastic.co/cluster-name=instana --timeout=3000s
 echo "Waiting for Postgres pods to be running..."
 ${KUBECTL} -n instana-postgres wait --for=condition=Ready=true pod -lcnpg.io/cluster=postgres --timeout=3000s
+echo "Waiting for Cassandra pods to be running..."
+${KUBECTL} -n instana-cassandra wait --for=condition=Ready=true pod -lapp.kubernetes.io/name=cassandra --timeout=3000s
 echo "Waiting for Clickhouse pods to be running..."
 ${KUBECTL} -n instana-clickhouse wait --for=jsonpath='{.status.status}'=Completed chi instana --timeout=3000s
 ${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lclickhouse.altinity.com/chi=instana --timeout=3000s
-echo "Waiting for Cassandra pods to be running..."
-${KUBECTL} -n instana-cassandra wait --for=condition=Ready=true pod -lapp.kubernetes.io/name=cassandra --timeout=3000s
 echo "Waiting for Beeinstana pods to be running..."
 ${KUBECTL} -n beeinstana wait --for=condition=Ready=true pod -lapp.kubernetes.io/name=beeinstana --timeout=3000s
 

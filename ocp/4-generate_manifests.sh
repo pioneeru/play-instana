@@ -12,10 +12,10 @@ metadata:
   namespace: instana-clickhouse
 spec:
   # For all params and defaults, see https://github.com/pravega/zookeeper-operator/tree/master/charts/zookeeper#configuration
-  replicas: 1
+  replicas: 1   ### 3
   image:
     repository: artifact-public.instana.io/self-hosted-images/3rd-party/zookeeper
-    tag: 3.8.3_v0.4.0
+    tag: 3.8.4_v0.5.0
   pod:
     imagePullSecrets: [name: "instana-registry"]
     serviceAccountName: "zookeeper"
@@ -57,6 +57,7 @@ spec:
   # Cruise Control needs more than 1 kafka node
   cruiseControl: {}
   kafka:
+    # image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/kafka:3.6.0_v0.6.0
     version: 3.6.0
     replicas: 3
     listeners:
@@ -107,7 +108,7 @@ spec:
       pod:
         tmpDirSizeLimit: 100Mi
     userOperator:
-      image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/operator:0.38.0_v0.3.0
+      image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/operator:0.38.0_v0.6.0
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
@@ -156,14 +157,6 @@ metadata:
   name: instana
   namespace: instana-elastic
 spec:
-  http:
-    service:
-      metadata: {}
-      spec: {}
-    tls:
-      certificate: {}
-      selfSignedCertificate:
-        disabled: true
   image: artifact-public.instana.io/self-hosted-images/3rd-party/elasticsearch:7.17.14_v0.6.0
   monitoring:
     logs: {}
@@ -171,12 +164,13 @@ spec:
   version: 7.17.14
   nodeSets:
   - name: default
-    count: 1
+    count: 1       ### 3
     config:
       node.master: true
       node.data: true
       node.ingest: true
       node.store.allow_mmap: false
+      search.max_buckets: 5
     podTemplate:
       metadata:
         creationTimestamp: null
@@ -214,6 +208,14 @@ spec:
             requests:
               storage: 20Gi
           storageClassName: ${RWO_STORAGECLASS}
+  http:
+    service:
+      metadata: {}
+      spec: {}
+    tls:
+      certificate: {}
+      selfSignedCertificate:
+        disabled: true
 EOF
 
 
@@ -332,13 +334,9 @@ spec:
   serverType: cassandra
   # configBuilderImage: docker.io/datastax/cass-config-builder:1.0-ubi7
   serverImage: artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-management-api-for-apache-cassandra:4.1.2_v0.4.0
-  systemLoggerImage: artifact-public.instana.io/self-hosted-images/3rd-party/system-logger:1.18.2_v0.2.0
-  k8ssandraClientImage: artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-k8ssandra-client:0.2.2_v0.2.0
+  systemLoggerImage: artifact-public.instana.io/self-hosted-images/3rd-party/system-logger:1.18.2_v0.1.0
+  k8ssandraClientImage: artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-k8ssandra-client:0.2.2_v0.1.0
   serverVersion: "4.1.2"
-  managementApiAuth:
-    insecure: {}
-  size: 1
-  allowMultipleNodesPerWorker: false
   imagePullPolicy: Always
   podTemplateSpec:
     spec:
@@ -346,12 +344,16 @@ spec:
       - name: instana-registry
       containers:
       - name: cassandra
+  managementApiAuth:
+    insecure: {}
+  size: 1
+  allowMultipleNodesPerWorker: false
   resources:
     requests:
-      cpu: 1000m
-      memory: 2Gi
+      cpu: 1000m      ### 2000m
+      memory: 2Gi     ### 8Gi
     limits:
-      memory: 3Gi
+      memory: 3Gi     ### 16Gi
   storageConfig:
     cassandraDataVolumeClaimSpec:
       accessModes:
@@ -362,8 +364,8 @@ spec:
       storageClassName: ${RWO_STORAGECLASS}
   config:
     jvm-server-options:
-      initial_heap_size: "1G"
-      max_heap_size: "2G"
+      initial_heap_size: "1G"   ### 4G
+      max_heap_size: "2G"       ### 8G
       additional-jvm-opts:
         - -Dcassandra.allow_unsafe_aggressive_sstable_expiration=true
     cassandra-yaml:
@@ -418,13 +420,6 @@ spec:
       logVolumeClaimTemplate: instana-clickhouse-log-volume
       serviceTemplate: service-template
   configuration:
-    settings:
-      max_concurrent_queries: 200
-      max_table_size_to_drop: 0
-      max_partition_size_to_drop: 0
-      remote_servers/all-sharded/secret: "${CLICKHOUSE_ADMIN_PASS}"
-      remote_servers/all-replicated/secret: "${CLICKHOUSE_ADMIN_PASS}"
-      remote_servers/local/secret: "${CLICKHOUSE_ADMIN_PASS}"
     files:
       config.d/storage.xml: |
         <clickhouse>
@@ -483,6 +478,13 @@ spec:
       default/interval/result_rows: 0
       default/interval/read_rows: 0
       default/interval/execution_time: 0
+    settings:
+      remote_servers/all-sharded/secret: "${CLICKHOUSE_ADMIN_PASS}"
+      remote_servers/all-replicated/secret: "${CLICKHOUSE_ADMIN_PASS}"
+      remote_servers/local/secret: "${CLICKHOUSE_ADMIN_PASS}"
+      max_concurrent_queries: 200
+      max_table_size_to_drop: 0
+      max_partition_size_to_drop: 0
     users:
       #${CLICKHOUSE_ADMIN}/networks/ip: "::/0"
       ${CLICKHOUSE_ADMIN}/password: "${CLICKHOUSE_ADMIN_PASS}"
@@ -490,13 +492,13 @@ spec:
       ${CLICKHOUSE_USER}/password: "${CLICKHOUSE_USER_PASS}"
       # Or
       # Generate password and the corresponding SHA256 hash with:
-      # $ PASSWORD=\$(base64 < /dev/urandom | head -c8); echo "\$PASSWORD"; echo -n "\$PASSWORD" | sha256sum | tr -d '-'
+      # $ PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'
       # 6edvj2+d                                                          <- first line is the password
       # a927723f4a42cccc50053e81bab1fcf579d8d8fb54a3ce559d42eb75a9118d65  <- second line is the corresponding SHA256 hash
       # clickhouse-user/password_sha256_hex: "a927723f4a42cccc50053e81bab1fcf579d8d8fb54a3ce559d42eb75a9118d65"
       # Or
       # Generate password and the corresponding SHA1 hash with:
-      # $ PASSWORD=\$(base64 < /dev/urandom | head -c8); echo "\$PASSWORD"; echo -n "\$PASSWORD" | sha1sum | tr -d '-' | xxd -r -p | sha1sum | tr -d '-'
+      # $ PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha1sum | tr -d '-' | xxd -r -p | sha1sum | tr -d '-'
       # LJfoOfxl                                  <- first line is the password, put this in the k8s secret
       # 3435258e803cefaab7db2201d04bf50d439f6c7f  <- the corresponding double SHA1 hash, put this below
       # clickhouse-user/password_double_sha1_hex: "3435258e803cefaab7db2201d04bf50d439f6c7f"
@@ -510,12 +512,9 @@ spec:
             command:
               - clickhouse-server
               - --config-file=/etc/clickhouse-server/config.xml
-            resources:
-              limits:
-                memory: 3Gi
-              requests:
-                cpu: "1"
-                memory: 2Gi
+            # volumeMounts:
+            #   - mountPath: /var/lib/clickhouse/cold/
+            #     name: instana-clickhouse-data-cold-volume
           - name: clickhouse-log
             image: registry.access.redhat.com/ubi9/ubi-minimal:latest
             args:
@@ -524,6 +523,12 @@ spec:
             - /bin/sh
             - -c
             - --
+        resources:
+          limits:
+            memory: 3Gi
+          requests:
+            cpu: "1"
+            memory: 2Gi
         imagePullSecrets:
           - name: clickhouse-image-secret
         ### FIX for K8s
@@ -549,6 +554,14 @@ spec:
             requests:
               storage: 1Gi
           storageClassName: ${RWO_STORAGECLASS}
+      # - name: instana-clickhouse-data-cold-volume
+      #   spec:
+      #     accessModes:
+      #       - ReadWriteOnce
+      #     resources:
+      #       requests:
+      #         storage: 100Gi
+      #     storageClassName: ${RWO_STORAGECLASS}
     serviceTemplates:
       - name: service-template
         generateName: "clickhouse-{chi}"
@@ -591,15 +604,15 @@ spec:
     memory: 200Mi
     replicas: 1
   ingestor:
-    cpu: 2
-    memory: 2Gi
+    cpu: 2         ### 4
+    memory: 2Gi    ### 3Gi
     limitMemory: true
     env: on-prem
     metricsTopic: raw_metrics
     replicas: 1
   aggregator:
-    cpu: 2
-    memory: 2Gi
+    cpu: 2         ### 4
+    memory: 2Gi    ### 16Gi
     limitMemory: true
     mirrors: 1
     shards: 1
@@ -670,6 +683,7 @@ spec:
       - instana-cassandra-service.instana-cassandra.svc
       datacenter: cassandra
       authEnabled: true
+      replicationFactor: 2
     clickhouseConfigs:
     - clusterName: local
       authEnabled: true
@@ -693,7 +707,7 @@ spec:
     postgresConfigs:
     - authEnabled: true
       hosts:
-        - postgres-r.instana-postgres.svc
+        - postgres-rw.instana-postgres.svc
 
   featureFlags:
     - name: beeinstana
@@ -729,7 +743,11 @@ spec:
     - name: feature.automation.enabled
       enabled: true      
     - name: feature.action.automation.enabled
-      enabled: true      
+      enabled: true
+    - name: feature.logging.enabled
+      enabled: true
+    - name: feature.kubernetes.logging.enabled
+      enabled: true
   # Use one of smtpConfig or sesConfig
   emailConfig:
     smtpConfig:

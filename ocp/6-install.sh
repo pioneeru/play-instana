@@ -21,21 +21,9 @@ ${KUBECTL} create secret docker-registry instana-registry \
 
 helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
   --create-namespace \
-  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/zookeeper-operator \
-  --set image.tag=0.2.15_v0.4.0 \
+  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/zookeeper-operator \ 
+  --set image.tag=0.2.15_v0.5.0 \
   --set global.imagePullSecrets={"instana-registry"}
-
-# helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
-#   --set "global.imagePullSecrets={docker-image-secret}" \
-#   --create-namespace \
-#   --set "securityContext.allowPrivilegeEscalation=false" \
-#   --set "securityContext.runAsNonRoot=true" \
-#   --set "securityContext.seccompProfile.type=RuntimeDefault" \
-#   --set "securityContext.capabilities.drop[0]=ALL" \
-#   --set "hooks.securityContext.seccompProfile.type=RuntimeDefault" \
-#   --set "hooks.securityContext.runAsNonRoot=true" \
-#   --set "hooks.securityContext.allowPrivilegeEscalation=false" \
-#   --set "hooks.securityContext.capabilities.drop[0]=ALL" \
 
 ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s
 # ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.componentsStatus}'=Ready core instana-core --timeout=3000s
@@ -70,13 +58,12 @@ helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-k
   --set image.registry=artifact-public.instana.io \
   --set image.repository=self-hosted-images/3rd-party/strimzi \
   --set image.name=operator \
-  --set image.tag=0.38.0_v0.5.0 \
+  --set image.tag=0.38.0_v0.6.0 \
   --set image.imagePullSecrets[0].name="instana-registry" \
   --set kafka.image.registry=artifact-public.instana.io \
   --set kafka.image.repository=self-hosted-images/3rd-party/strimzi \
   --set kafka.image.name=kafka \
-  --set kafka.image.tag=3.6.0_v0.5.0
-
+  --set kafka.image.tag=3.6.0_v0.6.0
 
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA} -n instana-kafka
 
@@ -113,18 +100,14 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-po
   --docker-username _ \
   --docker-password=$DOWNLOAD_KEY
 
-# helm install postgres-operator postgres-operator-1.10.0.tgz -n instana-postgres \
-#   --set configGeneral.kubernetes_use_configmaps=true \
-#   --set securityContext.runAsUser=101 \
-#   --create-namespace 
-
-helm install cnpg cloudnative-pg-0.20.0.tgz -n instana-postgres\
+helm install cnpg cloudnative-pg-0.20.0.tgz \
   --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/cloudnative-pg-operator \
   --set image.tag=1.21.1_v0.1.0 \
   --version=0.20.0 \
   --set imagePullSecrets[0].name=instana-registry \
   --set containerSecurityContext.runAsUser=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
-  --set containerSecurityContext.runAsGroup=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` 
+  --set containerSecurityContext.runAsGroup=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
+  -n instana-postgres 
 
 # ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES_SCC}
 

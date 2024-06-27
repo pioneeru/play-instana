@@ -21,7 +21,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
 
 helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
   --create-namespace \
-  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/zookeeper-operator \ 
+  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/zookeeper-operator \
   --set image.tag=0.2.15_v0.5.0 \
   --set global.imagePullSecrets={"instana-registry"}
 

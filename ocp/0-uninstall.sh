@@ -36,7 +36,7 @@ ${KUBECTL} -n instana-elastic delete es instana --wait=false
 
 ### Postgres
 echo "Deleteing pg postgres..."
-${KUBECTL} -n instana-postgres delete cluster postgres --wait=false
+${KUBECTL} -n instana-postgres delete clusters.postgresql.cnpg.io postgres --wait=false
 
 ### Kafka
 echo "Deleteing k instana..."

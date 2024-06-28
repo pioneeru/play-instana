@@ -18,7 +18,7 @@ helm pull instana/eck-operator --version=2.9.0
 helm pull instana/cloudnative-pg --version=0.21.1
 helm pull instana/cass-operator --version=0.45.2
 helm pull instana/ibm-clickhouse-operator --version=v0.1.2
-helm pull instana/beeinstana-operator --version=v1.47.0
+helm pull instana/beeinstana-operator --version=v1.58.0
 
 # helm pull instana/postgres-operator --version=1.10.1
 

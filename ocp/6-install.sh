@@ -56,8 +56,8 @@ ${KUBECTL} create secret docker-registry instana-registry \
 helm install strimzi strimzi-kafka-operator-helm-3-chart-0.41.0.tgz -n instana-kafka \
   --version 0.41.0 \
   --set image.registry=artifact-public.instana.io \
-  --set image.repository=self-hosted-images/3rd-party/operator/strimzi \
-  --set image.name=operator \
+  --set image.repository=self-hosted-images/3rd-party/operator \
+  --set image.name=strimzi \
   --set image.tag=0.41.0_v0.9.0 \
   --set image.imagePullSecrets[0].name="instana-registry" \
   --set kafka.image.registry=artifact-public.instana.io \

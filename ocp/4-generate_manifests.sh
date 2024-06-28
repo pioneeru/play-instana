@@ -172,7 +172,7 @@ spec:
       node.data: true
       node.ingest: true
       node.store.allow_mmap: false
-      search.max_buckets: 5
+      search.max_buckets: 65000
     podTemplate:
       metadata:
         creationTimestamp: null

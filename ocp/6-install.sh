@@ -58,7 +58,7 @@ helm install strimzi strimzi-kafka-operator-helm-3-chart-0.41.0.tgz -n instana-k
   --set image.registry=artifact-public.instana.io \
   --set image.repository=self-hosted-images/3rd-party/strimzi \
   --set image.name=operator \
-  --set image.tag=0.41.0_v0.9.0 \
+  --set image.tag=0.38.0_v0.6.0 \
   --set image.imagePullSecrets[0].name="instana-registry" \
   --set kafka.image.registry=artifact-public.instana.io \
   --set kafka.image.repository=self-hosted-images/3rd-party/datastore \
@@ -100,7 +100,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-po
   --docker-password=$DOWNLOAD_KEY
 
 helm install cnpg cloudnative-pg-0.21.1.tgz \
-  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/cloudnative-pg \
+  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/cloudnative-pg-operator \
   --set image.tag=1.21.1_v0.3.0 \
   --version=0.21.1 \
   --set imagePullSecrets[0].name=instana-registry \

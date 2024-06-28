@@ -21,8 +21,8 @@ ${KUBECTL} create secret docker-registry instana-registry \
 
 helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
   --create-namespace \
-  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/zookeeper-operator \
-  --set image.tag=0.2.15_v0.5.0 \
+  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/operator/zookeeper \
+  --set image.tag=0.2.15_v0.11.0 \
   --set global.imagePullSecrets={"instana-registry"}
 
 ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s
@@ -53,20 +53,19 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${DOWNLOAD_KEY} \
   --docker-server=artifact-public.instana.io
 
-helm install strimzi strimzi-kafka-operator-helm-3-chart-0.38.0.tgz -n instana-kafka \
-  --version 0.38.0 \
+helm install strimzi strimzi-kafka-operator-helm-3-chart-0.41.0.tgz -n instana-kafka \
+  --version 0.41.0 \
   --set image.registry=artifact-public.instana.io \
   --set image.repository=self-hosted-images/3rd-party/strimzi \
   --set image.name=operator \
-  --set image.tag=0.38.0_v0.6.0 \
+  --set image.tag=0.41.0_v0.9.0 \
   --set image.imagePullSecrets[0].name="instana-registry" \
   --set kafka.image.registry=artifact-public.instana.io \
-  --set kafka.image.repository=self-hosted-images/3rd-party/strimzi \
+  --set kafka.image.repository=self-hosted-images/3rd-party/datastore \
   --set kafka.image.name=kafka \
-  --set kafka.image.tag=3.6.0_v0.6.0
+  --set kafka.image.tag=0.41.0-kafka-3.6.2_v0.7.0
 
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA} -n instana-kafka
-
 
 
 
@@ -84,8 +83,8 @@ ${KUBECTL} create secret docker-registry instana-registry \
 #   --create-namespace
 helm install elastic-operator eck-operator-2.9.0.tgz -n instana-elastic \
   --version=2.9.0 \
-  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/elasticsearch-operator \
-  --set image.tag=2.9.0_v0.4.0 \
+  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/operator/elasticsearch \
+  --set image.tag=2.9.0_v0.11.0 \
   --set imagePullSecrets[0].name="instana-registry"
 
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_ELASTICSEARCH} -n instana-elastic
@@ -100,10 +99,10 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-po
   --docker-username _ \
   --docker-password=$DOWNLOAD_KEY
 
-helm install cnpg cloudnative-pg-0.20.0.tgz \
-  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/cloudnative-pg-operator \
-  --set image.tag=1.21.1_v0.1.0 \
-  --version=0.20.0 \
+helm install cnpg cloudnative-pg-1.21.1.tgz \
+  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/operator/cloudnative-pg \
+  --set image.tag=1.21.1_v0.5.0 \
+  --version=1.21.1 \
   --set imagePullSecrets[0].name=instana-registry \
   --set containerSecurityContext.runAsUser=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
   --set containerSecurityContext.runAsGroup=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
@@ -139,22 +138,17 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-ca
   --docker-username _ \
   --docker-password=$DOWNLOAD_KEY
 
-# helm install cass-operator cass-operator-0.42.0.tgz -n instana-cassandra \
-#   --set securityContext.runAsGroup=999 \
-#   --set securityContext.runAsUser=999 \
-#   --create-namespace
-
 helm install cass-operator cass-operator-0.45.2.tgz -n instana-cassandra \
   --version=0.45.2 \
   --set securityContext.runAsGroup=999 \
   --set securityContext.runAsUser=999 \
   --set image.registry=artifact-public.instana.io \
-  --set image.repository=self-hosted-images/3rd-party/cass-operator \
-  --set image.tag=1.18.2_v0.2.0 \
+  --set image.repository=self-hosted-images/3rd-party/operator/cass-operator \
+  --set image.tag=1.18.2_v0.12.0 \
   --set imagePullSecrets[0].name=instana-registry \
   --set appVersion=1.18.2 \
-  --set imageConfig.systemLogger=artifact-public.instana.io/self-hosted-images/3rd-party/system-logger:1.18.2_v0.2.0  \
-  --set imageConfig.k8ssandraClient=artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-k8ssandra-client:0.2.2_v0.2.0
+  --set imageConfig.systemLogger=artifact-public.instana.io/self-hosted-images/3rd-party/datastore/system-logger:1.18.2_v0.3.0  \
+  --set imageConfig.k8ssandraClient=artifact-public.instana.io/self-hosted-images/3rd-party/datastore/k8ssandra-client:0.2.2_v0.3.0
 
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA_SCC}
 sleep 30
@@ -174,11 +168,11 @@ ${KUBECTL} create secret docker-registry clickhouse-image-secret \
   --docker-username=_ \
   --docker-password=${DOWNLOAD_KEY} \
   --docker-server=artifact-public.instana.io
-${KUBECTL} create secret docker-registry docker-image-secret \
-  --namespace=instana-clickhouse \
-  --docker-username=${DOCKER_USERNAME} \
-  --docker-password=${DOCKER_PASSWORD} \
-  --docker-server=docker.io
+# ${KUBECTL} create secret docker-registry docker-image-secret \
+#   --namespace=instana-clickhouse \
+#   --docker-username=${DOCKER_USERNAME} \
+#   --docker-password=${DOCKER_PASSWORD} \
+#   --docker-server=docker.io
 
 # helm install clickhouse-operator altinity-clickhouse-operator-0.21.3.tgz -n instana-clickhouse \
 #   --create-namespace
@@ -324,7 +318,7 @@ if [[ ${TLS_CERTIFICATE_GENERATE} == "YES" ]]; then
         -subj "/C=CN/ST=GD/L=SZ/O=IBM/CN=IBM Root CA" -out ca.crt
     openssl req -newkey rsa:2048 -nodes -keyout tls.key \
         -subj "/C=CN/ST=GD/L=SZ/O=IBM./CN=*.${INSTANA_BASE_DOMAIN}" -out tls.csr
-    openssl x509 -req -extfile <(printf "subjectAltName=DNS:${INSTANA_BASE_DOMAIN},DNS:${INSTANA_TENANT_DOMAIN},DNS:${INSTANA_AGENT_ACCEPTOR}") \
+    openssl x509 -req -extfile <(printf "subjectAltName=DNS:${INSTANA_BASE_DOMAIN},DNS:${INSTANA_TENANT_DOMAIN},DNS:${INSTANA_AGENT_ACCEPTOR},DNS:${INSTANA_OTLP_GRPC_ACCEPTOR},DNS:${INSTANA_OTLP_HTTP_ACCEPTOR}") \
         -days 365 -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out tls.crt
 fi
 
@@ -496,27 +490,6 @@ echo "Waiting for Core components to start..."
 sleep 10
 ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.componentsStatus}'=Progressing core instana-core --timeout=3000s
 sleep 10
-# ${KUBECTL} -n instana-core patch deployment/groundskeeper --type=json --patch '
-# [
-#   { 
-#     "op": "add",
-#     "path": "/spec/template/spec/volumes/4",
-#     "value":
-#         {
-#             "name": "synthetics",
-#             "persistentVolumeClaim": {"claimName": "synthetics-volume-claim"}
-#         }
-#   },
-#   { 
-#     "op": "add",
-#     "path": "/spec/template/spec/containers/0/volumeMounts/4",
-#     "value":
-#         {
-#             "name": "synthetics",
-#             "mountPath": "/mnt/synthetics"
-#         }
-#   }
-# ]'
 
 echo "Waiting for Core to become ready..."
 ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.componentsStatus}'=Ready core instana-core --timeout=3000s

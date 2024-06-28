@@ -14,8 +14,8 @@ spec:
   # For all params and defaults, see https://github.com/pravega/zookeeper-operator/tree/master/charts/zookeeper#configuration
   replicas: 1   ### 3
   image:
-    repository: artifact-public.instana.io/self-hosted-images/3rd-party/zookeeper
-    tag: 3.8.4_v0.5.0
+    repository: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/zookeeper
+    tag: 3.8.3_v0.12.0
   pod:
     imagePullSecrets: [name: "instana-registry"]
     serviceAccountName: "zookeeper"
@@ -58,7 +58,7 @@ spec:
   cruiseControl: {}
   kafka:
     # image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/kafka:3.6.0_v0.6.0
-    version: 3.6.0
+    version: 3.6.2
     replicas: 3
     listeners:
     - name: scram
@@ -108,7 +108,9 @@ spec:
       pod:
         tmpDirSizeLimit: 100Mi
     userOperator:
-      image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/operator:0.38.0_v0.6.0
+      image: artifact-public.instana.io/self-hosted-images/3rd-party/operator/strimzi:0.41.0_v0.9.0
+    topicOperator:
+      image: artifact-public.instana.io/self-hosted-images/3rd-party/operator/strimzi:0.41.0_v0.9.0
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
@@ -157,11 +159,11 @@ metadata:
   name: instana
   namespace: instana-elastic
 spec:
-  image: artifact-public.instana.io/self-hosted-images/3rd-party/elasticsearch:7.17.14_v0.6.0
   monitoring:
     logs: {}
     metrics: {}
-  version: 7.17.14
+  version: 7.17.20
+  image: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/elasticsearch:7.17.20_v0.9.0
   nodeSets:
   - name: default
     count: 1       ### 3
@@ -206,7 +208,7 @@ spec:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 20Gi
+              storage: 50Gi
           storageClassName: ${RWO_STORAGECLASS}
   http:
     service:
@@ -253,7 +255,7 @@ metadata:
   namespace: instana-postgres
 spec:
   instances: 1
-  imageName: artifact-public.instana.io/self-hosted-images/3rd-party/cnpg-containers:15_v0.4.0
+  imageName: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/cnpg-containers:15_v0.6.0
   imagePullPolicy: IfNotPresent
   imagePullSecrets:
   - name: instana-registry
@@ -333,10 +335,10 @@ spec:
   clusterName: instana
   serverType: cassandra
   # configBuilderImage: docker.io/datastax/cass-config-builder:1.0-ubi7
-  serverImage: artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-management-api-for-apache-cassandra:4.1.2_v0.4.0
-  systemLoggerImage: artifact-public.instana.io/self-hosted-images/3rd-party/system-logger:1.18.2_v0.1.0
-  k8ssandraClientImage: artifact-public.instana.io/self-hosted-images/3rd-party/k8ssandra-k8ssandra-client:0.2.2_v0.1.0
-  serverVersion: "4.1.2"
+  serverImage: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/cassandra:4.1.4_v0.16.0
+  systemLoggerImage: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/system-logger:1.18.2_v0.3.0
+  k8ssandraClientImage: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/k8ssandra-client:0.2.2_v0.3.0
+  serverVersion: "4.1.4"
   imagePullPolicy: Always
   podTemplateSpec:
     spec:

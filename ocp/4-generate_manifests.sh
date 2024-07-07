@@ -190,16 +190,16 @@ spec:
         containers:
         - env:
           - name: ES_JAVA_OPTS
-            value: -Xms2g -Xmx2g
+            value: -Xms1g -Xmx1g
           - name: ingest.geoip.downloader.enabled
             value: "false"
           name: elasticsearch
           resources:
             limits:
-              memory: 4Gi
+              memory: 3Gi
             requests:
               cpu: "1"
-              memory: 3Gi
+              memory: 2Gi
     volumeClaimTemplates:
       - metadata:
           name: elasticsearch-data # Do not change this name unless you set up a volume mount for the data path.
@@ -431,6 +431,9 @@ spec:
           <storage_configuration>
             <disks>
               <default/>
+              <cold_disk>
+                <path>/var/lib/clickhouse-cold/</path>
+              </cold_disk>
             </disks>
             <policies>
               <logs_policy>
@@ -438,8 +441,21 @@ spec:
                   <data>
                     <disk>default</disk>
                   </data>
+                  <cold>
+                    <disk>cold_disk</disk>
+                  </cold>
                 </volumes>
               </logs_policy>
+              <logs_policy_v4>
+                <volumes>
+                  <tier1>
+                    <disk>default</disk>
+                  </tier1>
+                  <tier2>
+                    <disk>cold_disk</disk>
+                  </tier2>
+                </volumes>
+              </logs_policy_v4>
             </policies>
           </storage_configuration>
         </clickhouse>
@@ -514,9 +530,9 @@ spec:
             command:
               - clickhouse-server
               - --config-file=/etc/clickhouse-server/config.xml
-            # volumeMounts:
-            #   - mountPath: /var/lib/clickhouse/cold/
-            #     name: instana-clickhouse-data-cold-volume
+            volumeMounts:
+              - mountPath: /var/lib/clickhouse/cold/
+                name: instana-clickhouse-data-cold-volume
           - name: clickhouse-log
             image: registry.access.redhat.com/ubi9/ubi-minimal:latest
             args:
@@ -530,7 +546,7 @@ spec:
             memory: 3Gi
           requests:
             cpu: "1"
-            memory: 2Gi
+            memory: 1500Mi
         imagePullSecrets:
           - name: clickhouse-image-secret
         ### FIX for K8s
@@ -556,14 +572,14 @@ spec:
             requests:
               storage: 1Gi
           storageClassName: ${RWO_STORAGECLASS}
-      # - name: instana-clickhouse-data-cold-volume
-      #   spec:
-      #     accessModes:
-      #       - ReadWriteOnce
-      #     resources:
-      #       requests:
-      #         storage: 100Gi
-      #     storageClassName: ${RWO_STORAGECLASS}
+      - name: instana-clickhouse-data-cold-volume
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 100Gi
+          storageClassName: ${RWO_STORAGECLASS}
     serviceTemplates:
       - name: service-template
         generateName: "clickhouse-{chi}"

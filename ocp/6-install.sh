@@ -91,7 +91,6 @@ ${KUBECTL} apply -f ${MANIFEST_FILENAME_ELASTICSEARCH} -n instana-elastic
 
 
 
-
 echo "Installing Postgres..."
 ${KUBECTL} create namespace instana-postgres
 ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-postgres \
@@ -101,8 +100,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-po
 
 helm install cnpg cloudnative-pg-0.21.1.tgz \
   --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/cloudnative-pg-operator \
-  --set image.tag=1.21.1_v0.3.0 \
-  --version=0.21.1 \
+  --set image.tag=1.21.1_v0.5.0 \
   --set imagePullSecrets[0].name=instana-registry \
   --set containerSecurityContext.runAsUser=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
   --set containerSecurityContext.runAsGroup=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
@@ -139,7 +137,6 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-ca
   --docker-password=$DOWNLOAD_KEY
 
 helm install cass-operator cass-operator-0.45.2.tgz -n instana-cassandra \
-  --version=0.45.2 \
   --set securityContext.runAsGroup=999 \
   --set securityContext.runAsUser=999 \
   --set image.registry=artifact-public.instana.io \
@@ -179,7 +176,6 @@ ${KUBECTL} create secret docker-registry clickhouse-image-secret \
 
 helm install clickhouse-operator ibm-clickhouse-operator-v0.1.2.tgz \
   -n instana-clickhouse \
-  --version=v0.1.2 \
   --set operator.image.repository=artifact-public.instana.io/clickhouse-operator \
   --set operator.image.tag=v0.1.2 \
   --set imagePullSecrets[0].name="instana-registry"

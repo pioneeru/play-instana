@@ -99,7 +99,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-po
   --docker-password=$DOWNLOAD_KEY
 
 helm install cnpg cloudnative-pg-0.21.1.tgz \
-  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/cloudnative-pg-operator \
+  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/operator/cloudnative-pg \
   --set image.tag=1.21.1_v0.5.0 \
   --set imagePullSecrets[0].name=instana-registry \
   --set containerSecurityContext.runAsUser=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \

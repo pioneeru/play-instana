@@ -1,4 +1,4 @@
-# Deploying Instana backend v275_1-1
+# Deploying Instana backend v275_3-1
 
 The project is a set of bash scripts to automate Instana deployment on RedHat Openshift (versions: v4.14).
 

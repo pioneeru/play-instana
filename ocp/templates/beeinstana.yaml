@@ -1,0 +1,46 @@
+apiVersion: beeinstana.instana.com/v1beta1
+kind: BeeInstana
+metadata:
+  name: instance
+  namespace: beeinstana
+spec:
+  ###### For OCP 4.11 and later
+  # fsGroup: <GROUP_ID> # Will be set by install script
+  seccompProfile:
+    type: RuntimeDefault
+  ######
+  version: 1.4.0
+  adminCredentials:
+    secretName: beeinstana-admin-creds
+  kafkaSettings:
+    brokers:
+      # Update KAFKA_NAMESPACE to the namespace where Kafka is installed
+      - instana-kafka-bootstrap.instana-kafka:9092
+    securityProtocol: SASL_PLAINTEXT
+    saslMechanism: SCRAM-SHA-512
+    saslPasswordCredential:
+      secretName: beeinstana-kafka-creds
+  config:
+    cpu: 200m
+    memory: 200Mi
+    replicas: 1
+  ingestor:
+    cpu: 2         ### 4
+    memory: 2Gi    ### 3Gi
+    limitMemory: true
+    env: on-prem
+    metricsTopic: raw_metrics
+    replicas: 1
+  aggregator:
+    cpu: 2         ### 4
+    memory: 2Gi    ### 16Gi
+    limitMemory: true
+    mirrors: 1
+    shards: 1
+    volumes:
+      live:
+        size: 2000Gi
+        # Uncomment the line below to specify your own storage class.
+        storageClass: ${RWO_STORAGECLASS}
+  # Should set useMultiArchImages to true for s390x and ppc64le
+  useMultiArchImages: false

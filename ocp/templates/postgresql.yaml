@@ -1,0 +1,49 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+  namespace: instana-postgres
+spec:
+  instances: 1
+  imageName: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/cnpg-containers:15_v0.6.0
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets:
+  - name: instana-registry
+  postgresql:
+    parameters:
+      shared_buffers: 32MB
+      pg_stat_statements.track: all
+      auto_explain.log_min_duration: '10s'
+    pg_hba:
+      - local     all          all                            trust
+      - host      all          all          0.0.0.0/0         md5
+      - local     replication  standby                        trust
+      - hostssl   replication  standby      all               md5
+      - hostnossl all          all          all               reject
+      - hostssl   all          all          all               md5
+  managed:
+    roles:
+    - name: instanaadmin
+      login: true
+      superuser: true
+      createdb: true
+      createrole: true
+      passwordSecret:
+        name: instanaadmin
+  bootstrap:
+    initdb:
+      database: instanaadmin
+      owner: instanaadmin
+      secret:
+        name: instanaadmin
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+  superuserSecret:
+    name: instanaadmin
+  storage:
+    size: 5Gi
+    storageClass: ${RWO_STORAGECLASS}

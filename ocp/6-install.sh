@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "Reading credentials.env..."
+source ../artefacts.env
 source ../credentials.env
 
 #### DATASTORES ######
@@ -19,10 +20,10 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${DOWNLOAD_KEY} \
   --docker-server=artifact-public.instana.io
 
-helm install instana zookeeper-operator-0.2.15.tgz -n instana-zookeeper \
+helm install instana ${ZOOKEEPER_HELM_CHART} -n instana-zookeeper \
   --create-namespace \
-  --set image.repository=artifact-public.instana.io/self-hosted-images/3rd-party/operator/zookeeper \
-  --set image.tag=0.2.15_v0.11.0 \
+  --set image.repository=${ZOOKEEPER_OPERATOR_IMAGE_NAME} \
+  --set image.tag=${ZOOKEEPER_OPERATOR_IMAGE_TAG}\
   --set global.imagePullSecrets={"instana-registry"}
 
 ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s
@@ -165,14 +166,6 @@ ${KUBECTL} create secret docker-registry clickhouse-image-secret \
   --docker-username=_ \
   --docker-password=${DOWNLOAD_KEY} \
   --docker-server=artifact-public.instana.io
-# ${KUBECTL} create secret docker-registry docker-image-secret \
-#   --namespace=instana-clickhouse \
-#   --docker-username=${DOCKER_USERNAME} \
-#   --docker-password=${DOCKER_PASSWORD} \
-#   --docker-server=docker.io
-
-# helm install clickhouse-operator altinity-clickhouse-operator-0.21.3.tgz -n instana-clickhouse \
-#   --create-namespace
 
 helm install clickhouse-operator ibm-clickhouse-operator-v0.1.2.tgz \
   -n instana-clickhouse \

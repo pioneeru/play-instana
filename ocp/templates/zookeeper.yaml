@@ -1,0 +1,37 @@
+apiVersion: "zookeeper.pravega.io/v1beta1"
+kind: "ZookeeperCluster"
+metadata:
+  name: "instana-zookeeper"
+  namespace: instana-clickhouse
+spec:
+  # For all params and defaults, see https://github.com/pravega/zookeeper-operator/tree/master/charts/zookeeper#configuration
+  replicas: 3
+  image:
+    repository: ${ZOOKEEPER_IMAGE_NAME}
+    tag: ${ZOOKEEPER_IMAGE_TAG}
+  pod:
+    imagePullSecrets: [name: "instana-registry"]
+    serviceAccountName: "zookeeper"
+    env:
+    - name: ZK_SERVER_HEAP
+      value: "1000"
+    resources:
+      requests:
+        cpu: 1
+        memory: 1500Mi
+      limits:
+        memory: 2Gi
+  config:
+    tickTime: 2000
+    initLimit: 10
+    syncLimit: 5
+    maxClientCnxns: 0
+    autoPurgeSnapRetainCount: 20
+    autoPurgePurgeInterval: 1
+  persistence:
+    reclaimPolicy: Delete
+    spec:
+      resources:
+        requests:
+          storage: "10Gi"
+      storageClassName: ${RWO_STORAGECLASS}

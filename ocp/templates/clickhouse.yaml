@@ -1,0 +1,180 @@
+apiVersion: "clickhouse.altinity.com/v1"
+kind: "ClickHouseInstallation"
+metadata:
+  name: "instana"
+  namespace: "instana-clickhouse"
+spec:
+  defaults:
+    templates:
+      dataVolumeClaimTemplate: instana-clickhouse-data-volume
+      logVolumeClaimTemplate: instana-clickhouse-log-volume
+      serviceTemplate: service-template
+  configuration:
+    files:
+      config.d/storage.xml: |
+        <clickhouse>
+          <logger>
+            <level>information</level>
+          </logger>
+          <storage_configuration>
+            <disks>
+              <default/>
+              <cold_disk>
+                <path>/var/lib/clickhouse-cold/</path>
+              </cold_disk>
+            </disks>
+            <policies>
+              <logs_policy>
+                <volumes>
+                  <data>
+                    <disk>default</disk>
+                  </data>
+                  <cold>
+                    <disk>cold_disk</disk>
+                  </cold>
+                </volumes>
+              </logs_policy>
+              <logs_policy_v4>
+                <volumes>
+                  <tier1>
+                    <disk>default</disk>
+                  </tier1>
+                  <tier2>
+                    <disk>cold_disk</disk>
+                  </tier2>
+                </volumes>
+              </logs_policy_v4>
+            </policies>
+          </storage_configuration>
+        </clickhouse>
+    clusters:
+      - name: local
+        templates:
+          podTemplate: clickhouse
+        layout:
+          shardsCount: 1
+          replicasCount: 2  # The the replication count of 2 is fixed for Instana backend installations
+        schemaPolicy:
+          replica: None
+          shard: None
+    zookeeper:
+      nodes:
+        - host: instana-zookeeper-headless.instana-clickhouse
+    profiles:
+      default/max_memory_usage: 1000000000
+      default/joined_subquery_requires_alias: 0
+      default/max_execution_time: 100
+      default/max_query_size: 1048576
+      default/use_uncompressed_cache: 0
+      default/enable_http_compression: 1
+      default/load_balancing: random
+      default/background_pool_size: 32
+      default/background_schedule_pool_size: 32
+      default/distributed_directory_monitor_split_batch_on_failure: 1
+      default/distributed_directory_monitor_batch_inserts: 1
+      default/insert_distributed_sync: 1
+      default/log_queries: 1
+      default/log_query_views: 1
+      default/max_threads: 16
+      default/allow_experimental_database_replicated: 1
+    quotas:
+      default/interval/duration: 3600
+      default/interval/queries: 0
+      default/interval/errors: 0
+      default/interval/result_rows: 0
+      default/interval/read_rows: 0
+      default/interval/execution_time: 0
+    settings:
+      remote_servers/all-sharded/secret: "${CLICKHOUSE_ADMIN_PASS}"
+      remote_servers/all-replicated/secret: "${CLICKHOUSE_ADMIN_PASS}"
+      remote_servers/local/secret: "${CLICKHOUSE_ADMIN_PASS}"
+      max_concurrent_queries: 200
+      max_table_size_to_drop: 0
+      max_partition_size_to_drop: 0
+    users:
+      #${CLICKHOUSE_ADMIN}/networks/ip: "::/0"
+      ${CLICKHOUSE_ADMIN}/password: "${CLICKHOUSE_ADMIN_PASS}"
+      ${CLICKHOUSE_USER}/networks/ip: "::/0"
+      ${CLICKHOUSE_USER}/password: "${CLICKHOUSE_USER_PASS}"
+      # Or
+      # Generate password and the corresponding SHA256 hash with:
+      # $ PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'
+      # 6edvj2+d                                                          <- first line is the password
+      # a927723f4a42cccc50053e81bab1fcf579d8d8fb54a3ce559d42eb75a9118d65  <- second line is the corresponding SHA256 hash
+      # clickhouse-user/password_sha256_hex: "a927723f4a42cccc50053e81bab1fcf579d8d8fb54a3ce559d42eb75a9118d65"
+      # Or
+      # Generate password and the corresponding SHA1 hash with:
+      # $ PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha1sum | tr -d '-' | xxd -r -p | sha1sum | tr -d '-'
+      # LJfoOfxl                                  <- first line is the password, put this in the k8s secret
+      # 3435258e803cefaab7db2201d04bf50d439f6c7f  <- the corresponding double SHA1 hash, put this below
+      # clickhouse-user/password_double_sha1_hex: "3435258e803cefaab7db2201d04bf50d439f6c7f"
+  templates:
+    podTemplates:
+    - name: clickhouse
+      spec:
+        containers:
+          - name: instana-clickhouse
+            image: artifact-public.instana.io/clickhouse-openssl:23.8.9.54-1-lts-ibm
+            command:
+              - clickhouse-server
+              - --config-file=/etc/clickhouse-server/config.xml
+            volumeMounts:
+              - mountPath: /var/lib/clickhouse/cold/
+                name: instana-clickhouse-data-cold-volume
+          - name: clickhouse-log
+            image: artifact-public.instana.io/clickhouse-openssl:23.8.9.54-1-lts-ibm
+            args:
+            - while true; do sleep 30; done;
+            command:
+            - /bin/sh
+            - -c
+            - --
+        resources:
+          limits:
+            memory: 3Gi
+          requests:
+            cpu: "1"
+            memory: 1500Mi
+        imagePullSecrets:
+          - name: clickhouse-image-secret
+        ### FIX for K8s
+        #  securityContext:
+        #    fsGroup: 0
+        #    runAsGroup: 0
+        #    runAsUser: 1001
+        #########
+    volumeClaimTemplates:
+      - name: instana-clickhouse-data-volume
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 100Gi
+          storageClassName: ${RWO_STORAGECLASS}
+      - name: instana-clickhouse-log-volume
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+          storageClassName: ${RWO_STORAGECLASS}
+      - name: instana-clickhouse-data-cold-volume
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 100Gi
+          storageClassName: ${RWO_STORAGECLASS}
+    serviceTemplates:
+      - name: service-template
+        generateName: "clickhouse-{chi}"
+        spec:
+          ports:
+            - name: http
+              port: 8123
+            - name: tcp
+              port: 9000
+          type: ClusterIP

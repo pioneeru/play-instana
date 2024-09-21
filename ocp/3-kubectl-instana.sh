@@ -22,10 +22,10 @@ EOF
 
 yum makecache -y
 yum install -y 'dnf-command(versionlock)'
-# yum --showduplicates list instana-kubectl | expand
+# yum --showduplicates list instana-kubectl-plugin | expand
 
-yum versionlock delete instana-kubectl
+yum versionlock delete instana-kubectl-plugin
 yum install -y ${KUBECTL_INSTANA_PLUGIN}
-yum versionlock add instana-kubectl
+yum versionlock add instana-kubectl-plugin
 
 kubectl instana --version

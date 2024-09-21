@@ -1,8 +1,8 @@
 #!/bin/bash
 
 echo "Reading credentials.env"
+source ../artefacts.env
 source ../credentials.env
-# source ../artefacts.env
 
 # download all charts:
 helm repo add instana https://helm.instana.io/artifactory/rel-helm-customer-virtual --username _ --password $DOWNLOAD_KEY

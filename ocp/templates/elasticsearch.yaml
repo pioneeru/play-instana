@@ -7,8 +7,8 @@ spec:
   monitoring:
     logs: {}
     metrics: {}
-  version: 7.17.20
-  image: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/elasticsearch:7.17.20_v0.9.0
+  version: 7.17.24
+  image: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/elasticsearch:7.17.24_v0.10.0
   nodeSets:
   - name: default
     count: 3

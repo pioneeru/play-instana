@@ -9,10 +9,14 @@ spec:
   image:
     repository: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/zookeeper
 <<<<<<< HEAD
+<<<<<<< HEAD
     tag: 3.8.4_v0.13.0
 =======
     tag: 3.8.3_v0.13.0
 >>>>>>> 142ccf9 (datastore versions update)
+=======
+    tag: 3.8.4_v0.13.0
+>>>>>>> be55221 (zookeeper version fix)
   pod:
     imagePullSecrets: [name: "instana-registry"]
     serviceAccountName: "zookeeper"

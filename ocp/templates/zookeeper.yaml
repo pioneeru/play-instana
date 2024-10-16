@@ -7,8 +7,12 @@ spec:
   # For all params and defaults, see https://github.com/pravega/zookeeper-operator/tree/master/charts/zookeeper#configuration
   replicas: 3
   image:
-    repository: ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_IMAGE_REPOSITORY}/zookeeper
-    tag: ${ZOOKEEPER_TAG_NAME}
+    repository: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/zookeeper
+<<<<<<< HEAD
+    tag: 3.8.4_v0.13.0
+=======
+    tag: 3.8.3_v0.13.0
+>>>>>>> 142ccf9 (datastore versions update)
   pod:
     imagePullSecrets: [name: "instana-registry"]
     serviceAccountName: "zookeeper"

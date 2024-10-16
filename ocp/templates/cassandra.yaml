@@ -9,7 +9,7 @@ spec:
   # configBuilderImage: docker.io/datastax/cass-config-builder:1.0-ubi7
   serverImage: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/cassandra:4.1.4_v0.17.0
   systemLoggerImage: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/system-logger:1.18.2_v0.3.0
-  k8ssandraClientImage: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/k8ssandra-client:0.2.2_v0.3.0
+  k8ssandraClientImage: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/k8ssandra-client:0.2.2_v0.4.0
   serverVersion: "4.1.4"
   imagePullPolicy: Always
   podTemplateSpec:

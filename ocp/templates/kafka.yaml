@@ -9,7 +9,7 @@ spec:
   # Cruise Control needs more than 1 kafka node
   cruiseControl: {}
   kafka:
-    #image: ${INSTANA_IMAGE_REGISTRY}/${KAFKA_IMAGE_REPOSITORY}/${KAFKA_IMAGE_NAME}:${KAFKA_IMAGE_TAG}
+    image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/kafka:3.6.2_v0.10.0
     version: 3.6.2
     replicas: 3
     listeners:

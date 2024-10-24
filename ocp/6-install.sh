@@ -51,6 +51,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-server=artifact-public.instana.io
 
 helm install strimzi ${KAFKA_HELM_CHART} -n instana-kafka \
+  --set "securityContext.seccompProfile.type=RuntimeDefault" \
   --version ${KAFKA_HELM_CHART_VERSION} \
   --set image.registry=${KAFKA_IMAGE_REGISTRY} \
   --set image.repository=${KAFKA_OPERATOR_IMAGE_REPOSITORY} \

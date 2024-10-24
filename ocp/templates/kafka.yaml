@@ -9,7 +9,11 @@ spec:
   # Cruise Control needs more than 1 kafka node
   cruiseControl: {}
   kafka:
+<<<<<<< HEAD
+    #image: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/kafka:0.41.0-kafka-3.6.2_v0.10.0
+=======
     image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/kafka:3.6.2_v0.10.0
+>>>>>>> 8ed9e36 (kafka updates)
     version: 3.6.2
     replicas: 3
     listeners:

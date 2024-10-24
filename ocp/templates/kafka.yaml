@@ -9,7 +9,7 @@ spec:
   # Cruise Control needs more than 1 kafka node
   cruiseControl: {}
   kafka:
-    # image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/kafka:3.6.0_v0.6.0
+    image: artifact-public.instana.io/self-hosted-images/3rd-party/strimzi/kafka:3.6.2_v0.10.0
     version: 3.6.2
     replicas: 3
     listeners:
@@ -33,12 +33,12 @@ spec:
         size: 50Gi
         deleteClaim: true
         class: ${RWO_STORAGECLASS}
-    # config:
-    #   default.replication.factor: 1
-    #   min.insync.replicas: 1
-    #   offsets.topic.replication.factor: 1
-    #   transaction.state.log.min.isr: 1
-    #   transaction.state.log.replication.factor: 1
+    config:
+      default.replication.factor: 1
+      min.insync.replicas: 1
+      offsets.topic.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      transaction.state.log.replication.factor: 1
     jvmOptions:
       -Xms: 2G
       -Xmx: 2G
@@ -66,9 +66,9 @@ spec:
       pod:
         tmpDirSizeLimit: 100Mi
     userOperator:
-      image: artifact-public.instana.io/self-hosted-images/3rd-party/operator/strimzi:0.41.0_v0.9.0
+      image: artifact-public.instana.io/self-hosted-images/3rd-party/operator/strimzi:0.41.0_v0.10.0
     topicOperator:
-      image: artifact-public.instana.io/self-hosted-images/3rd-party/operator/strimzi:0.41.0_v0.9.0
+      image: artifact-public.instana.io/self-hosted-images/3rd-party/operator/strimzi:0.41.0_v0.10.0
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser

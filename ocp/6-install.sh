@@ -216,7 +216,7 @@ ${KUBECTL} -n instana-elastic wait --for=jsonpath='{.status.phase}'=Ready es ins
 echo "Waiting for Elasticsearch pods to be running..."
 ${KUBECTL} -n instana-elastic wait --for=condition=Ready=true pod -lelasticsearch.k8s.elastic.co/cluster-name=instana --timeout=3000s
 echo "Waiting for Postgres pods to be running..."
-${KUBECTL} -n instana-postgres wait --for=condition=Ready=true pod -lcnpg.io/cluster=postgres --timeout=3000s
+${KUBECTL} -n instana-postgres wait --for=condition=Ready=true cluster postgres --timeout=3000s
 echo "Waiting for Cassandra pods to be running..."
 ${KUBECTL} -n instana-cassandra wait --for=condition=Ready=true pod -lapp.kubernetes.io/name=cassandra --timeout=3000s
 echo "Waiting for Clickhouse pods to be running..."

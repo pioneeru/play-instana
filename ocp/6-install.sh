@@ -21,7 +21,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-server=artifact-public.instana.io
 
 helm install instana ${ZOOKEEPER_HELM_CHART} -n instana-zookeeper \
-  --create-namespace \
+  --create-namespace --wait \
   --set image.repository=${ZOOKEEPER_OPERATOR_IMAGE_NAME} \
   --set image.tag=${ZOOKEEPER_OPERATOR_IMAGE_TAG}\
   --set global.imagePullSecrets={"instana-registry"}
@@ -50,7 +50,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${DOWNLOAD_KEY} \
   --docker-server=artifact-public.instana.io
 
-helm install strimzi ${KAFKA_HELM_CHART} -n instana-kafka \
+helm install strimzi ${KAFKA_HELM_CHART} -n instana-kafka --wait \
   --set "securityContext.seccompProfile.type=RuntimeDefault" \
   --version ${KAFKA_HELM_CHART_VERSION} \
   --set image.registry=${KAFKA_IMAGE_REGISTRY} \
@@ -76,7 +76,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${DOWNLOAD_KEY} \
   --docker-server=artifact-public.instana.io
 
-helm install elastic-operator ${ELASTIC_HELM_CHART} -n instana-elastic \
+helm install elastic-operator ${ELASTIC_HELM_CHART} -n instana-elastic --wait \
   --version=${ELASTIC_HELM_CHART_VERSION} \
   --set image.repository=${ELASTIC_OPERATOR_IMAGE_NAME} \
   --set image.tag=${ELASTIC_OPERATOR_IMAGE_TAG} \
@@ -93,7 +93,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-po
   --docker-username _ \
   --docker-password=$DOWNLOAD_KEY
 
-helm install cnpg ${POSTGRES_HELM_CHART} \
+helm install cnpg ${POSTGRES_HELM_CHART} --wait \
   --set image.repository=${POSTGRES_IMAGE_NAME} \
   --set image.tag=${POSTGRES_IMAGE_TAG} \
   --set imagePullSecrets[0].name=instana-registry \
@@ -131,7 +131,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-ca
   --docker-username _ \
   --docker-password=$DOWNLOAD_KEY
 
-helm install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandra \
+helm install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandra --wait \
   --set securityContext.runAsGroup=999 \
   --set securityContext.runAsUser=999 \
   --set image.registry=${CASSANDRA_IMAGE_REGISTRY} \
@@ -162,7 +162,7 @@ ${KUBECTL} create secret docker-registry clickhouse-image-secret \
   --docker-server=artifact-public.instana.io
 
 helm install clickhouse-operator ${CLICKHOUSE_HELM_CHART} \
-  -n instana-clickhouse \
+  -n instana-clickhouse --wait \
   --set operator.image.repository=${CLICKHOUSE_OPERATOR_IMAGE_NAME} \
   --set operator.image.tag=${CLICKHOUSE_OPERATOR_IMAGE_TAG} \
   --set imagePullSecrets[0].name="instana-registry"
@@ -187,7 +187,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana
 # for k8s and OCP 4.10:
 #helm install beeinstana instana/beeinstana-operator --namespace=beeinstana
 # For a cluster on Red Hat OpenShift 4.11 and later:
-helm install beeinstana ${BEEINSTANA_HELM_CHART} --namespace=beeinstana \
+helm install beeinstana ${BEEINSTANA_HELM_CHART} --namespace=beeinstana --wait \
   --set operator.securityContext.seccompProfile.type=RuntimeDefault
 
 while ! ${KUBECTL} get secret strimzi-kafka-user -n instana-kafka; do echo "Waiting for strimzi-kafka-user secret in instana-kafka. CTRL-C to exit."; sleep 10; done

@@ -36,7 +36,7 @@ source ../credentials.env
 ## check current version:
 ## https://artifact-public.instana.io/artifactory/rel-generic-instana-virtual/infrastructure/kubectl/instana-kubectl-plugin-linux_amd64-1.1.0.tar.gz
 
-wget https://artifact-public.instana.io/artifactory/rel-generic-instana-virtual/infrastructure/kubectl/${KUBECTL_INSTANA_PLUGIN} -P /tmp --user=_ --password=${DOWNLOAD_KEY}
+wget ${KUBECTL_INSTANA_PLUGIN_URL}/${KUBECTL_INSTANA_PLUGIN} -P /tmp --user=_ --password=${DOWNLOAD_KEY}
 tar xzvf /tmp/${KUBECTL_INSTANA_PLUGIN} -C /usr/local/bin/
 
 kubectl instana --version

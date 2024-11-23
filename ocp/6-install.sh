@@ -67,7 +67,7 @@ ${KUBECTL} apply -f ${MANIFEST_FILENAME_ELASTICSEARCH} -n instana-elastic
 
 
 echo "Installing Postgres..."
-helm install postgres-operator postgres-operator-1.10.0.tgz -n instana-postgres \
+helm install postgres-operator postgres-operator-1.10.1.tgz -n instana-postgres \
   --set configGeneral.kubernetes_use_configmaps=true \
   --set securityContext.runAsUser=101 \
   --create-namespace 

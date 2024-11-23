@@ -101,6 +101,10 @@ spec:
     template:
       pod:
         tmpDirSizeLimit: 100Mi
+      topicOperatorContainer:
+        env:
+        - name: STRIMZI_USE_ZOOKEEPER_TOPIC_STORE
+          value: "true"
     topicOperator: {}
     userOperator: {}
 ---

@@ -65,6 +65,10 @@ spec:
     template:
       pod:
         tmpDirSizeLimit: 100Mi
+      topicOperatorContainer:
+        env:
+        - name: STRIMZI_USE_ZOOKEEPER_TOPIC_STORE
+          value: "true"
     userOperator:
       image: artifact-public.instana.io/self-hosted-images/3rd-party/operator/strimzi:0.41.0_v0.10.0
     topicOperator:

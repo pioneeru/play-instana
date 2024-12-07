@@ -9,7 +9,7 @@ spec:
   # Cruise Control needs more than 1 kafka node
   cruiseControl: {}
   kafka:
-    #image: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/kafka:0.41.0-kafka-3.6.2_v0.10.0
+    #image: ${INSTANA_IMAGE_REGISTRY}/${KAFKA_IMAGE_REPOSITORY}/${KAFKA_IMAGE_NAME}:${KAFKA_IMAGE_TAG}
     version: 3.6.2
     replicas: 3
     listeners:
@@ -70,9 +70,9 @@ spec:
         - name: STRIMZI_USE_ZOOKEEPER_TOPIC_STORE
           value: "true"
     userOperator:
-      image: artifact-public.instana.io/self-hosted-images/3rd-party/operator/strimzi:0.41.0_v0.10.0
+      image: ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/${KAFKA_OPERATOR_IMAGE_NAME}:${KAFKA_OPERATOR_IMAGE_TAG}
     topicOperator:
-      image: artifact-public.instana.io/self-hosted-images/3rd-party/operator/strimzi:0.41.0_v0.10.0
+      image: ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/${KAFKA_OPERATOR_IMAGE_NAME}:${KAFKA_OPERATOR_IMAGE_TAG}
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser

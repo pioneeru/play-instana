@@ -1,8 +1,8 @@
 #!/bin/bash
 
 echo "Reading credentials.env"
-source ../artefacts.env
 source ../credentials.env
+source ../artefacts.env
 
 # Kubectl plugin
 

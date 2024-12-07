@@ -9,7 +9,7 @@ spec:
   seccompProfile:
     type: RuntimeDefault
   ######
-  version: 1.4.0
+  version: ${BEEINSTANA_VERSION}
   adminCredentials:
     secretName: beeinstana-admin-creds
   kafkaSettings:
@@ -24,6 +24,9 @@ spec:
     cpu: 200m
     memory: 200Mi
     replicas: 1
+    image:
+      name: ${BEEINSTANA_MONCONFIG_IMAGE_NAME}
+      tag: ${BEEINSTANA_MONCONFIG_IMAGE_TAG}
   ingestor:
     cpu: 2         ### 4
     memory: 2Gi    ### 3Gi
@@ -31,12 +34,18 @@ spec:
     env: on-prem
     metricsTopic: raw_metrics
     replicas: 1
+    image:
+      name: ${BEEINSTANA_INGESTOR_IMAGE_NAME}
+      tag: ${BEEINSTANA_INGESTOR_IMAGE_TAG}
   aggregator:
     cpu: 2         ### 4
     memory: 2Gi    ### 16Gi
     limitMemory: true
     mirrors: 1
     shards: 1
+    image:
+      name: ${BEEINSTANA_AGGREGATOR_IMAGE_NAME}
+      tag: ${BEEINSTANA_AGGREGATOR_IMAGE_TAG}
     volumes:
       live:
         size: 2000Gi

@@ -114,7 +114,7 @@ spec:
       spec:
         containers:
           - name: instana-clickhouse
-            image: artifact-public.instana.io/clickhouse-openssl:23.8.10.43-1-lts-ibm
+            image: ${CLICKHOUSE_IMAGE_NAME}
             command:
               - clickhouse-server
               - --config-file=/etc/clickhouse-server/config.xml
@@ -122,7 +122,7 @@ spec:
               - mountPath: /var/lib/clickhouse/cold/
                 name: instana-clickhouse-data-cold-volume
           - name: clickhouse-log
-            image: artifact-public.instana.io/clickhouse-openssl:23.8.10.43-1-lts-ibm
+            image: ${CLICKHOUSE_IMAGE_NAME}
             args:
             - while true; do sleep 30; done;
             command:

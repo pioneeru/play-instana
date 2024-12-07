@@ -12,7 +12,7 @@ helm repo add instana https://helm.instana.io/artifactory/rel-helm-customer-virt
 helm repo update
 
 # helm pull --version v1.11.0 jetstack/cert-manager
-helm pull  instana/cert-manager --version=1.13.2
+helm pull instana/cert-manager --version=1.13.2
 
 helm install \
   cert-manager cert-manager-v1.13.2.tgz \

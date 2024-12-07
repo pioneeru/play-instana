@@ -5,7 +5,7 @@ metadata:
   namespace: instana-postgres
 spec:
   instances: 3
-  imageName: artifact-public.instana.io/self-hosted-images/3rd-party/datastore/cnpg-containers:15_v0.8.0
+  imageName: ${POSTGRES_IMAGE_NAME}:${POSTGRES_IMAGE_TAG}
   imagePullPolicy: IfNotPresent
   imagePullSecrets:
   - name: instana-registry

@@ -10,7 +10,6 @@ spec:
     type: RuntimeDefault
   ######
   version: ${BEEINSTANA_VERSION}
-  imageRegistry: ${INSTANA_IMAGE_REGISTRY}
   adminCredentials:
     secretName: beeinstana-admin-creds
   kafkaSettings:
@@ -28,6 +27,9 @@ spec:
     image:
       name: ${BEEINSTANA_MONCONFIG_IMAGE_NAME}
       tag: ${BEEINSTANA_MONCONFIG_IMAGE_TAG}
+    image:
+      name: ${BEEINSTANA_MONCONFIG_IMAGE_NAME}
+      tag: ${BEEINSTANA_MONCONFIG_IMAGE_TAG}
   ingestor:
     cpu: 2         ### 4
     memory: 2Gi    ### 3Gi
@@ -38,12 +40,18 @@ spec:
     image:
       name: ${BEEINSTANA_INGESTOR_IMAGE_NAME}
       tag: ${BEEINSTANA_INGESTOR_IMAGE_TAG}
+    image:
+      name: ${BEEINSTANA_INGESTOR_IMAGE_NAME}
+      tag: ${BEEINSTANA_INGESTOR_IMAGE_TAG}
   aggregator:
     cpu: 2         ### 4
     memory: 2Gi    ### 16Gi
     limitMemory: true
     mirrors: 1
     shards: 1
+    image:
+      name: ${BEEINSTANA_AGGREGATOR_IMAGE_NAME}
+      tag: ${BEEINSTANA_AGGREGATOR_IMAGE_TAG}
     image:
       name: ${BEEINSTANA_AGGREGATOR_IMAGE_NAME}
       tag: ${BEEINSTANA_AGGREGATOR_IMAGE_TAG}

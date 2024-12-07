@@ -3,6 +3,7 @@
 echo "Reading credentials.env..."
 source ../credentials.env
 source ../artefacts.env
+source ../artefacts.env
 
 #### DATASTORES ######
 
@@ -12,7 +13,7 @@ ${KUBECTL} create namespace instana-zookeeper
 ${KUBECTL} create secret docker-registry instana-registry \
   --namespace=instana-zookeeper \
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-  --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
+  --docker-password=${DOWNLOAD_KEY} \
   --docker-server=${INSTANA_IMAGE_REGISTRY}
 
 helm install instana ${ZOOKEEPER_HELM_CHART} -n instana-zookeeper \
@@ -29,7 +30,7 @@ ${KUBECTL} create namespace instana-clickhouse
 ${KUBECTL} create secret docker-registry instana-registry \
   --namespace=instana-clickhouse \
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-  --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
+  --docker-password=${DOWNLOAD_KEY} \
   --docker-server=${INSTANA_IMAGE_REGISTRY}
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_ZOOKEEPER} -n instana-clickhouse
 
@@ -43,7 +44,7 @@ ${KUBECTL} create namespace instana-kafka
 ${KUBECTL} create secret docker-registry instana-registry \
   --namespace=instana-kafka \
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-  --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
+  --docker-password=${DOWNLOAD_KEY} \
   --docker-server=${INSTANA_IMAGE_REGISTRY}
 
 helm install strimzi ${KAFKA_HELM_CHART} -n instana-kafka --wait \
@@ -69,7 +70,7 @@ ${KUBECTL} create namespace instana-elastic
 ${KUBECTL} create secret docker-registry instana-registry \
   --namespace=instana-elastic \
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-  --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
+  --docker-password=${DOWNLOAD_KEY} \
   --docker-server=${INSTANA_IMAGE_REGISTRY}
 
 helm install elastic-operator ${ELASTIC_HELM_CHART} -n instana-elastic --wait \
@@ -86,8 +87,18 @@ echo "Installing Postgres..."
 ${KUBECTL} create namespace instana-postgres
 ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-postgres \
   --docker-server=${INSTANA_IMAGE_REGISTRY} \
-  --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-  --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD}
+  --docker-username _ \
+  --docker-password=$DOWNLOAD_KEY
+
+helm install cnpg ${POSTGRES_HELM_CHART} --wait \
+  --set image.repository=${POSTGRES_OPERATOR_IMAGE_NAME} \
+  --set image.tag=${POSTGRES_OPERATOR_IMAGE_TAG} \
+  --set imagePullSecrets[0].name=instana-registry \
+  --set containerSecurityContext.runAsUser=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
+  --set containerSecurityContext.runAsGroup=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
+  -n instana-postgres 
+
+# ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES_SCC}
 
 cat << EOF > postgres-secret.yaml
 kind: Secret
@@ -123,8 +134,8 @@ ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA_SCC}
 ${KUBECTL} create namespace instana-cassandra
 ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-cassandra \
   --docker-server=${INSTANA_IMAGE_REGISTRY} \
-  --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-  --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD}
+  --docker-username _ \
+  --docker-password=$DOWNLOAD_KEY
 
 helm install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandra --wait \
   --set securityContext.runAsGroup=999 \
@@ -133,6 +144,7 @@ helm install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandra --wait \
   --set image.repository=${CASSANDRA_OPERATOR_IMAGE_NAME} \
   --set image.tag=${CASSANDRA_OPERATOR_IMAGE_TAG} \
   --set imagePullSecrets[0].name=instana-registry \
+  --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
   --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
   --set imageConfig.systemLogger=${CASSANDRA_SYSTEMLOGGER_IMAGE_NAME}  \
   --set imageConfig.k8ssandraClient=${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME}
@@ -153,7 +165,7 @@ ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
 ${KUBECTL} create secret docker-registry clickhouse-image-secret \
   --namespace=instana-clickhouse \
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-  --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
+  --docker-password=${DOWNLOAD_KEY} \
   --docker-server=${INSTANA_IMAGE_REGISTRY}
 
 helm install clickhouse-operator ${CLICKHOUSE_HELM_CHART} \
@@ -189,8 +201,8 @@ echo "Installing Beeinstana..."
 ${KUBECTL} create namespace beeinstana
 ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana \
   --docker-server=${INSTANA_IMAGE_REGISTRY} \
-  --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-  --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD}
+  --docker-username _ \
+  --docker-password=$DOWNLOAD_KEY
 # for k8s and OCP 4.10:
 #helm install beeinstana instana/beeinstana-operator --namespace=beeinstana
 # For a cluster on Red Hat OpenShift 4.11 and later:
@@ -247,7 +259,7 @@ ${KUBECTL} create ns instana-operator
 ${KUBECTL} create secret docker-registry instana-registry \
     --namespace=instana-operator \
     --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-    --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
+    --docker-password=$DOWNLOAD_KEY \
     --docker-server=${INSTANA_IMAGE_REGISTRY}
 
 cat << EOF > instana-operator-values.yaml
@@ -293,13 +305,13 @@ echo "Creating secrets for Instana core and units..."
 ${KUBECTL} create secret docker-registry instana-registry \
     --namespace=instana-core \
     --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-    --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
+    --docker-password=$DOWNLOAD_KEY \
     --docker-server=${INSTANA_IMAGE_REGISTRY}
 
 ${KUBECTL} create secret docker-registry instana-registry \
     --namespace=instana-units \
     --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-    --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
+    --docker-password=$DOWNLOAD_KEY \
     --docker-server=${INSTANA_IMAGE_REGISTRY}
 
 

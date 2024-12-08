@@ -17,8 +17,9 @@ ${KUBECTL} create secret docker-registry instana-registry \
 
 helm install instana ${ZOOKEEPER_HELM_CHART} -n instana-zookeeper \
   --create-namespace --wait \
+  --set image.registry=${INSTANA_IMAGE_REGISTRY} \
   --set image.repository=${ZOOKEEPER_OPERATOR_IMAGE_NAME} \
-  --set image.tag=${ZOOKEEPER_OPERATOR_IMAGE_TAG}\
+  --set image.tag=${ZOOKEEPER_OPERATOR_IMAGE_TAG} \
   --set global.imagePullSecrets={"instana-registry"}
 
 ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s
@@ -183,7 +184,10 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana
 #helm install beeinstana instana/beeinstana-operator --namespace=beeinstana
 # For a cluster on Red Hat OpenShift 4.11 and later:
 helm install beeinstana ${BEEINSTANA_HELM_CHART} --namespace=beeinstana --wait \
-  --set operator.securityContext.seccompProfile.type=RuntimeDefault
+  --set operator.securityContext.seccompProfile.type=RuntimeDefault \
+  --set image.registry=${INSTANA_IMAGE_REGISTRY} \
+  --set image.repository=${BEEINSTANA_OPERATOR_IMAGE_NAME} \
+  --set image.tag=${BEEINSTANA_OPERATOR_IMAGE_TAG}
 
 while ! ${KUBECTL} get secret strimzi-kafka-user -n instana-kafka; do echo "Waiting for strimzi-kafka-user secret in instana-kafka. CTRL-C to exit."; sleep 10; done
 

@@ -18,10 +18,9 @@ ${KUBECTL} create secret docker-registry instana-registry \
 
 helm install instana ${ZOOKEEPER_HELM_CHART} -n instana-zookeeper \
   --create-namespace --wait \
+  --set image.registry=${INSTANA_IMAGE_REGISTRY} \
   --set image.repository=${ZOOKEEPER_OPERATOR_IMAGE_NAME} \
   --set image.tag=${ZOOKEEPER_OPERATOR_IMAGE_TAG} \
-  --set hooks.image.repository=${ZOOKEEPER_K8S_IMAGE_NAME} \
-  --set hooks.image.tag=${ZOOKEEPER_K8S_IMAGE_TAG} \
   --set global.imagePullSecrets={"instana-registry"}
 
 ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s

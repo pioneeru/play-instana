@@ -17,8 +17,9 @@ spec:
 
   # dockerRegistryURI: containers.instana.io
   imageConfig:
-    registry: artifact-public.instana.io
-    tag: 3.285.627-0
+    registry: ${INSTANA_IMAGE_REGISTRY}
+    repository: ${INSTANA_BACKEND_IMAGE_REPOSITORY}
+    tag: ${INSTANA_CORE_IMAGE_TAG}
 
   imagePullSecrets:
     - name: instana-registry

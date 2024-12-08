@@ -10,6 +10,7 @@ spec:
     type: RuntimeDefault
   ######
   version: ${BEEINSTANA_VERSION}
+  imageRegistry: ${INSTANA_IMAGE_REGISTRY}
   adminCredentials:
     secretName: beeinstana-admin-creds
   kafkaSettings:

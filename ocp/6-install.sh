@@ -162,6 +162,19 @@ helm install clickhouse-operator ${CLICKHOUSE_HELM_CHART} \
   --set operator.image.tag=${CLICKHOUSE_OPERATOR_IMAGE_TAG} \
   --set imagePullSecrets[0].name="instana-registry"
 
+cat << EOF > clickhouse-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: clickhouse-passwords
+  namespace: instana-clickhouse
+type: Opaque
+stringData:
+  default_password: `openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
+  clickhouse-user_password: `openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
+EOF
+${KUBECTL} apply -f clickhouse-secret.yaml
+
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE}
 
 
@@ -192,9 +205,9 @@ while ! ${KUBECTL} get secret strimzi-kafka-user -n instana-kafka; do echo "Wait
 ${KUBECTL} create secret generic beeinstana-kafka-creds -n beeinstana \
   --from-literal=username=strimzi-kafka-user \
   --from-literal=password=`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`
-${KUBECTL} create secret generic beeinstana-admin-creds2 -n beeinstana \
+${KUBECTL} create secret generic beeinstana-admin-creds -n beeinstana \
   --from-literal=username=beeinstana-user \
-  --from-literal=password="$(base64 < /dev/urandom | head -c32)"
+  --from-literal=password=`openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
 
 ${KUBECTL} -n beeinstana apply -f ${MANIFEST_FILENAME_BEEINSTANA}
 
@@ -418,10 +431,14 @@ datastoreConfigs:
       user: instana-superuser
       password: "`${KUBECTL} get secret instana-superuser -n instana-cassandra --template='{{index .data.password | base64decode}}'`"
   clickhouseConfigs:
-    - adminUser: "${CLICKHOUSE_USER}"
-      adminPassword: "${CLICKHOUSE_USER_PASS}"
-      user: "${CLICKHOUSE_USER}"
-      password: "${CLICKHOUSE_USER_PASS}"
+    # - adminUser: "${CLICKHOUSE_USER}"
+    #   adminPassword: "${CLICKHOUSE_USER_PASS}"
+    #   user: "${CLICKHOUSE_USER}"
+    #   password: "${CLICKHOUSE_USER_PASS}"
+    - adminUser: "default"
+      adminPassword: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.default_password | base64decode}}'`"
+      user: "clickhouse-user"
+      password: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.clickhouse-user_password | base64decode}}'`"
 EOF
 
 

@@ -122,4 +122,8 @@ ${KUBECTL} delete ns beeinstana
 echo "Deleting instana-operator namespace..."
 ${KUBECTL} delete ns instana-operator 
 
+echo "Deleting SCC..."
+${KUBECTL} delete scc cassandra-scc
+${KUBECTL} delete scc clickhouse-scc
+
 echo "Done."

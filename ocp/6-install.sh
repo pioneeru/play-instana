@@ -437,7 +437,7 @@ datastoreConfigs:
     #   password: "${CLICKHOUSE_USER_PASS}"
     - adminUser: "default"
       adminPassword: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.default_password | base64decode}}'`"
-      user: "clickhouse-user"
+      user: "clickhouseuser"
       password: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.clickhouseuser_password | base64decode}}'`"
 EOF
 

@@ -171,7 +171,7 @@ metadata:
 type: Opaque
 stringData:
   default_password: `openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
-  clickhouse-user_password: `openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
+  clickhouseuser_password: `openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
 EOF
 ${KUBECTL} apply -f clickhouse-secret.yaml
 
@@ -438,7 +438,7 @@ datastoreConfigs:
     - adminUser: "default"
       adminPassword: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.default_password | base64decode}}'`"
       user: "clickhouse-user"
-      password: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.clickhouse-user_password | base64decode}}'`"
+      password: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.clickhouseuser_password | base64decode}}'`"
 EOF
 
 

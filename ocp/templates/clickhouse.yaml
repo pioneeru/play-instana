@@ -116,12 +116,12 @@ spec:
           secretKeyRef:
             name: clickhouse-passwords
             key: default_password
-      clickhouse-user/networks/ip: "::/0"
-      clickhouse-user/password: 
+      clickhouseuser/networks/ip: "::/0"
+      clickhouseuser/password: 
         valueFrom:
           secretKeyRef:
             name: clickhouse-passwords
-            key: clickhouse-user_password
+            key: clickhouseuser_password
       # Or
       # Generate password and the corresponding SHA256 hash with:
       # $ PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'

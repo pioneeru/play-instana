@@ -431,14 +431,14 @@ datastoreConfigs:
       user: instana-superuser
       password: "`${KUBECTL} get secret instana-superuser -n instana-cassandra --template='{{index .data.password | base64decode}}'`"
   clickhouseConfigs:
-    # - adminUser: "${CLICKHOUSE_USER}"
-    #   adminPassword: "${CLICKHOUSE_USER_PASS}"
-    #   user: "${CLICKHOUSE_USER}"
-    #   password: "${CLICKHOUSE_USER_PASS}"
-    - adminUser: "default"
-      adminPassword: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.default_password | base64decode}}'`"
-      user: "clickhouseuser"
-      password: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.clickhouseuser_password | base64decode}}'`"
+    - adminUser: "${CLICKHOUSE_USER}"
+      adminPassword: "${CLICKHOUSE_USER_PASS}"
+      user: "${CLICKHOUSE_USER}"
+      password: "${CLICKHOUSE_USER_PASS}"
+    # - adminUser: "default"
+    #   adminPassword: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.default_password | base64decode}}'`"
+    #   user: "clickhouseuser"
+    #   password: "`${KUBECTL} get secret clickhouse-passwords -n instana-clickhouse --template='{{index .data.clickhouseuser_password | base64decode}}'`"
 EOF
 
 

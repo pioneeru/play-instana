@@ -85,43 +85,43 @@ spec:
       default/interval/read_rows: 0
       default/interval/execution_time: 0
     settings:
-      remote_servers/all-sharded/secret: "${CLICKHOUSE_ADMIN_PASS}"
-      remote_servers/all-replicated/secret: "${CLICKHOUSE_ADMIN_PASS}"
-      remote_servers/local/secret: "${CLICKHOUSE_ADMIN_PASS}"
-      # remote_servers/all-sharded/secret:
-      #   valueFrom:
-      #     secretKeyRef:
-      #       name: clickhouse-passwords
-      #       key: default_password
-      # remote_servers/all-replicated/secret:
-      #   valueFrom:
-      #     secretKeyRef:
-      #       name: clickhouse-passwords
-      #       key: default_password
-      # remote_servers/local/secret:
-      #   valueFrom:
-      #     secretKeyRef:
-      #       name: clickhouse-passwords
-      #       key: default_password
+      # remote_servers/all-sharded/secret: "${CLICKHOUSE_ADMIN_PASS}"
+      # remote_servers/all-replicated/secret: "${CLICKHOUSE_ADMIN_PASS}"
+      # remote_servers/local/secret: "${CLICKHOUSE_ADMIN_PASS}"
+      remote_servers/all-sharded/secret:
+        valueFrom:
+          secretKeyRef:
+            name: chi-passwords
+            key: default_password
+      remote_servers/all-replicated/secret:
+        valueFrom:
+          secretKeyRef:
+            name: chi-passwords
+            key: default_password
+      remote_servers/local/secret:
+        valueFrom:
+          secretKeyRef:
+            name: chi-passwords
+            key: default_password
       max_concurrent_queries: 200
       max_table_size_to_drop: 0
       max_partition_size_to_drop: 0
     users:
-      ${CLICKHOUSE_ADMIN}/networks/ip: "::/0"
-      ${CLICKHOUSE_ADMIN}/password: "${CLICKHOUSE_ADMIN_PASS}"
-      ${CLICKHOUSE_USER}/networks/ip: "::/0"
-      ${CLICKHOUSE_USER}/password: "${CLICKHOUSE_USER_PASS}"
-      # default/password:
-      #   valueFrom:
-      #     secretKeyRef:
-      #       name: clickhouse-passwords
-      #       key: default_password
-      # clickhouseuser/networks/ip: "::/0"
-      # clickhouseuser/password: 
-      #   valueFrom:
-      #     secretKeyRef:
-      #       name: clickhouse-passwords
-      #       key: clickhouseuser_password
+      # # ${CLICKHOUSE_ADMIN}/networks/ip: "::/0"
+      # ${CLICKHOUSE_ADMIN}/password: "${CLICKHOUSE_ADMIN_PASS}"
+      # ${CLICKHOUSE_USER}/networks/ip: "::/0"
+      # ${CLICKHOUSE_USER}/password: "${CLICKHOUSE_USER_PASS}"
+      default/password:
+        valueFrom:
+          secretKeyRef:
+            name: chi-passwords
+            key: default_password
+      clickhouseuser/networks/ip: "::/0"
+      clickhouseuser/password: 
+        valueFrom:
+          secretKeyRef:
+            name: chi-passwords
+            key: clickhouseuser_password
       # Or
       # Generate password and the corresponding SHA256 hash with:
       # $ PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'

@@ -1,3 +1,10 @@
 .local
 .vscode
 credentials.env
+ocp/*.tgz
+ocp/*.crt
+ocp/*.csr
+ocp/*.srl
+ocp/*.key
+ocp/*.yaml
+ocp/*.json

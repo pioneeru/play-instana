@@ -200,10 +200,6 @@ helm install beeinstana ${BEEINSTANA_HELM_CHART} --namespace=beeinstana --wait \
   --set operator.securityContext.seccompProfile.type=RuntimeDefault \
   --set image.registry=${INSTANA_IMAGE_REGISTRY} \
   --set image.repository=${BEEINSTANA_OPERATOR_IMAGE_NAME} \
-  --set image.tag=${BEEINSTANA_OPERATOR_IMAGE_TAG} \
-  --set operator.securityContext.seccompProfile.type=RuntimeDefault \
-  --set image.registry=${INSTANA_IMAGE_REGISTRY} \
-  --set image.repository=${BEEINSTANA_OPERATOR_IMAGE_NAME} \
   --set image.tag=${BEEINSTANA_OPERATOR_IMAGE_TAG}
 
 while ! ${KUBECTL} get secret strimzi-kafka-user -n instana-kafka; do echo "Waiting for strimzi-kafka-user secret in instana-kafka. CTRL-C to exit."; sleep 10; done

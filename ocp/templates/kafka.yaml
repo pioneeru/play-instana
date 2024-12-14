@@ -30,7 +30,7 @@ spec:
       volumes:
       - id: 0
         type: persistent-claim
-        size: 50Gi
+        size: 100Gi
         deleteClaim: true
         class: ${RWO_STORAGECLASS}
     config:
@@ -40,14 +40,14 @@ spec:
       transaction.state.log.min.isr: 1
       transaction.state.log.replication.factor: 1
     jvmOptions:
-      -Xms: 2G
-      -Xmx: 2G
+      -Xms: 2000m
+      -Xmx: 2000m
     resources:
       limits:
         memory: 5Gi
       requests:
         cpu: "1"
-        memory: 3Gi
+        memory: 4Gi
   zookeeper:
     replicas: 3
     resources:

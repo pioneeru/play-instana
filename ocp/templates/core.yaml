@@ -83,8 +83,6 @@ spec:
         - postgres-rw.instana-postgres.svc
 
   featureFlags:
-    - name: beeinstana
-      enabled: true
     - name: feature.beeinstana.enabled
       enabled: true
     - name: feature.beeinstana.infra.metrics.enabled
@@ -93,12 +91,12 @@ spec:
       enabled: true
     # - name: feature.infrastructure.explore.data.enabled
     #   enabled: true
-    - name: feature.automation.enabled
-      enabled: true
     - name: feature.infra.metrics.widget.enabled
       enabled: true
     # - name: feature.plugin.entity.metric.statistics.enabled
     #   enabled: true
+    - name: feature.automation.enabled
+      enabled: true
     - name: feature.smart.alerts.logs.blueprint.enabled
       enabled: true
     - name: feature.infra.smart.alerts.enabled

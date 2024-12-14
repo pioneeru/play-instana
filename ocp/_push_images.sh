@@ -4,9 +4,9 @@ echo "Reading credentials.env"
 source ../credentials.env
 source ../artefacts.env
 
-INSTANA_IMAGE_REGISTRY=nexus1.tivlab.raleigh.ibm.com/instana
-INSTANA_IMAGE_REGISTRY_USERNAME=super
-INSTANA_IMAGE_REGISTRY_PASSWORD=super
+INSTANA_IMAGE_REGISTRY=${INSTANA_IMAGE_REGISTRY}/instana
+INSTANA_IMAGE_REGISTRY_USERNAME=${INSTANA_IMAGE_REGISTRY_USERNAME}
+INSTANA_IMAGE_REGISTRY_PASSWORD=${INSTANA_IMAGE_REGISTRY_PASSWORD}
 
 INSTANA_OPERATOR_IMAGE_NAME=infrastructure/instana-enterprise-operator
 INSTANA_BACKEND_IMAGE_REPOSITORY=backend
@@ -15,7 +15,7 @@ INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY=operator
 INSTANA_K8S_IMAGE_REPOSITORY=k8s
 
 
-podman login nexus1.tivlab.raleigh.ibm.com -u super -p super
+podman login ${INSTANA_IMAGE_REGISTRY} -u ${INSTANA_IMAGE_REGISTRY_USERNAME} -p ${INSTANA_IMAGE_REGISTRY_USERNAME}
 
 ## Cassandra
 podman tag artifact-public.instana.io/self-hosted-images/3rd-party/operator/cass-operator:1.22.4_v0.17.0 ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/cass-operator:1.22.4_v0.17.0

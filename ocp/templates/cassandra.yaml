@@ -24,22 +24,22 @@ spec:
   allowMultipleNodesPerWorker: false
   resources:
     requests:
-      cpu: 1000m      ### 2000m
-      memory: 2Gi     ### 8Gi
+      cpu: 2000m      ### 2000m
+      memory: 8Gi     ### 8Gi
     limits:
-      memory: 3Gi     ### 16Gi
+      memory: 16Gi     ### 16Gi
   storageConfig:
     cassandraDataVolumeClaimSpec:
       accessModes:
         - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: 200Gi
       storageClassName: ${RWO_STORAGECLASS}
   config:
     jvm-server-options:
-      initial_heap_size: "1G"   ### 4G
-      max_heap_size: "2G"       ### 8G
+      initial_heap_size: "4G"   ### 4G
+      max_heap_size: "8G"       ### 8G
       additional-jvm-opts:
         - -Dcassandra.allow_unsafe_aggressive_sstable_expiration=true
     cassandra-yaml:

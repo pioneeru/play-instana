@@ -38,12 +38,12 @@ spec:
         name: instanaadmin
   resources:
     limits:
-      memory: 1Gi
+      memory: 2Gi
     requests:
       cpu: 500m
-      memory: 500Mi
+      memory: 1Gi
   superuserSecret:
     name: instanaadmin
   storage:
-    size: 5Gi
+    size: 50Gi
     storageClass: ${RWO_STORAGECLASS}

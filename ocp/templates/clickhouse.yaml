@@ -61,7 +61,7 @@ spec:
       nodes:
         - host: instana-zookeeper-headless.instana-clickhouse
     profiles:
-      default/max_memory_usage: 1500000000
+      default/max_memory_usage: 2000000000     # bytes, <- Must be adjusted according to requests.memory
       default/joined_subquery_requires_alias: 0
       default/max_execution_time: 100
       default/max_query_size: 1048576
@@ -157,10 +157,10 @@ spec:
             - --
         resources:
           limits:
-            memory: 3Gi
+            memory: 4Gi
           requests:
             cpu: "1"
-            memory: 1500Mi
+            memory: 2Gi
         imagePullSecrets:
           - name: clickhouse-image-secret
         ### FIX for K8s
@@ -176,7 +176,7 @@ spec:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 100Gi
+              storage: 200Gi
           storageClassName: ${RWO_STORAGECLASS}
       - name: instana-clickhouse-log-volume
         spec:

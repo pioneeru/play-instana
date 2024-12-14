@@ -25,9 +25,7 @@ spec:
     memory: 200Mi
     replicas: 1
     image:
-      name: ${BEEINSTANA_MONCONFIG_IMAGE_NAME}
-      tag: ${BEEINSTANA_MONCONFIG_IMAGE_TAG}
-    image:
+      registry: ${INSTANA_IMAGE_REGISTRY}
       name: ${BEEINSTANA_MONCONFIG_IMAGE_NAME}
       tag: ${BEEINSTANA_MONCONFIG_IMAGE_TAG}
   ingestor:
@@ -38,9 +36,7 @@ spec:
     metricsTopic: raw_metrics
     replicas: 1
     image:
-      name: ${BEEINSTANA_INGESTOR_IMAGE_NAME}
-      tag: ${BEEINSTANA_INGESTOR_IMAGE_TAG}
-    image:
+      registry: ${INSTANA_IMAGE_REGISTRY}
       name: ${BEEINSTANA_INGESTOR_IMAGE_NAME}
       tag: ${BEEINSTANA_INGESTOR_IMAGE_TAG}
   aggregator:
@@ -50,9 +46,7 @@ spec:
     mirrors: 1
     shards: 1
     image:
-      name: ${BEEINSTANA_AGGREGATOR_IMAGE_NAME}
-      tag: ${BEEINSTANA_AGGREGATOR_IMAGE_TAG}
-    image:
+      registry: ${INSTANA_IMAGE_REGISTRY}
       name: ${BEEINSTANA_AGGREGATOR_IMAGE_NAME}
       tag: ${BEEINSTANA_AGGREGATOR_IMAGE_TAG}
     volumes:

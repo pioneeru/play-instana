@@ -59,9 +59,10 @@ spec:
           shard: None
     zookeeper:
       nodes:
-        - host: instana-zookeeper-headless.instana-clickhouse
+        # - host: instana-zookeeper-headless.instana-clickhouse
+        - host: clickhouse-keeper-headless.instana-clickhouse
     profiles:
-      default/max_memory_usage: 2000000000     # bytes, <- Must be adjusted according to requests.memory
+      default/max_memory_usage: 2000000000 # If memory limits are set, this value must be adjusted according to the limits.
       default/joined_subquery_requires_alias: 0
       default/max_execution_time: 100
       default/max_query_size: 1048576
@@ -77,6 +78,7 @@ spec:
       default/log_query_views: 1
       default/max_threads: 16
       default/allow_experimental_database_replicated: 1
+      default/allow_experimental_analyzer: 0
     quotas:
       default/interval/duration: 3600
       default/interval/queries: 0
@@ -162,13 +164,13 @@ spec:
             cpu: "1"
             memory: 2Gi
         imagePullSecrets:
-          - name: clickhouse-image-secret
-        ### FIX for K8s
-        #  securityContext:
-        #    fsGroup: 0
-        #    runAsGroup: 0
-        #    runAsUser: 1001
-        #########
+        - name: clickhouse-image-secret
+        ### for Kubernetes cluster (for OCP use SCC)
+        # securityContext:
+        #   fsGroup: 0
+        #   runAsGroup: 0
+        #   runAsUser: 1001
+        ########
     volumeClaimTemplates:
       - name: instana-clickhouse-data-volume
         spec:

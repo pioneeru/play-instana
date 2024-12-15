@@ -56,6 +56,11 @@ EOF
 " > ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
 
 eval "cat <<EOF
+$(<templates/clickhouse_keeper.yaml)
+EOF
+" > ${MANIFEST_FILENAME_CLICKHOUSE_KEEPER}
+
+eval "cat <<EOF
 $(<templates/clickhouse.yaml)
 EOF
 " > ${MANIFEST_FILENAME_CLICKHOUSE}

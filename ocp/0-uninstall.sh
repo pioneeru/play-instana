@@ -45,11 +45,13 @@ ${KUBECTL} -n instana-kafka delete k instana --wait=false
 ### Zookeeper
 echo "Waiting for chi deletion..."
 ${KUBECTL} -n instana-clickhouse wait --for=delete chi instana --timeout=3000s
-echo "Deleteing Zookeeper instana-zookeeper..."
+echo "Deleteing Zookeeper & Clickhouse Keeper clusters..."
 ${KUBECTL} -n instana-clickhouse delete zk instana-zookeeper
+${KUBECTL} -n instana-clickhouse delete chk clickhouse-keeper
 
-echo "Waiting for Zookeeper pods deletion..."
+echo "Waiting for Zookeeper & Clickhouse Keeper pods deletion..."
 ${KUBECTL} -n instana-clickhouse wait --for=delete pod -lrelease=instana-zookeeper --timeout=3000s
+${KUBECTL} -n instana-clickhouse wait --for=delete pod -lapp=clickhouse-keeper --timeout=3000s
 
 
 

@@ -6,31 +6,31 @@ source ../artefacts.env
 
 #### DATASTORES ######
 
-echo "Installing zookeeper..."
-${KUBECTL} create namespace instana-zookeeper
+# echo "Installing zookeeper..."
+# ${KUBECTL} create namespace instana-zookeeper
 
-${KUBECTL} create secret docker-registry instana-registry \
-  --namespace=instana-zookeeper \
-  --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-  --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
-  --docker-server=${INSTANA_IMAGE_REGISTRY}
+# ${KUBECTL} create secret docker-registry instana-registry \
+#   --namespace=instana-zookeeper \
+#   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
+#   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
+#   --docker-server=${INSTANA_IMAGE_REGISTRY}
 
-helm install instana ${ZOOKEEPER_HELM_CHART} -n instana-zookeeper \
-  --create-namespace --wait \
-  --set image.registry=${INSTANA_IMAGE_REGISTRY} \
-  --set image.repository=${ZOOKEEPER_OPERATOR_IMAGE_NAME} \
-  --set image.tag=${ZOOKEEPER_OPERATOR_IMAGE_TAG} \
-  --set global.imagePullSecrets={"instana-registry"}
+# helm install instana ${ZOOKEEPER_HELM_CHART} -n instana-zookeeper \
+#   --create-namespace --wait \
+#   --set image.registry=${INSTANA_IMAGE_REGISTRY} \
+#   --set image.repository=${ZOOKEEPER_OPERATOR_IMAGE_NAME} \
+#   --set image.tag=${ZOOKEEPER_OPERATOR_IMAGE_TAG} \
+#   --set global.imagePullSecrets={"instana-registry"}
 
-${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s
+# ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s
 
-${KUBECTL} create namespace instana-clickhouse
-${KUBECTL} create secret docker-registry instana-registry \
-  --namespace=instana-clickhouse \
-  --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-  --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
-  --docker-server=${INSTANA_IMAGE_REGISTRY}
-${KUBECTL} apply -f ${MANIFEST_FILENAME_ZOOKEEPER} -n instana-clickhouse
+# ${KUBECTL} create namespace instana-clickhouse
+# ${KUBECTL} create secret docker-registry instana-registry \
+#   --namespace=instana-clickhouse \
+#   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
+#   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
+#   --docker-server=${INSTANA_IMAGE_REGISTRY}
+# ${KUBECTL} apply -f ${MANIFEST_FILENAME_ZOOKEEPER} -n instana-clickhouse
 
 
 
@@ -143,15 +143,15 @@ ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA}
 
 
 
-echo "Waiting for Zookeeper pods to be running..."
-${KUBECTL} wait -n instana-clickhouse --for=jsonpath='{.status.conditions[0].status}'=True zk instana-zookeeper --timeout=3000s
-${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lrelease=instana-zookeeper --timeout=3000s
+# echo "Waiting for Zookeeper pods to be running..."
+# ${KUBECTL} wait -n instana-clickhouse --for=jsonpath='{.status.conditions[0].status}'=True zk instana-zookeeper --timeout=3000s
+# ${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lrelease=instana-zookeeper --timeout=3000s
 
 
 echo "Installing Clickhouse..."
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
 
-# ${KUBECTL} create namespace instana-clickhouse
+${KUBECTL} create namespace instana-clickhouse
 ${KUBECTL} create secret docker-registry clickhouse-image-secret \
   --namespace=instana-clickhouse \
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
@@ -177,6 +177,12 @@ stringData:
 EOF
 ${KUBECTL} apply -f clickhouse-secret.yaml
 
+${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_KEEPER}
+
+echo "Waiting for Clickhouse keeper pods to be running..."
+${KUBECTL} wait -n instana-clickhouse --for=jsonpath='{status.status}'=Completed chk clickhouse-keeper --timeout=3000s
+${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lapp=clickhouse-keeper --timeout=3000s
+sleep 30
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE}
 
 

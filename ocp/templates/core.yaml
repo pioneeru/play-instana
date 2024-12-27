@@ -123,6 +123,8 @@ spec:
       enabled: true
     - name: feature.kubernetes.logging.enabled
       enabled: true
+    - name: feature.appdata.live.aggregator.enabled
+      enabled: true
   # Use one of smtpConfig or sesConfig
   emailConfig:
     smtpConfig:

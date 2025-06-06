@@ -130,6 +130,9 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-ca
 helm install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandra --wait \
   --set securityContext.runAsGroup=999 \
   --set securityContext.runAsUser=999 \
+  --set securityContext.allowPrivilegeEscalation=false \
+  --set securityContext.capabilities.drop[0]="ALL" \
+  --set securityContext.seccompProfile.type="RuntimeDefault" \
   --set image.registry=${CASSANDRA_IMAGE_REGISTRY} \
   --set image.repository=${CASSANDRA_OPERATOR_IMAGE_NAME} \
   --set image.tag=${CASSANDRA_OPERATOR_IMAGE_TAG} \
@@ -152,7 +155,8 @@ echo "Installing Clickhouse..."
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
 
 ${KUBECTL} create namespace instana-clickhouse
-${KUBECTL} create secret docker-registry clickhouse-image-secret \
+
+${KUBECTL} create secret docker-registry instana-registry \
   --namespace=instana-clickhouse \
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \

@@ -128,8 +128,6 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-ca
   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD}
 
 helm install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandra --wait \
-  --set securityContext.runAsGroup=999 \
-  --set securityContext.runAsUser=999 \
   --set securityContext.allowPrivilegeEscalation=false \
   --set securityContext.capabilities.drop[0]="ALL" \
   --set securityContext.seccompProfile.type="RuntimeDefault" \

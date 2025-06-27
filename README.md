@@ -60,10 +60,11 @@ The script is downloading all required helm charts of certain versions for Insta
 ```bash
 ./5-pull_datastore_charts.sh
 ```
-In case of air-gapped deployment execute the following script to pull images and push them into your repository if it not mirroring:
+(Optional) In case of air-gapped deployment execute the following script to pull images and push them into your repository if it is not mirroring:
 ```bash
 5-pull_push_images.sh
 ```
+The scripts pulls images from `artifact-public.instana.io` and pushes them into `${INSTANA_IMAGE_REGISTRY}` specified in `credentials.env`.
 
 #### 9. install datastores and Instana backend
 

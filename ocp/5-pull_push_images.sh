@@ -115,6 +115,7 @@ podman pull artifact-public.instana.io/backend/appdata-live-aggregator:${INSTANA
 podman pull artifact-public.instana.io/backend/appdata-processor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/appdata-reader:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/appdata-writer:${INSTANA_CORE_IMAGE_TAG}
+podman pull artifact-public.instana.io/backend/application-health-processor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/bizops-reader:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/bizops-writer:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/butler:${INSTANA_CORE_IMAGE_TAG}
@@ -145,6 +146,7 @@ podman pull artifact-public.instana.io/backend/sli-data-reader:${INSTANA_CORE_IM
 podman pull artifact-public.instana.io/backend/sli-data-writer:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/sli-evaluator:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/sli-health-processor:${INSTANA_CORE_IMAGE_TAG}
+podman pull artifact-public.instana.io/backend/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/synthetics-health-processor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/synthetics-reader:${INSTANA_CORE_IMAGE_TAG}
@@ -168,6 +170,7 @@ podman tag artifact-public.instana.io/backend/appdata-live-aggregator:${INSTANA_
 podman tag artifact-public.instana.io/backend/appdata-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/appdata-reader:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/appdata-writer:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-writer:${INSTANA_CORE_IMAGE_TAG} 
+podman tag artifact-public.instana.io/backend/application-health-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/application-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/bizops-reader:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/bizops-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/bizops-writer:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/bizops-writer:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/butler:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/butler:${INSTANA_CORE_IMAGE_TAG} 
@@ -198,6 +201,7 @@ podman tag artifact-public.instana.io/backend/sli-data-reader:${INSTANA_CORE_IMA
 podman tag artifact-public.instana.io/backend/sli-data-writer:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-data-writer:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/sli-health-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-health-processor:${INSTANA_CORE_IMAGE_TAG} 
+podman tag artifact-public.instana.io/backend/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/synthetics-health-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/synthetics-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/synthetics-reader:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/synthetics-reader:${INSTANA_CORE_IMAGE_TAG} 
@@ -221,6 +225,7 @@ podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdat
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-writer:${INSTANA_CORE_IMAGE_TAG} 
+podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/application-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/bizops-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/bizops-writer:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/butler:${INSTANA_CORE_IMAGE_TAG} 
@@ -251,6 +256,7 @@ podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-da
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-data-writer:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-health-processor:${INSTANA_CORE_IMAGE_TAG} 
+podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/synthetics-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/synthetics-reader:${INSTANA_CORE_IMAGE_TAG} 

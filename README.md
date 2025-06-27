@@ -60,6 +60,10 @@ The script is downloading all required helm charts of certain versions for Insta
 ```bash
 ./5-pull_datastore_charts.sh
 ```
+In case of air-gapped deployment execute the following script to
+```bash
+5-pull_push_images.sh
+```
 
 #### 9. install datastores and Instana backend
 

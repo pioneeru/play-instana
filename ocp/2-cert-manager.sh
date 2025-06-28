@@ -19,6 +19,6 @@ helm install \
   --namespace cert-manager \
   --create-namespace \
   --version v1.17.1 \
-  --set installCRDs=true \
+  --set crds.enabled=true \
   --set prometheus.enabled=false \
   --set webhook.timeoutSeconds=4 

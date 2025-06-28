@@ -263,9 +263,16 @@ ${KUBECTL} create secret docker-registry instana-registry \
     --docker-server=${INSTANA_IMAGE_REGISTRY}
 
 cat << EOF > instana-operator-values.yaml
-image:
-  registry: ${INSTANA_IMAGE_REGISTRY}
-  repository: ${INSTANA_OPERATOR_IMAGE_NAME}
+operator:
+  image:
+    registry: ${INSTANA_IMAGE_REGISTRY}
+    repository: ${INSTANA_OPERATOR_IMAGE_NAME}
+    tag: ${INSTANA_OPERATOR_IMAGE_TAG}
+webhook:
+  image:
+    registry: ${INSTANA_IMAGE_REGISTRY}
+    repository: ${INSTANA_WEBHOOK_IMAGE_NAME}
+    tag: ${INSTANA_OPERATOR_IMAGE_TAG}
 imagePullSecrets:
   - name: instana-registry
 EOF

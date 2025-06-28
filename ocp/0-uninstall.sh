@@ -41,6 +41,7 @@ ${KUBECTL} -n instana-postgres delete clusters.postgresql.cnpg.io postgres --wai
 ### Kafka
 echo "Deleteing k instana..."
 ${KUBECTL} -n instana-kafka delete k instana --wait=false
+${KUBECTL} -n instana-kafka delete knp controller kafka --wait=false
 
 ### Zookeeper
 echo "Waiting for chi deletion..."

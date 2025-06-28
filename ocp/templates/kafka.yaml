@@ -1,3 +1,47 @@
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: kafka
+  namespace: instana-kafka
+  labels:
+    strimzi.io/cluster: instana
+spec:
+  replicas: 3
+  roles:
+     - broker
+  storage:
+    type: jbod
+    volumes:
+      - id: 0
+        type: persistent-claim
+        size: 50Gi
+        deleteClaim: true
+        class: ${RWO_STORAGECLASS}
+  template:
+    pod:
+      tmpDirSizeLimit: 500Mi
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: controller
+  namespace: instana-kafka
+  labels:
+    strimzi.io/cluster: instana
+spec:
+  replicas: 3
+  roles:
+    - controller
+  storage:
+    type: persistent-claim
+    size: 50Gi
+    deleteClaim: true
+    class: ${RWO_STORAGECLASS}
+  template:
+    pod:
+      tmpDirSizeLimit: 500Mi
+---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
@@ -5,11 +49,14 @@ metadata:
   namespace: instana-kafka
   labels:
     strimzi.io/cluster: instana
+  annotations:
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft:  enabled
 spec:
   # Cruise Control needs more than 1 kafka node
   cruiseControl: {}
   kafka:
-    #image: ${INSTANA_IMAGE_REGISTRY}/${KAFKA_IMAGE_REPOSITORY}/${KAFKA_IMAGE_NAME}:${KAFKA_IMAGE_TAG}
+    image: ${INSTANA_IMAGE_REGISTRY}/${KAFKA_IMAGE_REPOSITORY}/${KAFKA_IMAGE_NAME}:${KAFKA_IMAGE_TAG}
     version: 3.9.0
     replicas: 3
     listeners:
@@ -48,19 +95,19 @@ spec:
       requests:
         cpu: "1"
         memory: 4Gi
-  zookeeper:
-    replicas: 3
-    resources:
-      limits:
-        memory: 1Gi
-      requests:
-        cpu: "1"
-        memory: 1Gi
-    storage:
-      type: persistent-claim
-      size: 5Gi
-      deleteClaim: true
-      class: ${RWO_STORAGECLASS}
+  # zookeeper:
+  #   replicas: 3
+  #   resources:
+  #     limits:
+  #       memory: 1Gi
+  #     requests:
+  #       cpu: "1"
+  #       memory: 1Gi
+  #   storage:
+  #     type: persistent-claim
+  #     size: 5Gi
+  #     deleteClaim: true
+  #     class: ${RWO_STORAGECLASS}
   entityOperator:
     template:
       pod:

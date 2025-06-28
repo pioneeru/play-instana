@@ -144,7 +144,7 @@ podman pull artifact-public.instana.io/backend/sli-beacons-filter:${INSTANA_CORE
 podman pull artifact-public.instana.io/backend/sli-calls-filter:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/sli-data-reader:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/sli-data-writer:${INSTANA_CORE_IMAGE_TAG}
-podman pull artifact-public.instana.io/backend/sli-evaluator:${INSTANA_CORE_IMAGE_TAG}
+#podman pull artifact-public.instana.io/backend/sli-evaluator:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/sli-health-processor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG}
@@ -157,6 +157,7 @@ podman pull artifact-public.instana.io/backend/ui-backend:${INSTANA_CORE_IMAGE_T
 podman pull artifact-public.instana.io/backend/ui-client:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/config-templates:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/infrastructure/instana-enterprise-operator:${INSTANA_OPERATOR_IMAGE_TAG}
+podman pull artifact-public.instana.io/infrastructure/instana-enterprise-operator-webhook:${INSTANA_OPERATOR_IMAGE_TAG}
 
 podman tag artifact-public.instana.io/backend/acceptor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/acceptor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/accountant:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/accountant:${INSTANA_CORE_IMAGE_TAG} 
@@ -199,7 +200,7 @@ podman tag artifact-public.instana.io/backend/sli-beacons-filter:${INSTANA_CORE_
 podman tag artifact-public.instana.io/backend/sli-calls-filter:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-calls-filter:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/sli-data-reader:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-data-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/sli-data-writer:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-data-writer:${INSTANA_CORE_IMAGE_TAG} 
-podman tag artifact-public.instana.io/backend/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} 
+#podman tag artifact-public.instana.io/backend/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/sli-health-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG} 
@@ -212,6 +213,7 @@ podman tag artifact-public.instana.io/backend/ui-backend:${INSTANA_CORE_IMAGE_TA
 podman tag artifact-public.instana.io/backend/ui-client:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/ui-client:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/config-templates:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/config-templates:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/infrastructure/instana-enterprise-operator:${INSTANA_OPERATOR_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_OPERATOR_IMAGE_NAME}:${INSTANA_OPERATOR_IMAGE_TAG} 
+podman tag artifact-public.instana.io/infrastructure/instana-enterprise-operator-webhook:${INSTANA_OPERATOR_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_WEBHOOK_IMAGE_NAME}:${INSTANA_OPERATOR_IMAGE_TAG} 
 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/acceptor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/accountant:${INSTANA_CORE_IMAGE_TAG} 
@@ -254,7 +256,7 @@ podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-be
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-calls-filter:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-data-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-data-writer:${INSTANA_CORE_IMAGE_TAG} 
-podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} 
+#podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG} 
@@ -267,4 +269,5 @@ podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/ui-bac
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/ui-client:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/config-templates:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_OPERATOR_IMAGE_NAME}:${INSTANA_OPERATOR_IMAGE_TAG} 
+podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_WEBHOOK_IMAGE_NAME}:${INSTANA_OPERATOR_IMAGE_TAG} 
 

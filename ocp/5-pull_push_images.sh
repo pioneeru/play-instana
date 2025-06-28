@@ -105,6 +105,7 @@ podman push ${INSTANA_IMAGE_REGISTRY}/beeinstana/ingestor:${BEEINSTANA_INGESTOR_
 ## Instana backend
 podman pull artifact-public.instana.io/backend/acceptor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/accountant:${INSTANA_CORE_IMAGE_TAG}
+podman pull artifact-public.instana.io/backend/action-ai-generation:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/action-orchestration:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/action-reader:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/action-writer:${INSTANA_CORE_IMAGE_TAG}
@@ -160,6 +161,7 @@ podman pull artifact-public.instana.io/infrastructure/instana-enterprise-operato
 
 podman tag artifact-public.instana.io/backend/acceptor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/acceptor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/accountant:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/accountant:${INSTANA_CORE_IMAGE_TAG} 
+podman tag artifact-public.instana.io/backend/action-ai-generation:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/action-ai-generation:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/action-orchestration:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/action-orchestration:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/action-reader:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/action-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/action-writer:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/action-writer:${INSTANA_CORE_IMAGE_TAG} 
@@ -215,6 +217,7 @@ podman tag artifact-public.instana.io/infrastructure/instana-enterprise-operator
 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/acceptor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/accountant:${INSTANA_CORE_IMAGE_TAG} 
+podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/action-ai-generation:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/action-orchestration:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/action-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/action-writer:${INSTANA_CORE_IMAGE_TAG} 
@@ -254,7 +257,6 @@ podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-be
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-calls-filter:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-data-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-data-writer:${INSTANA_CORE_IMAGE_TAG} 
-#podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG} 

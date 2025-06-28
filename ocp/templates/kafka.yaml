@@ -10,7 +10,7 @@ spec:
   cruiseControl: {}
   kafka:
     #image: ${INSTANA_IMAGE_REGISTRY}/${KAFKA_IMAGE_REPOSITORY}/${KAFKA_IMAGE_NAME}:${KAFKA_IMAGE_TAG}
-    version: 3.8.1
+    version: 3.9.0
     replicas: 3
     listeners:
     - name: scram

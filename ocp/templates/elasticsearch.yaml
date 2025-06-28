@@ -13,9 +13,10 @@ spec:
   - name: default
     count: 3
     config:
-      node.master: true
-      node.data: true
-      node.ingest: true
+      node.roles:
+        - master
+        - data
+        - ingest
       node.store.allow_mmap: false
       search.max_buckets: 65000
     podTemplate:

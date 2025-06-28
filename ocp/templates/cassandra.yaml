@@ -48,8 +48,8 @@ spec:
       role_manager: org.apache.cassandra.auth.CassandraRoleManager
       memtable_flush_writers: 8
       auto_snapshot: false
-      gc_warn_threshold_in_ms: 10000
-      otc_coalescing_strategy: DISABLED
+      gc_warn_threshold: 10000ms
+      # otc_coalescing_strategy: DISABLED
       memtable_allocation_type: offheap_objects
       num_tokens: 256
       drop_compact_storage_enabled: true

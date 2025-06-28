@@ -7,13 +7,56 @@ spec:
   resourceProfile: small
   deploymentStrategyType: RollingUpdate
 
+  # enables gateway-v2 and gateway-controller
+  gatewayConfig:
+    enabled: true
+
+
+  # Deprecated: Host and port for the agent acceptor, usually a subdomain of the base domain
+  # agentAcceptorConfig:
+  #   host: ${INSTANA_AGENT_ACCEPTOR}
+  #   port: 443
+
+  acceptors:
+    agent:
+      host: ${INSTANA_AGENT_ACCEPTOR}
+      port: 443
+    otlp:
+      http:
+        host: ${INSTANA_OTLP_HTTP_ACCEPTOR}
+        port: 443
+      grpc:
+        host: ${INSTANA_OTLP_GRPC_ACCEPTOR}
+        port: 443
+    eum:
+      host: ${INSTANA_EUM_ACCEPTOR}
+      port: 443
+    synthetics:
+      host: ${INSTANA_SYNTHETICS_ACCEPTOR}
+      port: 443
+    serverless:
+      host: ${INSTANA_SERVERLESS_ACCEPTOR}
+      port: 443
+
+    # Custom Edition environment can route traffic for all tenants through a single base domain:
+    #  agent:
+    #    port: 1444
+    #   otlp:
+    #     http:
+    #       port: 4318
+    #     grpc:
+    #       port: 4317
+    #   eum:
+    #     port: 1555
+    #   synthetics:
+    #     port: 1666
+    #   serverless:
+    #     port: 1777
+
+
   # Base domain for Instana
   baseDomain: ${INSTANA_BASE_DOMAIN}
 
-  # Host and port for the agent acceptor, usually a subdomain of the base domain
-  agentAcceptorConfig:
-    host: ${INSTANA_AGENT_ACCEPTOR}
-    port: 443
 
   # dockerRegistryURI: containers.instana.io
   imageConfig:
@@ -36,10 +79,17 @@ spec:
       value: "8035200"
     - name: retention.metrics.rollup3600
       value: "34214400"
+    # Only values greater than or equal to 7 days are valid:
     - name: config.appdata.shortterm.retention.days
       value: "7"
     - name: config.synthetics.retention.days
       value: "7"
+
+    # Custom Edition environment can route traffic for all tenants through a single base domain:
+    # - name: config.url.format.pathStyle
+    #   value: "true"
+
+
 
   # Datastore configs
   datastoreConfigs:

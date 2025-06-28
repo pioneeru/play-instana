@@ -263,9 +263,10 @@ ${KUBECTL} create secret docker-registry instana-registry \
     --docker-server=${INSTANA_IMAGE_REGISTRY}
 
 cat << EOF > instana-operator-values.yaml
-image:
-  registry: ${INSTANA_IMAGE_REGISTRY}
-  repository: ${INSTANA_OPERATOR_IMAGE_NAME}
+operator:
+  image:
+    registry: ${INSTANA_IMAGE_REGISTRY}
+    repository: ${INSTANA_OPERATOR_IMAGE_NAME}
 imagePullSecrets:
   - name: instana-registry
 EOF
@@ -520,5 +521,6 @@ echo "Creating routes..."
 ${KUBECTL} create route passthrough ui-client-tenant --hostname=${INSTANA_TENANT_DOMAIN} --service=gateway --port=https -n instana-core
 ${KUBECTL} create route passthrough ui-client-ssl --hostname=${INSTANA_BASE_DOMAIN} --service=gateway --port=https -n instana-core
 ${KUBECTL} create route passthrough acceptor  --hostname=${INSTANA_AGENT_ACCEPTOR}  --service=acceptor  --port=8600  -n instana-core
-
+# ${KUBECTL} create route passthrough otlp-http-acceptor --hostname=${INSTANA_OTLP_HTTP_ACCEPTOR} --service=gateway  --port=https -n instana-core
+# ${KUBECTL} create route passthrough otlp-grpc-acceptor --hostname=${INSTANA_OTLP_GRPC_ACCEPTOR} --service=gateway  --port=https -n instana-core
 echo "Done."

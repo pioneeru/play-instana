@@ -144,7 +144,6 @@ podman pull artifact-public.instana.io/backend/sli-beacons-filter:${INSTANA_CORE
 podman pull artifact-public.instana.io/backend/sli-calls-filter:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/sli-data-reader:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/sli-data-writer:${INSTANA_CORE_IMAGE_TAG}
-#podman pull artifact-public.instana.io/backend/sli-evaluator:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/sli-health-processor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG}
@@ -200,7 +199,6 @@ podman tag artifact-public.instana.io/backend/sli-beacons-filter:${INSTANA_CORE_
 podman tag artifact-public.instana.io/backend/sli-calls-filter:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-calls-filter:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/sli-data-reader:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-data-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/sli-data-writer:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-data-writer:${INSTANA_CORE_IMAGE_TAG} 
-#podman tag artifact-public.instana.io/backend/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-evaluator:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/sli-health-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/sli-synthetics-filter:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/synthetics-acceptor:${INSTANA_CORE_IMAGE_TAG} 

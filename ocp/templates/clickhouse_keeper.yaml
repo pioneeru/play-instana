@@ -43,7 +43,7 @@
                  requests:
                    memory: "1Gi"
            imagePullSecrets:
-           - name: clickhouse-image-secret
+           - name: instana-registry
           ### for Kubernetes cluster (for OCP use SCC)
           #  securityContext:
           #    fsGroup: 0

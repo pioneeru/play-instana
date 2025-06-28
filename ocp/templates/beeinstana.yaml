@@ -4,6 +4,8 @@ metadata:
   name: instance
   namespace: beeinstana
 spec:
+  imagePullSecretName: instana-registry
+  imageRegistry: ${INSTANA_IMAGE_REGISTRY}
   ###### For OCP 4.11 and later
   # fsGroup: <GROUP_ID> # Will be set by install script
   seccompProfile:

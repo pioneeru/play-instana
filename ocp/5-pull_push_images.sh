@@ -139,6 +139,7 @@ podman pull artifact-public.instana.io/backend/js-stack-trace-translator:${INSTA
 podman pull artifact-public.instana.io/backend/log-health-processor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/log-processor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/log-reader:${INSTANA_CORE_IMAGE_TAG}
+podman pull artifact-public.instana.io/backend/log-template-trainer:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/log-writer:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/ms-teams-service:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/otlp-acceptor:${INSTANA_CORE_IMAGE_TAG}
@@ -201,6 +202,7 @@ podman tag artifact-public.instana.io/backend/js-stack-trace-translator:${INSTAN
 podman tag artifact-public.instana.io/backend/log-health-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/log-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/log-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/log-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/log-reader:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/log-reader:${INSTANA_CORE_IMAGE_TAG} 
+podman tag artifact-public.instana.io/backend/log-template-trainer:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/log-template-trainer:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/log-writer:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/log-writer:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/ms-teams-service:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/ms-teams-service:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/otlp-acceptor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/otlp-acceptor:${INSTANA_CORE_IMAGE_TAG} 
@@ -263,6 +265,7 @@ podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/js-sta
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/log-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/log-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/log-reader:${INSTANA_CORE_IMAGE_TAG} 
+podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/log-template-trainer:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/log-writer:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/ms-teams-service:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/otlp-acceptor:${INSTANA_CORE_IMAGE_TAG} 

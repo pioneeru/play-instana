@@ -56,5 +56,7 @@ spec:
         size: 2000Gi
         # Uncomment the line below to specify your own storage class.
         storageClass: ${RWO_STORAGECLASS}
+    alertRequestsTopic: alert_requests
+    thresholdBreachTopic: alert_breaches
   # Should set useMultiArchImages to true for s390x and ppc64le
-  useMultiArchImages: false
+  useMultiArchImages: true

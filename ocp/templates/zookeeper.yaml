@@ -11,7 +11,22 @@ spec:
     tag: ${ZOOKEEPER_TAG_NAME}
   pod:
     imagePullSecrets: [name: "instana-registry"]
+    # Add the following Affinity snippet to schedule each pod on a different node. 
+    # affinity:
+    #   podAntiAffinity:
+    #     requiredDuringSchedulingIgnoredDuringExecution:
+    #       - labelSelector:
+    #           matchExpressions:
+    #             - key: kind
+    #               operator: In
+    #               values:
+    #                 - "ZookeeperMember"
+    #         topologyKey: kubernetes.io/hostname
     serviceAccountName: "zookeeper"
+    # Add the following securityContext snippet for Kubernetes offerings other than OCP.
+    # securityContext:
+    #   runAsUser: 1000
+    #   fsGroup: 1000
     env:
     - name: ZK_SERVER_HEAP
       value: "1000"

@@ -34,17 +34,17 @@ podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_IMAGE_REPOSITORY}/k8ss
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_IMAGE_REPOSITORY}/cassandra:${CASSANDRA_SERVER_IMAGE_TAG}
 
 ## Zookeeper
-podman pull artifact-public.instana.io/self-hosted-images/3rd-party/operator/zookeeper:${ZOOKEEPER_OPERATOR_IMAGE_TAG}
-podman pull artifact-public.instana.io/self-hosted-images/3rd-party/datastore/zookeeper:${ZOOKEEPER_TAG_NAME}
-podman pull artifact-public.instana.io/self-hosted-images/k8s/kubectl:${ZOOKEEPER_K8S_IMAGE_TAG}
+# podman pull artifact-public.instana.io/self-hosted-images/3rd-party/operator/zookeeper:${ZOOKEEPER_OPERATOR_IMAGE_TAG}
+# podman pull artifact-public.instana.io/self-hosted-images/3rd-party/datastore/zookeeper:${ZOOKEEPER_TAG_NAME}
+# podman pull artifact-public.instana.io/self-hosted-images/k8s/kubectl:${ZOOKEEPER_K8S_IMAGE_TAG}
 
-podman tag artifact-public.instana.io/self-hosted-images/3rd-party/operator/zookeeper:${ZOOKEEPER_OPERATOR_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/zookeeper:${ZOOKEEPER_OPERATOR_IMAGE_TAG}
-podman tag artifact-public.instana.io/self-hosted-images/3rd-party/datastore/zookeeper:${ZOOKEEPER_TAG_NAME} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_IMAGE_REPOSITORY}/zookeeper:${ZOOKEEPER_TAG_NAME}
-podman tag artifact-public.instana.io/self-hosted-images/k8s/kubectl:${ZOOKEEPER_K8S_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_K8S_IMAGE_REPOSITORY}/kubectl:${ZOOKEEPER_K8S_IMAGE_TAG}
+# podman tag artifact-public.instana.io/self-hosted-images/3rd-party/operator/zookeeper:${ZOOKEEPER_OPERATOR_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/zookeeper:${ZOOKEEPER_OPERATOR_IMAGE_TAG}
+# podman tag artifact-public.instana.io/self-hosted-images/3rd-party/datastore/zookeeper:${ZOOKEEPER_TAG_NAME} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_IMAGE_REPOSITORY}/zookeeper:${ZOOKEEPER_TAG_NAME}
+# podman tag artifact-public.instana.io/self-hosted-images/k8s/kubectl:${ZOOKEEPER_K8S_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_K8S_IMAGE_REPOSITORY}/kubectl:${ZOOKEEPER_K8S_IMAGE_TAG}
 
-podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/zookeeper:${ZOOKEEPER_OPERATOR_IMAGE_TAG}
-podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_IMAGE_REPOSITORY}/zookeeper:${ZOOKEEPER_TAG_NAME}
-podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_K8S_IMAGE_REPOSITORY}/kubectl:${ZOOKEEPER_K8S_IMAGE_TAG}
+# podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/zookeeper:${ZOOKEEPER_OPERATOR_IMAGE_TAG}
+# podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_IMAGE_REPOSITORY}/zookeeper:${ZOOKEEPER_TAG_NAME}
+# podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_K8S_IMAGE_REPOSITORY}/kubectl:${ZOOKEEPER_K8S_IMAGE_TAG}
 
 ## Clickhouse
 podman pull artifact-public.instana.io/clickhouse-operator:${CLICKHOUSE_OPERATOR_IMAGE_TAG}
@@ -116,6 +116,7 @@ podman pull artifact-public.instana.io/backend/appdata-live-aggregator:${INSTANA
 podman pull artifact-public.instana.io/backend/appdata-processor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/appdata-reader:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/appdata-writer:${INSTANA_CORE_IMAGE_TAG}
+podman pull artifact-public.instana.io/backend/ai-automated-investigation:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/application-health-processor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/bizops-reader:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/bizops-writer:${INSTANA_CORE_IMAGE_TAG}
@@ -130,6 +131,7 @@ podman pull artifact-public.instana.io/backend/eum-processor:${INSTANA_CORE_IMAG
 podman pull artifact-public.instana.io/backend/filler:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/gateway:${INSTANA_CORE_GATEWAY_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/groundskeeper:${INSTANA_CORE_IMAGE_TAG}
+podman pull artifact-public.instana.io/backend/incident-ai-summary:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/infra-health-processor:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/infra-metric-aggregator:${INSTANA_CORE_IMAGE_TAG}
 podman pull artifact-public.instana.io/backend/issue-tracker:${INSTANA_CORE_IMAGE_TAG}
@@ -172,6 +174,7 @@ podman tag artifact-public.instana.io/backend/appdata-live-aggregator:${INSTANA_
 podman tag artifact-public.instana.io/backend/appdata-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/appdata-reader:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/appdata-writer:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-writer:${INSTANA_CORE_IMAGE_TAG} 
+podman tag artifact-public.instana.io/backend/ai-automated-investigation:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/ai-automated-investigation:${INSTANA_CORE_IMAGE_TAG}
 podman tag artifact-public.instana.io/backend/application-health-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/application-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/bizops-reader:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/bizops-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/bizops-writer:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/bizops-writer:${INSTANA_CORE_IMAGE_TAG} 
@@ -186,6 +189,7 @@ podman tag artifact-public.instana.io/backend/eum-processor:${INSTANA_CORE_IMAGE
 podman tag artifact-public.instana.io/backend/filler:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/filler:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/gateway:${INSTANA_CORE_GATEWAY_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/gateway:${INSTANA_CORE_GATEWAY_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/groundskeeper:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/groundskeeper:${INSTANA_CORE_IMAGE_TAG} 
+podman tag artifact-public.instana.io/backend/incident-ai-summary:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/incident-ai-summary:${INSTANA_CORE_IMAGE_TAG}
 podman tag artifact-public.instana.io/backend/infra-health-processor:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/infra-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/infra-metric-aggregator:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/infra-metric-aggregator:${INSTANA_CORE_IMAGE_TAG} 
 podman tag artifact-public.instana.io/backend/issue-tracker:${INSTANA_CORE_IMAGE_TAG} ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/issue-tracker:${INSTANA_CORE_IMAGE_TAG} 
@@ -228,6 +232,7 @@ podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdat
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/appdata-writer:${INSTANA_CORE_IMAGE_TAG} 
+podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/ai-automated-investigation:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/application-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/bizops-reader:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/bizops-writer:${INSTANA_CORE_IMAGE_TAG} 
@@ -242,6 +247,7 @@ podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/eum-pr
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/filler:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/gateway:${INSTANA_CORE_GATEWAY_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/groundskeeper:${INSTANA_CORE_IMAGE_TAG} 
+podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/incident-ai-summary:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/infra-health-processor:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/infra-metric-aggregator:${INSTANA_CORE_IMAGE_TAG} 
 podman push ${INSTANA_IMAGE_REGISTRY}/${INSTANA_BACKEND_IMAGE_REPOSITORY}/issue-tracker:${INSTANA_CORE_IMAGE_TAG} 

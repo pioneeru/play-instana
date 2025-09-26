@@ -1,6 +1,6 @@
-# Deploying Instana backend v297
+# Deploying Instana backend v299
 
-The project is a set of bash scripts to automate Instana deployment on RedHat Openshift (versions: v4.18).
+The project is a set of bash scripts to automate Instana deployment on RedHat Openshift (versions: v4.19).
 
 #### 1. Copy `credentials.env.template` to `credentials.env`
 The following template is pre-populated with values but will not work as it is.

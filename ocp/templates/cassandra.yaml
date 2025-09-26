@@ -14,6 +14,7 @@ spec:
   imagePullPolicy: Always
   podTemplateSpec:
     spec:
+      serviceAccountName: cassandra
       imagePullSecrets:
       - name: instana-registry
       containers:
@@ -34,7 +35,7 @@ spec:
         - ReadWriteOnce
       resources:
         requests:
-          storage: 200Gi
+          storage: 200Gi    ### 100Gi   
       storageClassName: ${RWO_STORAGECLASS}
   config:
     jvm-server-options:
@@ -49,7 +50,7 @@ spec:
       memtable_flush_writers: 8
       auto_snapshot: false
       gc_warn_threshold: 10000ms
-      # otc_coalescing_strategy: DISABLED
+      # otc_coalescing_strategy: DISABLED   ### Disabled by default
       memtable_allocation_type: offheap_objects
       num_tokens: 256
       drop_compact_storage_enabled: true

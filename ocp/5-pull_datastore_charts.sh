@@ -8,7 +8,7 @@ source ../artefacts.env
 helm repo add instana https://helm.instana.io/artifactory/rel-helm-customer-virtual --username _ --password $DOWNLOAD_KEY
 helm repo update
 
-helm pull instana/zookeeper-operator --version=${ZOOKEEPER_HELM_CHART_VERSION}
+#helm pull instana/zookeeper-operator --version=${ZOOKEEPER_HELM_CHART_VERSION}
 helm pull instana/strimzi-kafka-operator --version=${KAFKA_HELM_CHART_VERSION}
 helm pull instana/eck-operator --version=${ELASTIC_HELM_CHART_VERSION}
 helm pull instana/cloudnative-pg --version=${POSTGRES_HELM_CHART_VERSION}

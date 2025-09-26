@@ -65,6 +65,8 @@ ${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA} -n instana-kafka
 
 echo "Installing Elasticsearch..."
 ${KUBECTL} create namespace instana-elastic
+${KUBECTL} create serviceaccount elasticsearch -n instana-elastic
+
 ${KUBECTL} create secret docker-registry instana-registry \
   --namespace=instana-elastic \
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
@@ -122,6 +124,8 @@ echo "Installing Cassandra..."
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA_SCC}
 
 ${KUBECTL} create namespace instana-cassandra
+${KUBECTL} create serviceaccount cassandra -n instana-cassandra
+
 ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-cassandra \
   --docker-server=${INSTANA_IMAGE_REGISTRY} \
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
@@ -155,6 +159,8 @@ echo "Installing Clickhouse..."
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
 
 ${KUBECTL} create namespace instana-clickhouse
+${KUBECTL} create serviceaccount clickhousekeeper -n instana-clickhouse
+${KUBECTL} create serviceaccount clickhouse  -n instana-clickhouse
 
 ${KUBECTL} create secret docker-registry instana-registry \
   --namespace=instana-clickhouse \

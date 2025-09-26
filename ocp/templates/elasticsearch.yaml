@@ -23,6 +23,14 @@ spec:
       metadata:
         creationTimestamp: null
       spec:
+        # Add the following podAntiAffinity snippet to schedule each pod on a different node. 
+        #affinity:
+        #  podAntiAffinity:
+        #    requiredDuringSchedulingIgnoredDuringExecution:
+        #    - labelSelector:
+        #        matchLabels:
+        #          elasticsearch.k8s.elastic.co/cluster-name: instana
+        #      topologyKey: kubernetes.io/hostname   
         imagePullSecrets:
           - name: instana-registry
         # nodeSelector:
@@ -33,6 +41,7 @@ spec:
         #   runAsGroup: 1000
         #   fsGroup: 1000
         ### END OF FIX
+        serviceAccountName: elasticsearch
         containers:
         - env:
           # - name: ES_JAVA_OPTS

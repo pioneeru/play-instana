@@ -32,6 +32,15 @@
      podTemplates:
        - name: clickhouse-keeper
          spec:
+           # Add the following Affinity snippet to schedule each pod on a different node. 
+           #affinity:
+           #  podAntiAffinity:
+           #    requiredDuringSchedulingIgnoredDuringExecution:
+           #      - labelSelector:
+           #          matchLabels:
+           #            app: clickhouse-keeper
+           #        topologyKey: "kubernetes.io/hostname"
+           serviceAccountName: clickhousekeeper
            containers:
              - name: clickhouse-keeper
                imagePullPolicy: IfNotPresent

@@ -22,3 +22,5 @@ users:
   - system:serviceaccount:instana-clickhouse:clickhouse-operator-altinity-clickhouse-operator
   - system:serviceaccount:instana-clickhouse:clickhouse-operator-ibm-clickhouse-operator
   - system:serviceaccount:instana-clickhouse:default
+  - system:serviceaccount:instana-clickhouse:clickhouse
+  - system:serviceaccount:instana-clickhouse:clickhousekeeper

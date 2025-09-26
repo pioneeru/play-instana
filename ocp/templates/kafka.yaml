@@ -21,6 +21,14 @@ spec:
   template:
     pod:
       tmpDirSizeLimit: 500Mi
+      # Add the following Affinity snippet to schedule each pod on a different node. 
+      #affinity:
+      #  podAntiAffinity:
+      #    requiredDuringSchedulingIgnoredDuringExecution:
+      #      - labelSelector:
+      #          matchLabels:
+      #            strimzi.io/pool-name: kafka
+      #        topologyKey: "kubernetes.io/hostname"
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaNodePool
@@ -41,6 +49,14 @@ spec:
   template:
     pod:
       tmpDirSizeLimit: 500Mi
+      # Add the following Affinity snippet to schedule each pod on a different node. 
+      #affinity:
+      #  podAntiAffinity:
+      #    requiredDuringSchedulingIgnoredDuringExecution:
+      #      - labelSelector:
+      #          matchLabels:
+      #            strimzi.io/pool-name: controller
+      #        topologyKey: "kubernetes.io/hostname"
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
@@ -57,7 +73,7 @@ spec:
   cruiseControl: {}
   kafka:
     image: ${INSTANA_IMAGE_REGISTRY}/${KAFKA_IMAGE_REPOSITORY}/${KAFKA_IMAGE_NAME}:${KAFKA_IMAGE_TAG}
-    version: 3.9.0
+    version: 3.9.1
     replicas: 3
     listeners:
     - name: scram
@@ -72,20 +88,22 @@ spec:
       type: simple
       superUsers:
       - strimzi-kafka-user
-    storage:
-      type: jbod
-      volumes:
-      - id: 0
-        type: persistent-claim
-        size: 100Gi
-        deleteClaim: true
-        class: ${RWO_STORAGECLASS}
+    # storage:
+    #   type: jbod
+    #   volumes:
+    #   - id: 0
+    #     type: persistent-claim
+    #     size: 100Gi
+    #     deleteClaim: true
+    #     class: ${RWO_STORAGECLASS}
     config:
-      default.replication.factor: 1
-      min.insync.replicas: 1
-      offsets.topic.replication.factor: 1
-      transaction.state.log.min.isr: 1
-      transaction.state.log.replication.factor: 1
+      offsets.topic.replication.factor: 1          ### 3
+      transaction.state.log.replication.factor: 1  ### 3
+      transaction.state.log.min.isr: 1             ### 2
+      default.replication.factor: 1                ### 3
+      min.insync.replicas: 1                       ### 2
+      max.message.bytes: 52428800
+      replica.fetch.max.bytes: 52428800
     jvmOptions:
       -Xms: 2000m
       -Xmx: 2000m

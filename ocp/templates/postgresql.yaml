@@ -4,6 +4,9 @@ metadata:
   name: postgres
   namespace: instana-postgres
 spec:
+  # Add the following Affinity snippet to schedule each pod on a different node. 
+  #affinity:
+  #  podAntiAffinityType: required
   instances: 3
   imageName: ${POSTGRES_IMAGE_NAME}:${POSTGRES_IMAGE_TAG}
   imagePullPolicy: IfNotPresent

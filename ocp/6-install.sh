@@ -270,6 +270,9 @@ ${KUBECTL} create secret docker-registry instana-registry \
 
 cat << EOF > instana-operator-values.yaml
 operator:
+  extraEnv:
+    - name: INSTANA_DISABLE_DB_VERSION_CHECKS
+      value: "true"
   image:
     registry: ${INSTANA_IMAGE_REGISTRY}
     # repository: ${INSTANA_OPERATOR_IMAGE_NAME}

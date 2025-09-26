@@ -140,6 +140,17 @@ spec:
     podTemplates:
     - name: clickhouse
       spec:
+        # Add the following Affinity snippet to schedule each pod on a different node. 
+        #affinity:
+        #  podAntiAffinity:
+        #    requiredDuringSchedulingIgnoredDuringExecution:
+        #      - labelSelector:
+        #          matchExpressions:
+        #            - key: "clickhouse.altinity.com/app"
+        #              operator: In
+        #              values:
+        #                - "chop"
+        #        topologyKey: "kubernetes.io/hostname"
         containers:
           - name: instana-clickhouse
             image: ${CLICKHOUSE_IMAGE_NAME}

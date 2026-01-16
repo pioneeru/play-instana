@@ -8,6 +8,7 @@ source ../artefacts.env
 # INSTANA_IMAGE_REGISTRY_USERNAME=user
 # INSTANA_IMAGE_REGISTRY_PASSWORD=pass
 
+### The env vars defined in credentials.env
 # INSTANA_OPERATOR_IMAGE_NAME=infrastructure/instana-enterprise-operator
 # INSTANA_BACKEND_IMAGE_REPOSITORY=backend
 # INSTANA_DATASTORE_IMAGE_REPOSITORY=datastore
@@ -91,7 +92,7 @@ while IFS= read -r line; do
                    "${INSTANA_IMAGE_REGISTRY}/${TEMP_IMAGE_REPOSITORY}/${TEMP_IMAGE_NAME}:${TEMP_IMAGE_TAG}"
     fi
 
-done <<< `oc instana versions list-images -i ${INSTANA_VERSION} -d ${DOWNLOAD_KEY}`
+done <<< `${KUBECTL} instana versions list-images -i ${INSTANA_CORE_IMAGE_TAG} -d ${DOWNLOAD_KEY}`
 
 #echo "total: $i"
 

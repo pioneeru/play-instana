@@ -24,9 +24,9 @@ function copy_image {
     TARGET_IMAGE=$2
 
     echo "Image: ${SOURCE_IMAGE} -> ${TARGET_IMAGE}" 
-    # podman pull ${SOURCE_IMAGE}
-    # podman tag ${SOURCE_IMAGE} ${TARGET_IMAGE}
-    # podman push ${TARGET_IMAGE}
+    podman pull ${SOURCE_IMAGE}
+    podman tag ${SOURCE_IMAGE} ${TARGET_IMAGE}
+    podman push ${TARGET_IMAGE}
 
 }
 

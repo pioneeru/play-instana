@@ -1,4 +1,4 @@
-# Deploying Instana backend v309
+# Deploying Instana backend v311
 
 The project is a set of bash scripts to automate Self-Hosted Custom Instana Edition deployment on RedHat Openshift (tested OCP versions: v4.20 with x86_64 nodes).
 

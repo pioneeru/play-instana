@@ -45,7 +45,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
   --docker-server=${INSTANA_IMAGE_REGISTRY}
 
-helm install strimzi ${KAFKA_HELM_CHART} -n instana-kafka --wait \
+helm upgrade --install strimzi -n instana-kafka --wait \
   --set "securityContext.seccompProfile.type=RuntimeDefault" \
   --version ${KAFKA_HELM_CHART_VERSION} \
   --set image.registry=${KAFKA_IMAGE_REGISTRY} \
@@ -56,7 +56,8 @@ helm install strimzi ${KAFKA_HELM_CHART} -n instana-kafka --wait \
   --set kafka.image.registry=${KAFKA_IMAGE_REGISTRY} \
   --set kafka.image.repository=${KAFKA_IMAGE_REPOSITORY} \
   --set kafka.image.name=${KAFKA_IMAGE_NAME} \
-  --set kafka.image.tag=${KAFKA_IMAGE_TAG}
+  --set kafka.image.tag=${KAFKA_IMAGE_TAG} \
+  ${KAFKA_HELM_CHART} 
 
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA} -n instana-kafka
 
@@ -73,7 +74,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
   --docker-server=${INSTANA_IMAGE_REGISTRY}
 
-helm install elastic-operator ${ELASTIC_HELM_CHART} -n instana-elastic --wait \
+helm upgrade --install elastic-operator ${ELASTIC_HELM_CHART} -n instana-elastic --wait \
   --version=${ELASTIC_HELM_CHART_VERSION} \
   --set image.repository=${ELASTIC_OPERATOR_IMAGE_NAME} \
   --set image.tag=${ELASTIC_OPERATOR_IMAGE_TAG} \
@@ -105,7 +106,7 @@ stringData:
 EOF
 ${KUBECTL} apply -f postgres-secret.yaml
 
-helm install cnpg ${POSTGRES_HELM_CHART} --wait \
+helm upgrade --install cnpg ${POSTGRES_HELM_CHART} --wait \
   --set image.repository=${POSTGRES_OPERATOR_IMAGE_NAME} \
   --set image.tag=${POSTGRES_OPERATOR_IMAGE_TAG} \
   --set imagePullSecrets[0].name=instana-registry \
@@ -131,7 +132,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-ca
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD}
 
-helm install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandra --wait \
+helm upgrade --install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandra --wait \
   --set securityContext.runAsGroup=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
   --set securityContext.runAsUser=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
   --set securityContext.allowPrivilegeEscalation=false \
@@ -168,11 +169,12 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
   --docker-server=${INSTANA_IMAGE_REGISTRY}
 
-helm install clickhouse-operator ${CLICKHOUSE_HELM_CHART} \
+helm upgrade --install clickhouse-operator \
   -n instana-clickhouse --wait \
   --set operator.image.repository=${CLICKHOUSE_OPERATOR_IMAGE_NAME} \
   --set operator.image.tag=${CLICKHOUSE_OPERATOR_IMAGE_TAG} \
-  --set imagePullSecrets[0].name="instana-registry"
+  --set imagePullSecrets[0].name="instana-registry" \
+  ${CLICKHOUSE_HELM_CHART} 
 
 cat << EOF > clickhouse-secret.yaml
 apiVersion: v1
@@ -199,7 +201,7 @@ ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE}
 
 echo "Waiting for Kafka pods to be running..."
 # ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true -f ${MANIFEST_FILENAME_KAFKA} --timeout=3000s
-${KUBECTL} -n instana-kafka wait --for=condition=Ready=true pod -lstrimzi.io/component-type=zookeeper --timeout=3000s
+# ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true pod -lstrimzi.io/component-type=zookeeper --timeout=3000s
 ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true pod -lstrimzi.io/component-type=kafka --timeout=3000s
 
 
@@ -212,7 +214,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana
 # for k8s and OCP 4.10:
 #helm install beeinstana instana/beeinstana-operator --namespace=beeinstana
 # For a cluster on Red Hat OpenShift 4.11 and later:
-helm install beeinstana ${BEEINSTANA_HELM_CHART} --namespace=beeinstana --wait \
+helm upgrade --install beeinstana ${BEEINSTANA_HELM_CHART} --namespace=beeinstana --wait \
   --set operator.securityContext.seccompProfile.type=RuntimeDefault \
   --set image.registry=${INSTANA_IMAGE_REGISTRY} \
   --set image.repository=${BEEINSTANA_OPERATOR_IMAGE_NAME} \

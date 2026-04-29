@@ -60,6 +60,10 @@ copy_image "artifact-public.instana.io/self-hosted-images/3rd-party/operator/str
         "${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/strimzi:${KAFKA_OPERATOR_IMAGE_TAG}"
 copy_image "artifact-public.instana.io/self-hosted-images/3rd-party/datastore/kafka:${KAFKA_IMAGE_TAG}" \
         "${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_IMAGE_REPOSITORY}/kafka:${KAFKA_IMAGE_TAG}"
+####### WORKAROUND !!!!!
+copy_image "artifact-public.instana.io/self-hosted-images/3rd-party/operator/strimzi:${KAFKA_WORKAROUND_USER_OPERATOR}" \
+        "${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/strimzi:${KAFKA_WORKAROUND_USER_OPERATOR}"
+####### WORKAROUND !!!!!
 
 ### Copy Postgres images
 copy_image "artifact-public.instana.io/self-hosted-images/3rd-party/operator/cloudnative-pg:${POSTGRES_OPERATOR_IMAGE_TAG}" \

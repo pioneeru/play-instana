@@ -50,8 +50,8 @@ echo "Deleteing Zookeeper & Clickhouse Keeper clusters..."
 ${KUBECTL} -n instana-clickhouse delete zk instana-zookeeper
 ${KUBECTL} -n instana-clickhouse delete chk clickhouse-keeper
 
-echo "Waiting for Zookeeper & Clickhouse Keeper pods deletion..."
-${KUBECTL} -n instana-clickhouse wait --for=delete pod -lrelease=instana-zookeeper --timeout=3000s
+echo "Waiting for Clickhouse Keeper pods deletion..."
+#${KUBECTL} -n instana-clickhouse wait --for=delete pod -lrelease=instana-zookeeper --timeout=3000s
 ${KUBECTL} -n instana-clickhouse wait --for=delete pod -lapp=clickhouse-keeper --timeout=3000s
 
 
@@ -87,7 +87,7 @@ echo "Uninstaling cassandra-operator..."
 helm uninstall cass-operator -n instana-cassandra 
 
 echo "Uninstaling strimzi-operator..."
-helm uninstall strimzi -n instana-kafka 
+helm uninstall strimzi-kafka-operator -n instana-kafka 
 
 echo "Uninstaling postgres-operator..."
 helm uninstall cnpg -n instana-postgres 

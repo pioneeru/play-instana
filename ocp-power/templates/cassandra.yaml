@@ -1,0 +1,56 @@
+apiVersion: cassandra.datastax.com/v1beta1
+kind: CassandraDatacenter
+metadata:
+  name: cassandra
+  namespace: instana-cassandra
+spec:
+  clusterName: instana
+  serverType: cassandra
+  # configBuilderImage: docker.io/datastax/cass-config-builder:1.0-ubi7
+  serverImage: ${CASSANDRA_SERVER_IMAGE_NAME}
+  systemLoggerImage: ${CASSANDRA_SYSTEMLOGGER_IMAGE_NAME}
+  k8ssandraClientImage: ${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME}
+  serverVersion: ${CASSANDRA_SERVER_VERSION}
+  imagePullPolicy: Always
+  podTemplateSpec:
+    spec:
+      serviceAccountName: cassandra
+      imagePullSecrets:
+      - name: instana-registry
+      containers:
+      - name: cassandra
+  managementApiAuth:
+    insecure: {}
+  size: 1
+  allowMultipleNodesPerWorker: false
+  resources:
+    requests:
+      cpu: 2000m      ### 2000m
+      memory: 8Gi     ### 8Gi
+    limits:
+      memory: 16Gi     ### 16Gi
+  storageConfig:
+    cassandraDataVolumeClaimSpec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 200Gi    ### 100Gi   
+      storageClassName: ${RWO_STORAGECLASS}
+  config:
+    jvm-server-options:
+      initial_heap_size: "4G"   ### 4G
+      max_heap_size: "8G"       ### 8G
+      additional-jvm-opts:
+        - -Dcassandra.allow_unsafe_aggressive_sstable_expiration=true
+    cassandra-yaml:
+      authenticator: org.apache.cassandra.auth.PasswordAuthenticator
+      authorizer: org.apache.cassandra.auth.CassandraAuthorizer
+      role_manager: org.apache.cassandra.auth.CassandraRoleManager
+      memtable_flush_writers: 8
+      auto_snapshot: false
+      gc_warn_threshold: 10000ms
+      # otc_coalescing_strategy: DISABLED   ### Disabled by default
+      memtable_allocation_type: offheap_objects
+      num_tokens: 256
+      drop_compact_storage_enabled: true

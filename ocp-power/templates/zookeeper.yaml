@@ -1,0 +1,52 @@
+apiVersion: "zookeeper.pravega.io/v1beta1"
+kind: "ZookeeperCluster"
+metadata:
+  name: "instana-zookeeper"
+  namespace: instana-clickhouse
+spec:
+  # For all params and defaults, see https://github.com/pravega/zookeeper-operator/tree/master/charts/zookeeper#configuration
+  replicas: 3
+  image:
+    repository: ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_IMAGE_REPOSITORY}/zookeeper
+    tag: ${ZOOKEEPER_TAG_NAME}
+  pod:
+    imagePullSecrets: [name: "instana-registry"]
+    # Add the following Affinity snippet to schedule each pod on a different node. 
+    # affinity:
+    #   podAntiAffinity:
+    #     requiredDuringSchedulingIgnoredDuringExecution:
+    #       - labelSelector:
+    #           matchExpressions:
+    #             - key: kind
+    #               operator: In
+    #               values:
+    #                 - "ZookeeperMember"
+    #         topologyKey: kubernetes.io/hostname
+    serviceAccountName: "zookeeper"
+    # Add the following securityContext snippet for Kubernetes offerings other than OCP.
+    # securityContext:
+    #   runAsUser: 1000
+    #   fsGroup: 1000
+    env:
+    - name: ZK_SERVER_HEAP
+      value: "1000"
+    resources:
+      requests:
+        cpu: 1
+        memory: 1500Mi
+      limits:
+        memory: 2Gi
+  config:
+    tickTime: 2000
+    initLimit: 10
+    syncLimit: 5
+    maxClientCnxns: 0
+    autoPurgeSnapRetainCount: 20
+    autoPurgePurgeInterval: 1
+  persistence:
+    reclaimPolicy: Delete
+    spec:
+      resources:
+        requests:
+          storage: "10Gi"
+      storageClassName: ${RWO_STORAGECLASS}

@@ -1,0 +1,75 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: instana
+  namespace: instana-elastic
+spec:
+  monitoring:
+    logs: {}
+    metrics: {}
+  version: ${ELASTIC_VERSION}
+  image: ${ELASTIC_IMAGE_NAME}
+  nodeSets:
+  - name: default
+    count: 3
+    config:
+      node.roles:
+        - master
+        - data
+        - ingest
+      node.store.allow_mmap: false
+      search.max_buckets: 65000
+    podTemplate:
+      metadata:
+        creationTimestamp: null
+      spec:
+        # Add the following podAntiAffinity snippet to schedule each pod on a different node. 
+        #affinity:
+        #  podAntiAffinity:
+        #    requiredDuringSchedulingIgnoredDuringExecution:
+        #    - labelSelector:
+        #        matchLabels:
+        #          elasticsearch.k8s.elastic.co/cluster-name: instana
+        #      topologyKey: kubernetes.io/hostname   
+        imagePullSecrets:
+          - name: instana-registry
+        # nodeSelector:
+        #   deploy-env: bank-prod
+        ### FIX for K8s with securityContext
+        # securityContext:
+        #   runAsUser: 1000
+        #   runAsGroup: 1000
+        #   fsGroup: 1000
+        ### END OF FIX
+        serviceAccountName: elasticsearch
+        containers:
+        - env:
+          # - name: ES_JAVA_OPTS
+          #   value: -Xms1g -Xmx1g
+          - name: ingest.geoip.downloader.enabled
+            value: "false"
+          name: elasticsearch
+          resources:
+            limits:
+              memory: 5Gi
+            requests:
+              cpu: "1"
+              memory: 4Gi
+    volumeClaimTemplates:
+      - metadata:
+          name: elasticsearch-data # Do not change this name unless you set up a volume mount for the data path.
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 200Gi
+          storageClassName: ${RWO_STORAGECLASS}
+  http:
+    service:
+      metadata: {}
+      spec: {}
+    tls:
+      certificate: {}
+      selfSignedCertificate:
+        disabled: true

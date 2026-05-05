@@ -145,34 +145,32 @@ spec:
       enabled: true
     # - name: feature.plugin.entity.metric.statistics.enabled
     #   enabled: true
-    - name: feature.automation.enabled
-      enabled: true
     - name: feature.smart.alerts.logs.blueprint.enabled
-      enabled: true
+      enabled: false
     - name: feature.infra.smart.alerts.enabled
-      enabled: true
+      enabled: false
     - name: feature.synthetics.enabled
-      enabled: true
+      enabled: false
     - name: feature.synthetic.smart.alerts.enabled
-      enabled: true
+      enabled: false
     - name: syntheticSmartAlertsEnabled
-      enabled: true
+      enabled: false
     - name: feature.synthetic.create.test.advance.mode.enabled
-      enabled: true
+      enabled: false
     - name: feature.synthetic.browser.create.test.enabled
-      enabled: true
+      enabled: false
     - name: feature.synthetic.browser.script.enabled
-      enabled: true
+      enabled: false
     - name: feature.vsphere.enabled
       enabled: false      
     - name: feature.automation.enabled
-      enabled: true      
+      enabled: false      
     - name: feature.action.automation.enabled
-      enabled: true
+      enabled: false
     - name: feature.logging.enabled
-      enabled: true
+      enabled: flase
     - name: feature.kubernetes.logging.enabled
-      enabled: true
+      enabled: false
   # Use one of smtpConfig or sesConfig
   emailConfig:
     smtpConfig:

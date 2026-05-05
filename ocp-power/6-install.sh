@@ -148,7 +148,6 @@ helm upgrade --install cass-operator -n instana-cassandra --wait \
   --set imageConfig.k8ssandraClient=${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME} \
   ${CASSANDRA_HELM_CHART} 
 
-
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA} 
 
 

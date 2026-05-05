@@ -53,7 +53,7 @@ spec:
           podTemplate: clickhouse
         layout:
           shardsCount: 1
-          replicasCount: 2  # The the replication count of 2 is fixed for Instana backend installations
+          replicasCount: 1  # The the replication count of 2 is fixed for Instana backend installations
         schemaPolicy:
           replica: None
           shard: None
@@ -170,7 +170,7 @@ spec:
             - --
         resources:
           limits:
-            memory: 4Gi
+            memory: 3Gi
           requests:
             cpu: "1"
             memory: 2Gi

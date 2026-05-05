@@ -11,18 +11,12 @@ spec:
   image: ${ELASTIC_IMAGE_NAME}
   nodeSets:
   - name: default
-    count: 3
-    config:
-      node.roles:
-        - master
-        - data
-        - ingest
-      node.store.allow_mmap: false
-      search.max_buckets: 65000
+    count: 1
     podTemplate:
       metadata:
         creationTimestamp: null
       spec:
+        serviceAccountName: elasticsearch
         # Add the following podAntiAffinity snippet to schedule each pod on a different node. 
         #affinity:
         #  podAntiAffinity:
@@ -35,36 +29,36 @@ spec:
           - name: instana-registry
         # nodeSelector:
         #   deploy-env: bank-prod
-        ### FIX for K8s with securityContext
-        # securityContext:
-        #   runAsUser: 1000
-        #   runAsGroup: 1000
-        #   fsGroup: 1000
-        ### END OF FIX
-        serviceAccountName: elasticsearch
         containers:
-        - env:
+        - name: elasticsearch
+          #env:
           # - name: ES_JAVA_OPTS
           #   value: -Xms1g -Xmx1g
-          - name: ingest.geoip.downloader.enabled
-            value: "false"
-          name: elasticsearch
+          #- name: ingest.geoip.downloader.enabled
+          #  value: "false"
           resources:
             limits:
-              memory: 5Gi
+              memory: 3Gi
             requests:
               cpu: "1"
-              memory: 4Gi
+              memory: 2Gi
+    config:
+      node.master: true
+      node.data: true
+      node.ingest: true
+      node.store.allow_mmap: false
+      search.max_buckets: 65000
+      xpack.ml.enabled: false
     volumeClaimTemplates:
-      - metadata:
-          name: elasticsearch-data # Do not change this name unless you set up a volume mount for the data path.
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 200Gi
-          storageClassName: ${RWO_STORAGECLASS}
+    - metadata:
+        name: elasticsearch-data # Do not change this name unless you set up a volume mount for the data path.
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 200Gi
+        storageClassName: ${RWO_STORAGECLASS}
   http:
     service:
       metadata: {}

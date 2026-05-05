@@ -7,7 +7,7 @@ metadata:
   labels:
     strimzi.io/cluster: instana
 spec:
-  replicas: 3
+  replicas: 1
   roles:
      - broker
   storage:
@@ -38,7 +38,7 @@ metadata:
   labels:
     strimzi.io/cluster: instana
 spec:
-  replicas: 3
+  replicas: 1
   roles:
     - controller
   storage:
@@ -70,11 +70,11 @@ metadata:
     strimzi.io/kraft:  enabled
 spec:
   # Cruise Control needs more than 1 kafka node, comment the line below if you plan to use 1 broker nodes.
-  cruiseControl: {}
+  #cruiseControl: {}
   kafka:
     image: ${INSTANA_IMAGE_REGISTRY}/${KAFKA_IMAGE_REPOSITORY}/${KAFKA_IMAGE_NAME}:${KAFKA_IMAGE_TAG}
     version: ${KAFKA_VERSION}
-    replicas: 3
+    replicas: 1
     listeners:
     - name: scram
       port: 9092
@@ -105,14 +105,14 @@ spec:
       max.message.bytes: 52428800
       replica.fetch.max.bytes: 52428800
     jvmOptions:
-      -Xms: 2000m
-      -Xmx: 2000m
+      -Xms: 1000m
+      -Xmx: 1000m
     resources:
       limits:
-        memory: 5Gi
+        memory: 3Gi
       requests:
         cpu: "1"
-        memory: 4Gi
+        memory: 3Gi
   # zookeeper:
   #   replicas: 3
   #   resources:

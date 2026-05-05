@@ -215,11 +215,12 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana
 # for k8s and OCP 4.10:
 #helm install beeinstana instana/beeinstana-operator --namespace=beeinstana
 # For a cluster on Red Hat OpenShift 4.11 and later:
-helm upgrade --install beeinstana ${BEEINSTANA_HELM_CHART} --namespace=beeinstana --wait \
+helm upgrade --install beeinstana --namespace=beeinstana --wait \
   --set operator.securityContext.seccompProfile.type=RuntimeDefault \
   --set image.registry=${INSTANA_IMAGE_REGISTRY} \
   --set image.repository=${BEEINSTANA_OPERATOR_IMAGE_NAME} \
-  --set image.tag=${BEEINSTANA_OPERATOR_IMAGE_TAG}
+  --set image.tag=${BEEINSTANA_OPERATOR_IMAGE_TAG} \
+  ${BEEINSTANA_HELM_CHART} 
 
 while ! ${KUBECTL} get secret strimzi-kafka-user -n instana-kafka; do echo "Waiting for strimzi-kafka-user secret in instana-kafka. CTRL-C to exit."; sleep 10; done
 

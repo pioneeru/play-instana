@@ -155,7 +155,8 @@ spec:
         initContainers:
           - name: waiting-configmap
             image: ${CLICKHOUSE_IMAGE_NAME}
-            command: ['sh', '-c', 'echo Waiting for ConfigMap readiness && sleep 840']
+            # command: ['sh', '-c', 'echo Waiting for ConfigMap readiness && sleep 840']
+            command: ['sh', '-c', 'echo Waiting for ConfigMap readiness && sleep 120']
         containers:
           - name: instana-clickhouse
             image: ${CLICKHOUSE_IMAGE_NAME}

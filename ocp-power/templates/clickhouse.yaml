@@ -154,7 +154,7 @@ spec:
         #        topologyKey: "kubernetes.io/hostname"
         initContainers:
           - name: waiting-configmap
-            image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+            image: ${CLICKHOUSE_IMAGE_NAME}
             command: ['sh', '-c', 'echo Waiting for ConfigMap readiness && sleep 840']
         containers:
           - name: instana-clickhouse

@@ -45,19 +45,19 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
   --docker-server=${INSTANA_IMAGE_REGISTRY}
 
-helm upgrade --install strimzi-kafka-operator -n instana-kafka --wait \
-  --set "securityContext.seccompProfile.type=RuntimeDefault" \
-  --version ${KAFKA_HELM_CHART_VERSION} \
-  --set image.registry=${KAFKA_IMAGE_REGISTRY} \
-  --set image.repository=${KAFKA_OPERATOR_IMAGE_REPOSITORY} \
-  --set image.name=${KAFKA_OPERATOR_IMAGE_NAME} \
-  --set image.tag=${KAFKA_OPERATOR_IMAGE_TAG} \
-  --set image.imagePullSecrets[0].name="instana-registry" \
-  --set kafka.image.registry=${KAFKA_IMAGE_REGISTRY} \
-  --set kafka.image.repository=${KAFKA_IMAGE_REPOSITORY} \
-  --set kafka.image.name=${KAFKA_IMAGE_NAME} \
-  --set kafka.image.tag=${KAFKA_IMAGE_TAG} \
-  ${KAFKA_HELM_CHART} 
+  helm upgrade --install strimzi-kafka-operator -n instana-kafka --wait \
+    --set "securityContext.seccompProfile.type=RuntimeDefault" \
+    --version ${KAFKA_HELM_CHART_VERSION} \
+    --set image.registry=${KAFKA_IMAGE_REGISTRY} \
+    --set image.repository=${KAFKA_OPERATOR_IMAGE_REPOSITORY} \
+    --set image.name=${KAFKA_OPERATOR_IMAGE_NAME} \
+    --set image.tag=${KAFKA_OPERATOR_IMAGE_TAG} \
+    --set image.imagePullSecrets[0].name="instana-registry" \
+    --set kafka.image.registry=${KAFKA_IMAGE_REGISTRY} \
+    --set kafka.image.repository=${KAFKA_IMAGE_REPOSITORY} \
+    --set kafka.image.name=${KAFKA_IMAGE_NAME} \
+    --set kafka.image.tag=${KAFKA_IMAGE_TAG} \
+    ${KAFKA_HELM_CHART} 
 
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA} -n instana-kafka
 

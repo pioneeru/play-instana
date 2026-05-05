@@ -69,7 +69,7 @@ metadata:
     strimzi.io/node-pools: enabled
     strimzi.io/kraft:  enabled
 spec:
-  # Cruise Control needs more than 1 kafka node
+  # Cruise Control needs more than 1 kafka node, comment the line below if you plan to use 1 broker nodes.
   cruiseControl: {}
   kafka:
     image: ${INSTANA_IMAGE_REGISTRY}/${KAFKA_IMAGE_REPOSITORY}/${KAFKA_IMAGE_NAME}:${KAFKA_IMAGE_TAG}

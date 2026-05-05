@@ -132,7 +132,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-ca
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD}
 
-helm upgrade --install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandra --wait \
+helm upgrade --install cass-operator -n instana-cassandra --wait \
   --set securityContext.runAsGroup=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
   --set securityContext.runAsUser=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
   --set securityContext.allowPrivilegeEscalation=false \
@@ -145,7 +145,9 @@ helm upgrade --install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandr
   --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
   --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
   --set imageConfig.systemLogger=${CASSANDRA_SYSTEMLOGGER_IMAGE_NAME}  \
-  --set imageConfig.k8ssandraClient=${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME}
+  --set imageConfig.k8ssandraClient=${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME} \
+  ${CASSANDRA_HELM_CHART} 
+
 
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA} 
 

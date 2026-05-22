@@ -12,7 +12,7 @@ spec:
   nodeSets:
   - name: default
     count: 1
-`[[ $ELASTIC_VERSION == '7.'* ]] && echo "
+`[[ ${ELASTIC_VERSION} == '7.'* ]] && echo "
     config:
       node.master: true
       node.data: true
@@ -21,7 +21,7 @@ spec:
       search.max_buckets: 65000
       xpack.ml.enabled: false
 `
-`[[ $ELASTIC_VERSION == '8.'* ]] && echo "
+`[[ ${ELASTIC_VERSION} == '8.'* ]] && echo "
     config:
       node.roles:
         - master

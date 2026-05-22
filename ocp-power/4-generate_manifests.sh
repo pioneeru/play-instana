@@ -5,12 +5,6 @@ source ../credentials.env
 source ../artifacts-${INSTANA_PLATFORM}.env
 
 
-eval "cat <<EOF
-$(<templates/zookeeper.yaml)
-EOF
-" > ${MANIFEST_FILENAME_ZOOKEEPER}
-
-
 
 eval "cat <<EOF
 $(<templates/kafka.yaml)

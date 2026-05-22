@@ -2,7 +2,7 @@
 
 echo "Reading credentials.env"
 source ../credentials.env
-source ../artefacts.env
+source ../artefacts-${INSTANA_PLATFORM}.env
 
 # INSTANA_IMAGE_REGISTRY=${INSTANA_IMAGE_REGISTRY}/instana
 # INSTANA_IMAGE_REGISTRY_USERNAME=user

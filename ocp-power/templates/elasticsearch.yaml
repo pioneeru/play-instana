@@ -20,7 +20,7 @@ spec:
       node.store.allow_mmap: false
       search.max_buckets: 65000
       xpack.ml.enabled: false
-`
+"`
 `[[ ${ELASTIC_VERSION} == '8.'* ]] && echo "
     config:
       node.roles:
@@ -29,7 +29,7 @@ spec:
         - ingest
       node.store.allow_mmap: false
       search.max_buckets: 65000
-`
+"`
     podTemplate:
       metadata:
         creationTimestamp: null

@@ -2,7 +2,7 @@
 
 echo "Reading credentials.env..."
 source ../credentials.env
-source ../artefacts-${INSTANA_PLATFORM}.env
+source ../artifacts-${INSTANA_PLATFORM}.env
 
 #### DATASTORES ######
 

@@ -59,4 +59,6 @@ spec:
     alertRequestsTopic: alert_requests
     thresholdBreachTopic: alert_breaches
   # Should set useMultiArchImages to true for s390x and ppc64le
-  useMultiArchImages: true
+`[[ $INSTANA_PLATFORM == 'ppc64le' ]] && echo "
+  useMultiArchImages: true"
+`

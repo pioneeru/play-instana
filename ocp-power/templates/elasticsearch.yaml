@@ -55,11 +55,11 @@ spec:
         serviceAccountName: elasticsearch
         containers:
         - name: elasticsearch
-          env:
+          #env:
           # - name: ES_JAVA_OPTS
           #   value: -Xms1g -Xmx1g
-          - name: ingest.geoip.downloader.enabled
-            value: "false"
+          # - name: ingest.geoip.downloader.enabled
+          #   value: "false"
           resources:
             limits:
               memory: 3Gi

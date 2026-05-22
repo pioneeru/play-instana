@@ -11,7 +11,17 @@ spec:
   image: ${ELASTIC_IMAGE_NAME}
   nodeSets:
   - name: default
-    count: 3
+    count: 1
+`[[ $ELASTIC_VERSION == '7.'* ]] && echo "
+    config:
+      node.master: true
+      node.data: true
+      node.ingest: true
+      node.store.allow_mmap: false
+      search.max_buckets: 65000
+      xpack.ml.enabled: false
+`
+`[[ $ELASTIC_VERSION == '8.'* ]] && echo "
     config:
       node.roles:
         - master
@@ -19,6 +29,7 @@ spec:
         - ingest
       node.store.allow_mmap: false
       search.max_buckets: 65000
+`
     podTemplate:
       metadata:
         creationTimestamp: null
@@ -43,12 +54,12 @@ spec:
         ### END OF FIX
         serviceAccountName: elasticsearch
         containers:
-        - env:
+        - name: elasticsearch
+          env:
           # - name: ES_JAVA_OPTS
           #   value: -Xms1g -Xmx1g
           - name: ingest.geoip.downloader.enabled
             value: "false"
-          name: elasticsearch
           resources:
             limits:
               memory: 5Gi

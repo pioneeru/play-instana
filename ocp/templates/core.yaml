@@ -145,8 +145,6 @@ spec:
       enabled: true
     # - name: feature.plugin.entity.metric.statistics.enabled
     #   enabled: true
-    - name: feature.automation.enabled
-      enabled: true
     - name: feature.smart.alerts.logs.blueprint.enabled
       enabled: true
     - name: feature.infra.smart.alerts.enabled

@@ -12,11 +12,28 @@ spec:
   nodeSets:
   - name: default
     count: 1
+`[[ $ELASTIC_VERSION == '7.'* ]] && echo "
+    config:
+      node.master: true
+      node.data: true
+      node.ingest: true
+      node.store.allow_mmap: false
+      search.max_buckets: 65000
+      xpack.ml.enabled: false
+`
+`[[ $ELASTIC_VERSION == '8.'* ]] && echo "
+    config:
+      node.roles:
+        - master
+        - data
+        - ingest
+      node.store.allow_mmap: false
+      search.max_buckets: 65000
+`
     podTemplate:
       metadata:
         creationTimestamp: null
       spec:
-        serviceAccountName: elasticsearch
         # Add the following podAntiAffinity snippet to schedule each pod on a different node. 
         #affinity:
         #  podAntiAffinity:
@@ -29,26 +46,26 @@ spec:
           - name: instana-registry
         # nodeSelector:
         #   deploy-env: bank-prod
+        ### FIX for K8s with securityContext
+        # securityContext:
+        #   runAsUser: 1000
+        #   runAsGroup: 1000
+        #   fsGroup: 1000
+        ### END OF FIX
+        serviceAccountName: elasticsearch
         containers:
         - name: elasticsearch
-          #env:
+          env:
           # - name: ES_JAVA_OPTS
           #   value: -Xms1g -Xmx1g
-          #- name: ingest.geoip.downloader.enabled
-          #  value: "false"
+          - name: ingest.geoip.downloader.enabled
+            value: "false"
           resources:
             limits:
               memory: 3Gi
             requests:
               cpu: "1"
               memory: 2Gi
-    config:
-      node.master: true
-      node.data: true
-      node.ingest: true
-      node.store.allow_mmap: false
-      search.max_buckets: 65000
-      xpack.ml.enabled: false
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data # Do not change this name unless you set up a volume mount for the data path.

@@ -6,37 +6,6 @@ source ../artifacts-${INSTANA_PLATFORM}.env
 
 #### DATASTORES ######
 
-# echo "Installing zookeeper..."
-# ${KUBECTL} create namespace instana-zookeeper
-
-# ${KUBECTL} create secret docker-registry instana-registry \
-#   --namespace=instana-zookeeper \
-#   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-#   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
-#   --docker-server=${INSTANA_IMAGE_REGISTRY}
-
-# helm install instana ${ZOOKEEPER_HELM_CHART} -n instana-zookeeper \
-#   --create-namespace --wait \
-#   --set image.registry=${INSTANA_IMAGE_REGISTRY} \
-#   --set image.repository=${ZOOKEEPER_OPERATOR_IMAGE_NAME} \
-#   --set image.tag=${ZOOKEEPER_OPERATOR_IMAGE_TAG} \
-#   --set global.imagePullSecrets={"instana-registry"}
-
-# ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s
-
-# ${KUBECTL} create namespace instana-clickhouse
-# ${KUBECTL} create secret docker-registry instana-registry \
-#   --namespace=instana-clickhouse \
-#   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
-#   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
-#   --docker-server=${INSTANA_IMAGE_REGISTRY}
-# ${KUBECTL} apply -f ${MANIFEST_FILENAME_ZOOKEEPER} -n instana-clickhouse
-
-
-
-
-
-
 echo "Installing kafka..."
 ${KUBECTL} create namespace instana-kafka
 ${KUBECTL} create secret docker-registry instana-registry \
@@ -149,11 +118,6 @@ helm upgrade --install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandr
 
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA} 
 
-
-
-# echo "Waiting for Zookeeper pods to be running..."
-# ${KUBECTL} wait -n instana-clickhouse --for=jsonpath='{.status.conditions[0].status}'=True zk instana-zookeeper --timeout=3000s
-# ${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lrelease=instana-zookeeper --timeout=3000s
 
 
 echo "Installing Clickhouse..."

@@ -66,6 +66,15 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-po
 
 # ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES_SCC}
 
+helm upgrade --install cnpg -n instana-postgres --wait \
+  --set image.repository=${POSTGRES_OPERATOR_IMAGE_NAME} \
+  --set image.tag=${POSTGRES_OPERATOR_IMAGE_TAG} \
+  --set imagePullSecrets[0].name=instana-registry \
+  --set containerSecurityContext.runAsUser=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
+  --set containerSecurityContext.runAsGroup=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
+  ${INSTANA_AIRGAPPED_FOLDER}/${POSTGRES_HELM_CHART}
+
+${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES}
 
 if ! ${KUBECTL} get secret instanaadmin -n instana-postgres &> /dev/null; then
 echo "Generating instanaadmin secret in instana-postgres namespace..." 
@@ -85,15 +94,7 @@ else
   echo "instanaadmin secret already exists in instana-postgres namespace."
 fi
 
-helm upgrade --install cnpg -n instana-postgres --wait \
-  --set image.repository=${POSTGRES_OPERATOR_IMAGE_NAME} \
-  --set image.tag=${POSTGRES_OPERATOR_IMAGE_TAG} \
-  --set imagePullSecrets[0].name=instana-registry \
-  --set containerSecurityContext.runAsUser=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
-  --set containerSecurityContext.runAsGroup=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
-  ${INSTANA_AIRGAPPED_FOLDER}/${POSTGRES_HELM_CHART}
 
-${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES}
 
 
 
@@ -152,6 +153,8 @@ helm upgrade --install clickhouse-operator \
   ${INSTANA_AIRGAPPED_FOLDER}/${CLICKHOUSE_HELM_CHART} 
 
 
+${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_KEEPER}
+
 if ! ${KUBECTL} get secret chi-passwords -n instana-clickhouse &> /dev/null; then
 echo "Generating chi-passwords secret in instana-clickhouse namespace..." 
 cat << EOF > clickhouse-secret.yaml
@@ -169,8 +172,6 @@ ${KUBECTL} apply -f clickhouse-secret.yaml
 else
   echo "chi-passwords secret already exists in instana-clickhouse namespace." 
 fi
-
-${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_KEEPER}
 
 echo "Waiting for Clickhouse keeper pods to be running..."
 ${KUBECTL} wait -n instana-clickhouse --for=jsonpath='{status.status}'=Completed chk clickhouse-keeper --timeout=3000s
@@ -321,7 +322,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
     --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
     --docker-server=${INSTANA_IMAGE_REGISTRY}
 
-
+sleep 5
 
 # Creating/Updating instana tls secret
 if ! ${KUBECTL} get secret instana-tls -n instana-core  &> /dev/null; then

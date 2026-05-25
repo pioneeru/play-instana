@@ -202,7 +202,7 @@ helm upgrade --install beeinstana --namespace=beeinstana --wait \
 
 while ! ${KUBECTL} get secret strimzi-kafka-user -n instana-kafka; do echo "Waiting for strimzi-kafka-user secret in instana-kafka. CTRL-C to exit."; sleep 10; done
 
-if ! ${KUBECTL} get secret beeinstana-kafka-creds -n beeinstana  &> /dev/null; then
+if ${KUBECTL} get secret beeinstana-kafka-creds -n beeinstana  &> /dev/null; then
     ${KUBECTL} delete secret beeinstana-kafka-creds -n beeinstana
 fi
 ${KUBECTL} create secret generic beeinstana-kafka-creds -n beeinstana \

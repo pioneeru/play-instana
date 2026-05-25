@@ -67,7 +67,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-po
 # ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES_SCC}
 
 
-if ${KUBECTL} get secret instanaadmin -n instana-postgres >/dev/null 2>&1; then
+if ! ${KUBECTL} get secret instanaadmin -n instana-postgres &> /dev/null; then
 echo "Generating instanaadmin secret in instana-postgres namespace..." 
 cat << EOF > postgres-secret.yaml
 kind: Secret
@@ -80,9 +80,9 @@ stringData:
    username: instanaadmin
    password: `openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
 EOF
-${KUBECTL} apply -f postgres-secret.yaml
+${KUBECTL} apply -f postgres-secret.yaml;
 else
-  echo "instanaadmin secret already exists in instana-postgres namespace." 
+  echo "instanaadmin secret already exists in instana-postgres namespace."
 fi
 
 helm upgrade --install cnpg -n instana-postgres --wait \
@@ -152,7 +152,7 @@ helm upgrade --install clickhouse-operator \
   ${INSTANA_AIRGAPPED_FOLDER}/${CLICKHOUSE_HELM_CHART} 
 
 
-if ${KUBECTL} get secret chi-passwords -n instana-clickhouse >/dev/null 2>&1; then
+if ! ${KUBECTL} get secret chi-passwords -n instana-clickhouse &> /dev/null; then
 echo "Generating chi-passwords secret in instana-clickhouse namespace..." 
 cat << EOF > clickhouse-secret.yaml
 apiVersion: v1
@@ -202,14 +202,14 @@ helm upgrade --install beeinstana --namespace=beeinstana --wait \
 
 while ! ${KUBECTL} get secret strimzi-kafka-user -n instana-kafka; do echo "Waiting for strimzi-kafka-user secret in instana-kafka. CTRL-C to exit."; sleep 10; done
 
-if ${KUBECTL} get secret beeinstana-kafka-creds -n beeinstana >/dev/null 2>&1; then
+if ! ${KUBECTL} get secret beeinstana-kafka-creds -n beeinstana  &> /dev/null; then
     ${KUBECTL} delete secret beeinstana-kafka-creds -n beeinstana
 fi
 ${KUBECTL} create secret generic beeinstana-kafka-creds -n beeinstana \
   --from-literal=username=strimzi-kafka-user \
   --from-literal=password=`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`
 
-if ${KUBECTL} get secret beeinstana-admin-creds -n beeinstana >/dev/null 2>&1; then
+if ! ${KUBECTL} get secret beeinstana-admin-creds -n beeinstana &> /dev/null; then
     echo "Generating beeinstana-admin-creds secret in instana-beeinstana namespace..." 
     ${KUBECTL} create secret generic beeinstana-admin-creds -n beeinstana \
       --from-literal=username=beeinstana-user \
@@ -324,7 +324,7 @@ ${KUBECTL} create secret docker-registry instana-registry \
 
 
 # Creating/Updating instana tls secret
-if ! ${KUBECTL} get secret instana-tls -n instana-core >/dev/null 2>&1; then
+if ! ${KUBECTL} get secret instana-tls -n instana-core  &> /dev/null; then
     # Generate certificate files
     if [[ ${TLS_CERTIFICATE_GENERATE} == "YES" ]]; then
         echo "Generating SSL certificates ${TLS_CERTIFICATE_FILE}/${TLS_KEY_FILE} ..."
@@ -447,12 +447,12 @@ yq eval-all '. as $item ireduce ({}; . *+ $item)' unit-config-base.yaml unit_con
 
 
 echo "Creating instana-core, instana-units secrets..."
-if ${KUBECTL} get secret instana-core -n instana-core >/dev/null 2>&1; then
+if ${KUBECTL} get secret instana-core -n instana-core &> /dev/null; then
     ${KUBECTL} delete secret beeinstana-kafka-creds -n beeinstana
 fi
 ${KUBECTL} create secret generic instana-core --namespace instana-core --from-file=config.yaml=core-config.yaml
 
-if ${KUBECTL} get secret ${INSTANA_TENANT_NAME}-${INSTANA_UNIT_NAME} -n instana-units >/dev/null 2>&1; then
+if ${KUBECTL} get secret ${INSTANA_TENANT_NAME}-${INSTANA_UNIT_NAME} -n instana-units &> /dev/null; then
     ${KUBECTL} delete secret ${INSTANA_TENANT_NAME}-${INSTANA_UNIT_NAME} -n instana-units
 fi
 ${KUBECTL} create secret generic ${INSTANA_TENANT_NAME}-${INSTANA_UNIT_NAME} --namespace instana-units --from-file=config.yaml=unit-config.yaml

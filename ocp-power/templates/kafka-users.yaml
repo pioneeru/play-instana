@@ -1,0 +1,27 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: strimzi-kafka-user
+  namespace: instana-kafka
+  labels:
+    strimzi.io/cluster: instana
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+    - resource:
+        type: topic
+        name: '*'
+        patternType: literal
+      operations:
+      - All
+      host: "*"
+    - resource:
+        type: group
+        name: '*'
+        patternType: literal
+      operations:
+      - All
+      host: "*"

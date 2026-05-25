@@ -1,81 +1,3 @@
----
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaNodePool
-metadata:
-  name: kafka
-  namespace: instana-kafka
-  labels:
-    strimzi.io/cluster: instana
-spec:
-  replicas: 1
-  roles:
-     - broker
-  jvmOptions:
-    -Xms: 1000m
-    -Xmx: 1000m
-  resources:
-    limits:
-      memory: 3Gi
-    requests:
-      cpu: "1"
-      memory: 3Gi
-  storage:
-    type: jbod
-    volumes:
-      - id: 0
-        type: persistent-claim
-        size: 50Gi
-        deleteClaim: true
-        class: ${RWO_STORAGECLASS}
-  template:
-    pod:
-      tmpDirSizeLimit: 500Mi
-      # Add the following Affinity snippet to schedule each pod on a different node. 
-      #affinity:
-      #  podAntiAffinity:
-      #    requiredDuringSchedulingIgnoredDuringExecution:
-      #      - labelSelector:
-      #          matchLabels:
-      #            strimzi.io/pool-name: kafka
-      #        topologyKey: "kubernetes.io/hostname"
----
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaNodePool
-metadata:
-  name: controller
-  namespace: instana-kafka
-  labels:
-    strimzi.io/cluster: instana
-spec:
-  replicas: 1
-  roles:
-    - controller
-  jvmOptions:
-    -Xms: 500m
-    -Xmx: 500m
-  resources:
-    limits:
-      memory: 1Gi
-    requests:
-      cpu: "200m"
-      memory: 1Gi
-  storage:
-    type: persistent-claim
-    size: 50Gi
-    deleteClaim: true
-    class: ${RWO_STORAGECLASS}
-  template:
-    pod:
-      tmpDirSizeLimit: 500Mi
-      # Add the following Affinity snippet to schedule each pod on a different node. 
-      #affinity:
-      #  podAntiAffinity:
-      #    requiredDuringSchedulingIgnoredDuringExecution:
-      #      - labelSelector:
-      #          matchLabels:
-      #            strimzi.io/pool-name: controller
-      #        topologyKey: "kubernetes.io/hostname"
----
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
@@ -115,19 +37,6 @@ spec:
       min.insync.replicas: 1                       ### 2
       max.message.bytes: 52428800
       replica.fetch.max.bytes: 52428800
-  # zookeeper:
-  #   replicas: 3
-  #   resources:
-  #     limits:
-  #       memory: 1Gi
-  #     requests:
-  #       cpu: "1"
-  #       memory: 1Gi
-  #   storage:
-  #     type: persistent-claim
-  #     size: 5Gi
-  #     deleteClaim: true
-  #     class: ${RWO_STORAGECLASS}
   entityOperator:
     template:
       pod:
@@ -140,31 +49,3 @@ spec:
       image: ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/${KAFKA_OPERATOR_IMAGE_NAME}:${KAFKA_OPERATOR_IMAGE_TAG}
     # topicOperator:
     #   image: ${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/${KAFKA_OPERATOR_IMAGE_NAME}:${KAFKA_OPERATOR_IMAGE_TAG}
----
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaUser
-metadata:
-  name: strimzi-kafka-user
-  namespace: instana-kafka
-  labels:
-    strimzi.io/cluster: instana
-spec:
-  authentication:
-    type: scram-sha-512
-  authorization:
-    type: simple
-    acls:
-    - resource:
-        type: topic
-        name: '*'
-        patternType: literal
-      operations:
-      - All
-      host: "*"
-    - resource:
-        type: group
-        name: '*'
-        patternType: literal
-      operations:
-      - All
-      host: "*"

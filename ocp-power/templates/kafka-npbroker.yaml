@@ -1,0 +1,39 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: kafka
+  namespace: instana-kafka
+  labels:
+    strimzi.io/cluster: instana
+spec:
+  replicas: 1
+  roles:
+     - broker
+  jvmOptions:
+    -Xms: 1000m
+    -Xmx: 1000m
+  resources:
+    limits:
+      memory: 3Gi
+    requests:
+      cpu: "1"
+      memory: 3Gi
+  storage:
+    type: jbod
+    volumes:
+      - id: 0
+        type: persistent-claim
+        size: 50Gi
+        deleteClaim: true
+        class: ${RWO_STORAGECLASS}
+  template:
+    pod:
+      tmpDirSizeLimit: 500Mi
+      # Add the following Affinity snippet to schedule each pod on a different node. 
+      #affinity:
+      #  podAntiAffinity:
+      #    requiredDuringSchedulingIgnoredDuringExecution:
+      #      - labelSelector:
+      #          matchLabels:
+      #            strimzi.io/pool-name: kafka
+      #        topologyKey: "kubernetes.io/hostname"

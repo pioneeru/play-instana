@@ -70,7 +70,35 @@ spec:
   # URL for downloading the GeoLite2 geo-location data file
   # geoDbUrl:
 
+`[[ ${INSTANA_INSTALLATION_SIZE} == @(reduced|small) ]] && echo "
   properties:
+    - name: retention.metrics.rawPayload
+      value: "86400"
+    - name: retention.metrics.rollup5
+      value: "86400"
+    - name: retention.metrics.rollup60
+      value: "86400"
+    - name: retention.metrics.rollup300
+      value: "86400"
+    - name: retention.metrics.rollup3600
+      value: "86400"
+    # Only values greater than or equal to 7 days are valid:
+    - name: config.appdata.shortterm.retention.days
+      value: "7"
+    - name: config.synthetics.retention.days
+      value: "7"
+
+    # Custom Edition environment can route traffic for all tenants through a single base domain:
+    # - name: config.url.format.pathStyle
+    #   value: "true"
+
+    - name: feature.plugin.metric.statistics.enabled
+      value: "*"
+"`
+`[[ ${INSTANA_INSTALLATION_SIZE} == 'normal' ]] && echo '
+  properties:
+    - name: retention.metrics.rawPayload
+      value: "2592000"
     - name: retention.metrics.rollup5
       value: "86400"
     - name: retention.metrics.rollup60
@@ -89,6 +117,9 @@ spec:
     # - name: config.url.format.pathStyle
     #   value: "true"
 
+    - name: feature.plugin.metric.statistics.enabled
+      value: "*"
+'`
 
 
   # Datastore configs
@@ -132,6 +163,7 @@ spec:
       hosts:
         - postgres-rw.instana-postgres.svc
 
+`[[ ${INSTANA_INSTALLATION_SIZE} == 'reduced' ]] && echo '
   featureFlags:
     - name: feature.beeinstana.enabled
       enabled: true
@@ -171,6 +203,12 @@ spec:
       enabled: false
     - name: feature.kubernetes.logging.enabled
       enabled: false
+    - name: feature.internal.monitoring.unit
+      enabled: false
+    - name: feature.plugin.metric.statistics.enabled
+      enabled: false
+'`
+
   # Use one of smtpConfig or sesConfig
   emailConfig:
     smtpConfig:

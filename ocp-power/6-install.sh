@@ -6,7 +6,7 @@ source ../artifacts-${INSTANA_PLATFORM}.env
 
 #### DATASTORES ######
 
-echo "Installing kafka..."
+echo "Upgrading or installing Kafka..."
 ${KUBECTL} create namespace instana-kafka
 ${KUBECTL} create secret docker-registry instana-registry \
   --namespace=instana-kafka \
@@ -26,14 +26,17 @@ ${KUBECTL} create secret docker-registry instana-registry \
     --set kafka.image.repository=${KAFKA_IMAGE_REPOSITORY} \
     --set kafka.image.name=${KAFKA_IMAGE_NAME} \
     --set kafka.image.tag=${KAFKA_IMAGE_TAG} \
-    ${KAFKA_HELM_CHART} 
+    ${INSTANA_AIRGAPPED_FOLDER}/${KAFKA_HELM_CHART} 
 
+${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA_NPCPNTROLLER} -n instana-kafka
+${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA_NPBROKER} -n instana-kafka
+${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA_USERS} -n instana-kafka
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_KAFKA} -n instana-kafka
 
 
 
 
-echo "Installing Elasticsearch..."
+echo "Upgrading or installing Elasticsearch..."
 ${KUBECTL} create namespace instana-elastic
 ${KUBECTL} create serviceaccount elasticsearch -n instana-elastic
 
@@ -43,17 +46,18 @@ ${KUBECTL} create secret docker-registry instana-registry \
   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD} \
   --docker-server=${INSTANA_IMAGE_REGISTRY}
 
-helm upgrade --install elastic-operator ${ELASTIC_HELM_CHART} -n instana-elastic --wait \
+helm upgrade --install elastic-operator -n instana-elastic --wait \
   --version=${ELASTIC_HELM_CHART_VERSION} \
   --set image.repository=${ELASTIC_OPERATOR_IMAGE_NAME} \
   --set image.tag=${ELASTIC_OPERATOR_IMAGE_TAG} \
-  --set imagePullSecrets[0].name="instana-registry"
+  --set imagePullSecrets[0].name="instana-registry" \
+  ${INSTANA_AIRGAPPED_FOLDER}/${ELASTIC_HELM_CHART}
 
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_ELASTICSEARCH} -n instana-elastic
 
 
 
-echo "Installing Postgres..."
+echo "Upgrading or installing Postgres..."
 ${KUBECTL} create namespace instana-postgres
 ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-postgres \
   --docker-server=${INSTANA_IMAGE_REGISTRY} \
@@ -62,6 +66,9 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-po
 
 # ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES_SCC}
 
+
+if ${KUBECTL} get secret instanaadmin -n instana-postgres >/dev/null 2>&1; then
+echo "Generating instanaadmin secret in instana-postgres namespace..." 
 cat << EOF > postgres-secret.yaml
 kind: Secret
 apiVersion: v1
@@ -74,14 +81,17 @@ stringData:
    password: `openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
 EOF
 ${KUBECTL} apply -f postgres-secret.yaml
+else
+  echo "instanaadmin secret already exists in instana-postgres namespace." 
+fi
 
-helm upgrade --install cnpg ${POSTGRES_HELM_CHART} --wait \
+helm upgrade --install cnpg -n instana-postgres --wait \
   --set image.repository=${POSTGRES_OPERATOR_IMAGE_NAME} \
   --set image.tag=${POSTGRES_OPERATOR_IMAGE_TAG} \
   --set imagePullSecrets[0].name=instana-registry \
   --set containerSecurityContext.runAsUser=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
   --set containerSecurityContext.runAsGroup=`${KUBECTL} get namespace instana-postgres -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
-  -n instana-postgres 
+  ${INSTANA_AIRGAPPED_FOLDER}/${POSTGRES_HELM_CHART}
 
 ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES}
 
@@ -90,7 +100,7 @@ ${KUBECTL} -n instana-postgres apply -f ${MANIFEST_FILENAME_POSTGRES}
 
 
 
-echo "Installing Cassandra..."
+echo "Upgrading or installing Cassandra..."
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA_SCC}
 
 ${KUBECTL} create namespace instana-cassandra
@@ -101,7 +111,7 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=instana-ca
   --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
   --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD}
 
-helm upgrade --install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandra --wait \
+helm upgrade --install cass-operator -n instana-cassandra --wait \
   --set securityContext.runAsGroup=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
   --set securityContext.runAsUser=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
   --set securityContext.allowPrivilegeEscalation=false \
@@ -114,13 +124,14 @@ helm upgrade --install cass-operator ${CASSANDRA_HELM_CHART} -n instana-cassandr
   --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
   --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
   --set imageConfig.systemLogger=${CASSANDRA_SYSTEMLOGGER_IMAGE_NAME}  \
-  --set imageConfig.k8ssandraClient=${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME} 
+  --set imageConfig.k8ssandraClient=${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME} \
+  ${INSTANA_AIRGAPPED_FOLDER}/${CASSANDRA_HELM_CHART}
 
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA} 
 
 
 
-echo "Installing Clickhouse..."
+echo "Upgrading or installing Clickhouse..."
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_SCC}
 
 ${KUBECTL} create namespace instana-clickhouse
@@ -138,8 +149,11 @@ helm upgrade --install clickhouse-operator \
   --set operator.image.repository=${CLICKHOUSE_OPERATOR_IMAGE_NAME} \
   --set operator.image.tag=${CLICKHOUSE_OPERATOR_IMAGE_TAG} \
   --set imagePullSecrets[0].name="instana-registry" \
-  ${CLICKHOUSE_HELM_CHART} 
+  ${INSTANA_AIRGAPPED_FOLDER}/${CLICKHOUSE_HELM_CHART} 
 
+
+if ${KUBECTL} get secret chi-passwords -n instana-clickhouse >/dev/null 2>&1; then
+echo "Generating chi-passwords secret in instana-clickhouse namespace..." 
 cat << EOF > clickhouse-secret.yaml
 apiVersion: v1
 kind: Secret
@@ -152,6 +166,9 @@ stringData:
   clickhouseuser_password: `openssl rand -base64 8 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
 EOF
 ${KUBECTL} apply -f clickhouse-secret.yaml
+else
+  echo "chi-passwords secret already exists in instana-clickhouse namespace." 
+fi
 
 ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_KEEPER}
 
@@ -164,12 +181,10 @@ ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE}
 
 
 echo "Waiting for Kafka pods to be running..."
-# ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true -f ${MANIFEST_FILENAME_KAFKA} --timeout=3000s
-# ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true pod -lstrimzi.io/component-type=zookeeper --timeout=3000s
 ${KUBECTL} -n instana-kafka wait --for=condition=Ready=true pod -lstrimzi.io/component-type=kafka --timeout=3000s
 
 
-echo "Installing Beeinstana..."
+echo "Upgrading or installing Beeinstana..."
 ${KUBECTL} create namespace beeinstana
 ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana \
   --docker-server=${INSTANA_IMAGE_REGISTRY} \
@@ -178,20 +193,30 @@ ${KUBECTL} create secret docker-registry instana-registry --namespace=beeinstana
 # for k8s and OCP 4.10:
 #helm install beeinstana instana/beeinstana-operator --namespace=beeinstana
 # For a cluster on Red Hat OpenShift 4.11 and later:
-helm upgrade --install beeinstana ${BEEINSTANA_HELM_CHART} --namespace=beeinstana --wait \
+helm upgrade --install beeinstana --namespace=beeinstana --wait \
   --set operator.securityContext.seccompProfile.type=RuntimeDefault \
   --set image.registry=${INSTANA_IMAGE_REGISTRY} \
   --set image.repository=${BEEINSTANA_OPERATOR_IMAGE_NAME} \
-  --set image.tag=${BEEINSTANA_OPERATOR_IMAGE_TAG} 
+  --set image.tag=${BEEINSTANA_OPERATOR_IMAGE_TAG} \
+  ${INSTANA_AIRGAPPED_FOLDER}/${BEEINSTANA_HELM_CHART}
 
 while ! ${KUBECTL} get secret strimzi-kafka-user -n instana-kafka; do echo "Waiting for strimzi-kafka-user secret in instana-kafka. CTRL-C to exit."; sleep 10; done
 
+if ${KUBECTL} get secret beeinstana-kafka-creds -n beeinstana >/dev/null 2>&1; then
+    ${KUBECTL} delete secret beeinstana-kafka-creds -n beeinstana
+fi
 ${KUBECTL} create secret generic beeinstana-kafka-creds -n beeinstana \
   --from-literal=username=strimzi-kafka-user \
   --from-literal=password=`${KUBECTL} get secret strimzi-kafka-user  -n instana-kafka --template='{{index .data.password | base64decode}}'`
-${KUBECTL} create secret generic beeinstana-admin-creds -n beeinstana \
-  --from-literal=username=beeinstana-user \
-  --from-literal=password=`openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
+
+if ${KUBECTL} get secret beeinstana-admin-creds -n beeinstana >/dev/null 2>&1; then
+    echo "Generating beeinstana-admin-creds secret in instana-beeinstana namespace..." 
+    ${KUBECTL} create secret generic beeinstana-admin-creds -n beeinstana \
+      --from-literal=username=beeinstana-user \
+      --from-literal=password=`openssl rand -base64 24 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
+else
+    echo "beeinstana-admin-creds secret already exists in instana-beeinstana namespace." 
+fi
 
 ${KUBECTL} -n beeinstana apply -f ${MANIFEST_FILENAME_BEEINSTANA}
 
@@ -298,17 +323,27 @@ ${KUBECTL} create secret docker-registry instana-registry \
 
 
 
-# Generate certificate files
-if [[ ${TLS_CERTIFICATE_GENERATE} == "YES" ]]; then
-    echo "Generating SSL certificates ${TLS_CERTIFICATE_FILE}/${TLS_KEY_FILE} ..."
-    openssl genrsa -out ca.key 2048
-    openssl req -new -x509 -days 365 -key ca.key \
-        -subj "/C=${TLS_CERTIFICATE_GENERATE_C}/ST=${TLS_CERTIFICATE_GENERATE_ST}/L=${TLS_CERTIFICATE_GENERATE_L}/O=${TLS_CERTIFICATE_GENERATE_O}/CN=${TLS_CERTIFICATE_GENERATE_CN}" -out ca.crt
-    openssl req -newkey rsa:2048 -nodes -keyout ${TLS_KEY_FILE} \
-        -subj "/C=${TLS_CERTIFICATE_GENERATE_C}/ST=${TLS_CERTIFICATE_GENERATE_ST}/L=S${TLS_CERTIFICATE_GENERATE_L}/O=${TLS_CERTIFICATE_GENERATE_O}/CN=*.${INSTANA_BASE_DOMAIN}" -out tls.csr
-    openssl x509 -req -extfile <(printf "subjectAltName=DNS:${INSTANA_BASE_DOMAIN},DNS:${INSTANA_TENANT_DOMAIN},DNS:${INSTANA_AGENT_ACCEPTOR},DNS:${INSTANA_EUM_ACCEPTOR},DNS:${INSTANA_SYNTHETICS_ACCEPTOR},DNS:${INSTANA_SERVERLESS_ACCEPTOR},DNS:${INSTANA_OTLP_GRPC_ACCEPTOR},DNS:${INSTANA_OTLP_HTTP_ACCEPTOR}") \
-        -days 365 -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out ${TLS_CERTIFICATE_FILE}
+# Creating/Updating instana tls secret
+if ! ${KUBECTL} get secret instana-tls -n instana-core >/dev/null 2>&1; then
+    # Generate certificate files
+    if [[ ${TLS_CERTIFICATE_GENERATE} == "YES" ]]; then
+        echo "Generating SSL certificates ${TLS_CERTIFICATE_FILE}/${TLS_KEY_FILE} ..."
+        openssl genrsa -out ca.key 2048
+        openssl req -new -x509 -days 365 -key ca.key \
+            -subj "/C=${TLS_CERTIFICATE_GENERATE_C}/ST=${TLS_CERTIFICATE_GENERATE_ST}/L=${TLS_CERTIFICATE_GENERATE_L}/O=${TLS_CERTIFICATE_GENERATE_O}/CN=${TLS_CERTIFICATE_GENERATE_CN}" -out ca.crt
+        openssl req -newkey rsa:2048 -nodes -keyout ${TLS_KEY_FILE} \
+            -subj "/C=${TLS_CERTIFICATE_GENERATE_C}/ST=${TLS_CERTIFICATE_GENERATE_ST}/L=S${TLS_CERTIFICATE_GENERATE_L}/O=${TLS_CERTIFICATE_GENERATE_O}/CN=*.${INSTANA_BASE_DOMAIN}" -out tls.csr
+        openssl x509 -req -extfile <(printf "subjectAltName=DNS:${INSTANA_BASE_DOMAIN},DNS:${INSTANA_TENANT_DOMAIN},DNS:${INSTANA_AGENT_ACCEPTOR},DNS:${INSTANA_EUM_ACCEPTOR},DNS:${INSTANA_SYNTHETICS_ACCEPTOR},DNS:${INSTANA_SERVERLESS_ACCEPTOR},DNS:${INSTANA_OTLP_GRPC_ACCEPTOR},DNS:${INSTANA_OTLP_HTTP_ACCEPTOR}") \
+            -days 365 -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out ${TLS_CERTIFICATE_FILE}
+    fi
+    
+    echo "Creating instana-tls secrets..."
+    ${KUBECTL} create secret tls instana-tls --namespace instana-core \
+        --cert=${TLS_CERTIFICATE_FILE} \
+        --key=${TLS_KEY_FILE}
 fi
+
+
 
 # Preparing instana-core config
 echo "Generating instana-core config..."
@@ -343,7 +378,7 @@ echo "Generating instana-core config..."
 # cat key.pem cert.pem > sp.pem
 
 
-cat > core-config.yaml <<-EOF
+cat > core-config-base.yaml <<-EOF
 # Diffie-Hellman parameters to use (Optional)
 #dhParams: |
 #`#sed  's/^/  /' dhparams.pem`
@@ -354,19 +389,6 @@ salesKey: ${SALES_KEY}
 # Seed for creating crypto tokens. Pick a random 12 char string
 tokenSecret: ${TOKEN_SECRET}
 # Configuration for raw spans storage
-storageConfigs:
-#  rawSpans:
-#    # Required if using S3 or compatible storage bucket.
-#    # Credentials should be configured.
-#    # Not required if IRSA on EKS is used.
-#    s3Config:
-#      accessKeyId: ...
-#      secretAccessKey: ...
-#    # Required if using Google Cloud Storage.
-#    # Credentials should be configured.
-#    # Not required if GKE with workload identity is used.
-#    gcloudConfig:
-#      serviceAccountKey: ...
 
 # SAML/OIDC configuration
 # serviceProviderConfig:
@@ -375,29 +397,6 @@ storageConfigs:
 #   # The combined key/cert file
 #   pem: |
 #`#sed  's/^/    /' sp.pem`
-# # Required if a proxy is configured that needs authentication
-# proxyConfig:
-#   # Proxy user
-#   user: myproxyuser
-#   # Proxy password
-#   password: my proxypassword
-# emailConfig:
-#   # Required if SMTP is used for sending e-mails and authentication is required
-#   smtpConfig:
-#     user: mysmtpuser
-#     password: mysmtppassword
-#   # Required if using for sending e-mail.
-#   # Credentials should be configured.
-#   # Not required if using IRSA on EKS.
-#   sesConfig:
-#     accessKeyId: ...
-#     secretAccessKey: ...
-# # Optional custom CA certificate to be added to component trust stores
-# # in case internal systems Instana talks to (e.g. LDAP or alert receivers) use a custom CA.
-# customCACert: |
-#   -----BEGIN CERTIFICATE-----
-#   <snip/>
-#   -----END CERTIFICATE-----
 datastoreConfigs:
   beeInstanaConfig:
     user: beeinstana-user
@@ -434,43 +433,31 @@ datastoreConfigs:
       user: "clickhouseuser"
       password: "`${KUBECTL} get secret chi-passwords -n instana-clickhouse --template='{{index .data.clickhouseuser_password | base64decode}}'`"
 EOF
+# Merge with custom core_config.yaml
+yq eval-all '. as $item ireduce ({}; . *+ $item)' core-config-base.yaml core_config.yaml > core-config.yaml
 
 
 # Preparing instana-units config
 echo "Generating instana-units secret..."
-cat > unit-config.yaml <<-EOF
-# The initial user of this tenant unit with admin role, default admin@instana.local.
-# Must be a valid e-maiol address.
-# NOTE:
-# This only applies when setting up the tenant unit.
-# Changes to this value won't have any effect.
-initialAdminUser: ${INSTANA_ADMIN_USER}
-# The initial admin password.
-# NOTE:
-# This is only used for the initial tenant unit setup.
-# Changes to this value won't have any effect.
-initialAdminPassword: ${INSTANA_ADMIN_PASSWORD}
-# The Instana license. Can be a plain text string or a JSON array encoded as string. Deprecated. Use 'licenses' instead. Will no longer be supported in release 243.
-# license: mylicensestring # This would also work: '["mylicensestring"]'
-# A list of Instana licenses. Multiple licenses may be specified.
-# licenses: [ "license1", "license2" ]
-licenses: `cat license.json`
-# A list of agent keys. Specifying multiple agent keys enables gradually rotating agent keys.
-agentKeys:
-  - ${DOWNLOAD_KEY}
-downloadKey: ${DOWNLOAD_KEY}
+cat > unit-config-base.yaml <<-EOF
+licenses: `cat ${INSTANA_AIRGAPPED_FOLDER}/license.json`
 EOF
+# Merge with custom unit_config.yaml
+yq eval-all '. as $item ireduce ({}; . *+ $item)' unit-config-base.yaml unit_config.yaml > unit-config.yaml
 
-# Creating secrets
-echo "Creating instana-core, instana-units and instana-tls secrets..."
-${KUBECTL} create secret tls instana-tls --namespace instana-core \
-    --cert=${TLS_CERTIFICATE_FILE} \
-    --key=${TLS_KEY_FILE}
 
+echo "Creating instana-core, instana-units secrets..."
+if ${KUBECTL} get secret instana-core -n instana-core >/dev/null 2>&1; then
+    ${KUBECTL} delete secret beeinstana-kafka-creds -n beeinstana
+fi
 ${KUBECTL} create secret generic instana-core --namespace instana-core --from-file=config.yaml=core-config.yaml
 
+if ${KUBECTL} get secret ${INSTANA_TENANT_NAME}-${INSTANA_UNIT_NAME} -n instana-units >/dev/null 2>&1; then
+    ${KUBECTL} delete secret ${INSTANA_TENANT_NAME}-${INSTANA_UNIT_NAME} -n instana-units
+fi
 ${KUBECTL} create secret generic ${INSTANA_TENANT_NAME}-${INSTANA_UNIT_NAME} --namespace instana-units --from-file=config.yaml=unit-config.yaml
 
+rm -f core-config-base.yaml unit-config-base.yaml
 
 echo "Creating instana-core..."
 ${KUBECTL} apply -f ${MANIFEST_FILENAME_CORE}

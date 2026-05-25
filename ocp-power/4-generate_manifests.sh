@@ -18,10 +18,11 @@ normalize_merged_yaml_arrays() {
     | ( $uniqueMap  | to_entries | .[]) as $item ireduce([]; . + $item.value)
     ) as $mergedArray
     | select(fi == 0) | (eval(strenv(originalPath))) = $mergedArray
-    ' $4
+    ' $3
 }
 
 for FILE in templates/*; do
+    FILE=templates/core.yaml
     FILENAME=$(basename "$FILE")
     echo "Generating file: ${FILENAME}"
     read_template $FILE > temp.yaml

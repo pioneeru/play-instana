@@ -35,7 +35,7 @@ for FILE in templates/*; do
                 ;;
             elasticsearch.yaml)
                 normalize_merged_yaml_arrays ".name" ".spec.nodeSets" "temp-merged.yaml" > temp-merged1.yaml
-                normalize_merged_yaml_arrays ".metadata.name" ".spec.volumeClaimTemplates" "temp-merged1.yaml" > ${FILENAME}
+                normalize_merged_yaml_arrays ".metadata.name" ".spec.nodeSets[*].volumeClaimTemplates" "temp-merged1.yaml" > ${FILENAME}
                 ;;
             kafka-users.yaml)
                 normalize_merged_yaml_arrays ".resource.type" ".spec.authorization.acls" "temp-merged.yaml" > ${FILENAME}

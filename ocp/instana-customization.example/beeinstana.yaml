@@ -1,0 +1,17 @@
+apiVersion: beeinstana.instana.com/v1beta1
+kind: BeeInstana
+spec:
+  ingestor:
+    cpu: 1         ### 4
+    memory: 1Gi    ### 3Gi
+    limitMemory: true
+    replicas: 1
+  aggregator:
+    cpu: 1         ### 4
+    memory: 2Gi    ### 16Gi
+    limitMemory: true
+    mirrors: 1
+    shards: 1
+    volumes:
+      live:
+        size: 2000Gi

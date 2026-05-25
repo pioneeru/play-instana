@@ -1,0 +1,19 @@
+apiVersion: cassandra.datastax.com/v1beta1
+kind: CassandraDatacenter
+spec:
+  size: 1
+  resources:
+    requests:
+      cpu: 2000m      ### 2000m
+      memory: 1Gi     ### 8Gi
+    limits:
+      memory: 3Gi     ### 16Gi
+  storageConfig:
+    cassandraDataVolumeClaimSpec:
+      resources:
+        requests:
+          storage: 200Gi    ### 100Gi   
+  config:
+    jvm-server-options:
+      initial_heap_size: "512M"   ### 4G
+      max_heap_size: "512M"       ### 8G

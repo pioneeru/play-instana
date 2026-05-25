@@ -1,0 +1,20 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+spec:
+  replicas: 1
+  roles:
+    - controller
+  jvmOptions:
+    -Xms: 500m
+    -Xmx: 500m
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: "200m"
+      memory: 1Gi
+  storage:
+    type: persistent-claim
+    size: 50Gi
+    deleteClaim: true
+    class: nfs-client

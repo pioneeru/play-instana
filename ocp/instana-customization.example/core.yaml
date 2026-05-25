@@ -59,7 +59,7 @@ spec:
       limits:
         memory: 2Gi
   - name: eum-acceptor
-    replicas: 0
+    replicas: 1
     resources:
       requests:
         memory: 500Mi
@@ -67,7 +67,7 @@ spec:
       limits:
         memory: 2Gi
   - name: eum-health-processor
-    replicas: 0
+    replicas: 1
     resources:
       requests:
         memory: 500Mi
@@ -75,7 +75,7 @@ spec:
       limits:
         memory: 2Gi
   - name: eum-processor
-    replicas: 0
+    replicas: 1
     resources:
       requests:
         memory: 500Mi
@@ -97,22 +97,6 @@ spec:
       limits:
         memory: 2Gi
   - name: js-stack-trace-translator
-    resources:
-      requests:
-        memory: 500Mi
-        cpu: 400m
-      limits:
-        memory: 2Gi
-  - name: otlp-acceptor
-    replicas: 0
-    resources:
-      requests:
-        memory: 500Mi
-        cpu: 400m
-      limits:
-        memory: 2Gi
-  - name: otlp-acceptor
-    replicas: 0
     resources:
       requests:
         memory: 500Mi

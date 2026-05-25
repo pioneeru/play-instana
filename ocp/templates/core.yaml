@@ -70,26 +70,52 @@ spec:
   # URL for downloading the GeoLite2 geo-location data file
   # geoDbUrl:
 
+`[[ ${INSTANA_INSTALLATION_SIZE} == @(reduced|small) ]] && echo "
   properties:
+    - name: retention.metrics.rawPayload
+      value: '86400'
     - name: retention.metrics.rollup5
-      value: "86400"
+      value: '86400'
     - name: retention.metrics.rollup60
-      value: "2678400"
+      value: '86400'
     - name: retention.metrics.rollup300
-      value: "8035200"
+      value: '86400'
     - name: retention.metrics.rollup3600
-      value: "34214400"
+      value: '86400'
     # Only values greater than or equal to 7 days are valid:
     - name: config.appdata.shortterm.retention.days
-      value: "7"
+      value: '7'
     - name: config.synthetics.retention.days
-      value: "7"
-
+      value: '7'
+    - name: feature.plugin.metric.statistics.enabled
+      value: '*'
     # Custom Edition environment can route traffic for all tenants through a single base domain:
     # - name: config.url.format.pathStyle
-    #   value: "true"
-
-
+    #   value: 'true'
+"`
+`[[ ${INSTANA_INSTALLATION_SIZE} == 'normal' ]] && echo "
+  properties:
+    - name: retention.metrics.rawPayload
+      value: '2592000'
+    - name: retention.metrics.rollup5
+      value: '86400'
+    - name: retention.metrics.rollup60
+      value: '2678400'
+    - name: retention.metrics.rollup300
+      value: '8035200'
+    - name: retention.metrics.rollup3600
+      value: '34214400'
+    # Only values greater than or equal to 7 days are valid:
+    - name: config.appdata.shortterm.retention.days
+      value: '7'
+    - name: config.synthetics.retention.days
+      value: '7'
+    - name: feature.plugin.metric.statistics.enabled
+      value: '*'
+    # Custom Edition environment can route traffic for all tenants through a single base domain:
+    # - name: config.url.format.pathStyle
+    #   value: 'true'
+"`
 
   # Datastore configs
   datastoreConfigs:
@@ -132,6 +158,52 @@ spec:
       hosts:
         - postgres-rw.instana-postgres.svc
 
+`[[ ${INSTANA_INSTALLATION_SIZE} == 'reduced' ]] && echo '
+  featureFlags:
+    - name: feature.beeinstana.enabled
+      enabled: true
+    - name: feature.beeinstana.infra.metrics.enabled
+      enabled: true
+    - name: feature.infra.explore.presentation.enabled
+      enabled: true
+    # - name: feature.infrastructure.explore.data.enabled
+    #   enabled: true
+    - name: feature.infra.metrics.widget.enabled
+      enabled: true
+    # - name: feature.plugin.entity.metric.statistics.enabled
+    #   enabled: true
+    - name: feature.smart.alerts.logs.blueprint.enabled
+      enabled: false
+    - name: feature.infra.smart.alerts.enabled
+      enabled: false
+    - name: feature.synthetics.enabled
+      enabled: false
+    - name: feature.synthetic.smart.alerts.enabled
+      enabled: false
+    - name: syntheticSmartAlertsEnabled
+      enabled: false
+    - name: feature.synthetic.create.test.advance.mode.enabled
+      enabled: false
+    - name: feature.synthetic.browser.create.test.enabled
+      enabled: false
+    - name: feature.synthetic.browser.script.enabled
+      enabled: false
+    - name: feature.vsphere.enabled
+      enabled: false      
+    - name: feature.automation.enabled
+      enabled: false      
+    - name: feature.action.automation.enabled
+      enabled: false
+    - name: feature.logging.enabled
+      enabled: false
+    - name: feature.kubernetes.logging.enabled
+      enabled: false
+    - name: feature.internal.monitoring.unit
+      enabled: false
+    - name: feature.plugin.metric.statistics.enabled
+      enabled: false
+'`
+`[[ ${INSTANA_INSTALLATION_SIZE} != 'reduced' ]] && echo '
   featureFlags:
     - name: feature.beeinstana.enabled
       enabled: true
@@ -162,7 +234,7 @@ spec:
     - name: feature.synthetic.browser.script.enabled
       enabled: true
     - name: feature.vsphere.enabled
-      enabled: false      
+      enabled: true      
     - name: feature.automation.enabled
       enabled: true      
     - name: feature.action.automation.enabled
@@ -171,6 +243,12 @@ spec:
       enabled: true
     - name: feature.kubernetes.logging.enabled
       enabled: true
+    - name: feature.internal.monitoring.unit
+      enabled: true
+    - name: feature.plugin.metric.statistics.enabled
+      enabled: true
+'`
+
   # Use one of smtpConfig or sesConfig
   emailConfig:
     smtpConfig:

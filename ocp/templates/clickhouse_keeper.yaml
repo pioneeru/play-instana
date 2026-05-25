@@ -8,7 +8,7 @@
      clusters:
        - name: "local"
          layout:
-           replicasCount: 3
+           replicasCount: 1
      settings:
          logger/level: "information"
          logger/console: "true"

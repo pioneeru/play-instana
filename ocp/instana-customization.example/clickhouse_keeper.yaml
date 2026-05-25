@@ -1,0 +1,8 @@
+ apiVersion: "clickhouse-keeper.altinity.com/v1"
+ kind: "ClickHouseKeeperInstallation"
+ spec:
+   configuration:
+     clusters:
+       - name: "local"
+         layout:
+           replicasCount: 1

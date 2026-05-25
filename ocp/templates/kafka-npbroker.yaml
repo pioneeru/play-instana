@@ -10,14 +10,14 @@ spec:
   roles:
      - broker
   jvmOptions:
-    -Xms: 1000m
-    -Xmx: 1000m
+    -Xms: 2000m
+    -Xmx: 2000m
   resources:
     limits:
-      memory: 3Gi
+      memory: 5Gi
     requests:
       cpu: "1"
-      memory: 3Gi
+      memory: 4Gi
   storage:
     type: jbod
     volumes:

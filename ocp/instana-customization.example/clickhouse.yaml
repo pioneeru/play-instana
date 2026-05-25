@@ -1,0 +1,45 @@
+apiVersion: "clickhouse.altinity.com/v1"
+kind: "ClickHouseInstallation"
+spec:
+  configuration:
+    clusters:
+      - name: local
+        templates:
+          podTemplate: clickhouse
+        layout:
+          shardsCount: 1
+          replicasCount: 2  # The the replication count of 2 is fixed for Instana backend installations
+        schemaPolicy:
+          replica: None
+          shard: None
+    profiles:
+      default/max_memory_usage: 2000000000 # If memory limits are set, this value must be adjusted according to the limits.
+      default/max_threads: 16
+    settings:
+      max_concurrent_queries: 200
+  templates:
+    podTemplates:
+    - name: clickhouse
+      spec:
+        resources:
+          limits:
+            memory: 3Gi
+          requests:
+            cpu: "1"
+            memory: 2Gi
+    volumeClaimTemplates:
+      - name: instana-clickhouse-data-volume
+        spec:
+          resources:
+            requests:
+              storage: 200Gi
+      - name: instana-clickhouse-log-volume
+        spec:
+          resources:
+            requests:
+              storage: 1Gi
+      - name: instana-clickhouse-data-cold-volume
+        spec:
+          resources:
+            requests:
+              storage: 100Gi

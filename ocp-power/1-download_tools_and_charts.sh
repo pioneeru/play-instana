@@ -15,7 +15,7 @@ wget https://mirror.openshift.com/pub/openshift-v4/clients/helm/latest/helm-linu
 chmod +x /usr/local/bin/helm
 ### Prepare helm for air-gapped bastion
 echo "Downloading helm for bastion node to install pulled charts..."
-wget https://mirror.openshift.com/pub/openshift-v4/clients/helm/latest/helm-linux-${BASTION_PLATFORM} -O ${INSTANA_AIRGAPPED_FOLDER}/helm-linux-${BASTION_PLATFORM}
+wget "https://mirror.openshift.com/pub/openshift-v4/clients/helm/latest/helm-linux-${BASTION_PLATFORM}" -O ${INSTANA_AIRGAPPED_FOLDER}/helm-linux-${BASTION_PLATFORM}
 
 
 # Kubectl plugin

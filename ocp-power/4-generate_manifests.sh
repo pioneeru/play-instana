@@ -45,6 +45,9 @@ for FILE in templates/*; do
             postgresql.yaml)
                 normalize_merged_yaml_arrays ".name" ".spec.managed.roles" "temp-merged.yaml" > ${FILENAME}
                 ;;
+            kafka-npcontroller.yaml|kafka-npbroker.yaml)
+                normalize_merged_yaml_arrays ".id" ".spec.stostorage.volumes" "temp-merged.yaml" > ${FILENAME}
+                ;;
             core.yaml)
                 normalize_merged_yaml_arrays ".name" ".spec.properties" "temp-merged.yaml" > temp-merged1.yaml
                 normalize_merged_yaml_arrays ".name" ".spec.featureFlags" "temp-merged1.yaml" > temp-merged.yaml

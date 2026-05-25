@@ -73,54 +73,49 @@ spec:
 `[[ ${INSTANA_INSTALLATION_SIZE} == @(reduced|small) ]] && echo "
   properties:
     - name: retention.metrics.rawPayload
-      value: "86400"
+      value: '86400'
     - name: retention.metrics.rollup5
-      value: "86400"
+      value: '86400'
     - name: retention.metrics.rollup60
-      value: "86400"
+      value: '86400'
     - name: retention.metrics.rollup300
-      value: "86400"
+      value: '86400'
     - name: retention.metrics.rollup3600
-      value: "86400"
+      value: '86400'
     # Only values greater than or equal to 7 days are valid:
     - name: config.appdata.shortterm.retention.days
-      value: "7"
+      value: '7'
     - name: config.synthetics.retention.days
-      value: "7"
-
+      value: '7'
+    - name: feature.plugin.metric.statistics.enabled
+      value: '*'
     # Custom Edition environment can route traffic for all tenants through a single base domain:
     # - name: config.url.format.pathStyle
-    #   value: "true"
-
-    - name: feature.plugin.metric.statistics.enabled
-      value: "*"
+    #   value: 'true'
 "`
-`[[ ${INSTANA_INSTALLATION_SIZE} == 'normal' ]] && echo '
+`[[ ${INSTANA_INSTALLATION_SIZE} == 'normal' ]] && echo "
   properties:
     - name: retention.metrics.rawPayload
-      value: "2592000"
+      value: '2592000'
     - name: retention.metrics.rollup5
-      value: "86400"
+      value: '86400'
     - name: retention.metrics.rollup60
-      value: "2678400"
+      value: '2678400'
     - name: retention.metrics.rollup300
-      value: "8035200"
+      value: '8035200'
     - name: retention.metrics.rollup3600
-      value: "34214400"
+      value: '34214400'
     # Only values greater than or equal to 7 days are valid:
     - name: config.appdata.shortterm.retention.days
-      value: "7"
+      value: '7'
     - name: config.synthetics.retention.days
-      value: "7"
-
+      value: '7'
+    - name: feature.plugin.metric.statistics.enabled
+      value: '*'
     # Custom Edition environment can route traffic for all tenants through a single base domain:
     # - name: config.url.format.pathStyle
-    #   value: "true"
-
-    - name: feature.plugin.metric.statistics.enabled
-      value: "*"
-'`
-
+    #   value: 'true'
+"`
 
   # Datastore configs
   datastoreConfigs:

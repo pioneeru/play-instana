@@ -12,7 +12,7 @@ if [[ -z "${NFS_SERVER_IP}" && -z "${NFS_SERVER_PATH}" ]]; then
       --set nfs.server=${NFS_SERVER_IP} \
       --set nfs.path=${NFS_SERVER_PATH}
 else
-   echo "Skipped installing or upgrading nfs-client..."
+   echo "Skipping install or upgrade for nfs-client..."
 fi
 
 # Install cert manager

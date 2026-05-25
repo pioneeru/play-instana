@@ -24,7 +24,7 @@ normalize_merged_yaml_arrays() {
 for FILE in templates/*; do
     FILENAME=$(basename "$FILE")
     echo "Generating file: ${FILENAME}"
-    read_template $file > temp.yaml
+    read_template $FILE > temp.yaml
     if [ -f "${CUSTOM_CONFIGS_FOLDER}/${FILENAME}" ]; then
         # Merge yamls
         yq eval-all '. as $item ireduce ({}; . *+ $item)' temp.yaml ${CUSTOM_CONFIGS_FOLDER}/${FILENAME} > temp-merged.yaml

@@ -34,7 +34,8 @@ for FILE in templates/*; do
                 normalize_merged_yaml_arrays ".name" ".spec.templates.podTemplates" "temp-merged.yaml" > ${FILENAME}
                 ;;
             elasticsearch.yaml)
-                normalize_merged_yaml_arrays ".name" ".spec.nodeSets" "temp-merged.yaml" > ${FILENAME}
+                normalize_merged_yaml_arrays ".name" ".spec.nodeSets" "temp-merged.yaml" > temp-merged1.yaml
+                normalize_merged_yaml_arrays ".metadata.name" ".spec.volumeClaimTemplates" "temp-merged1.yaml" > ${FILENAME}
                 ;;
             kafka-users.yaml)
                 normalize_merged_yaml_arrays ".resource.type" ".spec.authorization.acls" "temp-merged.yaml" > ${FILENAME}

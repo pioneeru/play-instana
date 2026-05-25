@@ -1,8 +1,8 @@
 # Deploying Instana backend v315
 
 The project is a set of bash scripts to automate Self-Hosted Custom Instana Edition deployment on RedHat Openshift. Tested with the following configurations:
-- OCP versions: v4.20 v4.21
-- Node platforms: amd64 and ppc64le
+- OCP versions: v4.20, v4.21
+- Node platforms: amd64, ppc64le
 
 #### 1. Clone the project and copy `credentials.env.template` to `credentials.env`
 The following template is pre-populated with values but will not work as it is.
@@ -45,8 +45,8 @@ Execute the following script to download:
 ./1-download_tools_and_charts.sh
 ```
 
-#### 5. Push images to local registry for air-gapped deployment
-(Optional) If you use air-gapped deployment you need to have access to local registry. The following script will pull images from IBM image registry re-tag them and push to your local registry. Set `${INSTANA_IMAGE_REGISTRY}` in `credentials.env` pointing to local registry, Instana deployment will use `${INSTANA_IMAGE_REGISTRY}` to pull images for its containers:
+#### 5. (Optional) Push images to local registry for air-gapped deployment
+If you use air-gapped deployment you need to have access to local registry. The following script will pull images from IBM image registry re-tag them and push to your local registry. Set `${INSTANA_IMAGE_REGISTRY}` in `credentials.env` pointing to local registry, Instana deployment will use `${INSTANA_IMAGE_REGISTRY}` to pull images for its containers:
 ```bash
 ./1-push_images_to_local_registry.sh
 ```

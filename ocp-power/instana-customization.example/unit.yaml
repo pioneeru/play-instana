@@ -1,0 +1,44 @@
+apiVersion: instana.io/v1beta2
+kind: Unit
+spec:
+  componentConfigs:
+  - name: filler
+    replicas: 1
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 200m
+      limits:
+        memory: 2Gi
+  - name: appdata-processor
+    replicas: 1
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 200m
+      limits:
+        memory: 2Gi
+  - name: processor
+    replicas: 1
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 200m
+      limits:
+        memory: 2Gi
+  - name: issue-tracker
+    replicas: 1
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 200m
+      limits:
+        memory: 2Gi
+  - name: ui-client
+    replicas: 1
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 200m
+      limits:
+        memory: 2Gi

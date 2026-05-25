@@ -1,0 +1,250 @@
+apiVersion: instana.io/v1beta2
+kind: Core
+spec:
+  componentConfigs:
+  - name: acceptor
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 200m
+      limits:
+        memory: 2Gi
+  - name: appdata-reader
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: appdata-writer
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: accountant
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 200m
+      limits:
+        memory: 2Gi
+  - name: application-health-processor
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: butler
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: cashier-ingest
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 200m
+      limits:
+        memory: 2Gi
+  - name: cashier-rollup
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: eum-acceptor
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: eum-health-processor
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 200m
+      limits:
+        memory: 2Gi
+  - name: eum-processor
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: groundskeeper
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name:  infra-metric-aggregator
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 200m
+      limits:
+        memory: 2Gi
+  - name: js-stack-trace-translator
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: otlp-acceptor
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: otlp-acceptor
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: otlp-acceptor
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: serverless-acceptor
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: sli-beacons-filter
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: sli-calls-filter
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: sli-data-reader
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: sli-data-writer
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: sli-health-processor
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 500Mi
+  - name: sli-infrastructure-filter
+    replicas: 0
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: tag-processor
+    replicas: 1
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: tag-reader
+    replicas: 1
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+  - name: ui-client
+    replicas: 1
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 400m
+      limits:
+        memory: 2Gi
+
+
+  featureFlags:
+    - name: feature.beeinstana.enabled
+      enabled: true
+    - name: feature.beeinstana.infra.metrics.enabled
+      enabled: true
+    - name: feature.infra.explore.presentation.enabled
+      enabled: true
+    # - name: feature.infrastructure.explore.data.enabled
+    #   enabled: true
+    - name: feature.infra.metrics.widget.enabled
+      enabled: true
+    # - name: feature.plugin.entity.metric.statistics.enabled
+    #   enabled: true
+    - name: feature.smart.alerts.logs.blueprint.enabled
+      enabled: false
+    - name: feature.infra.smart.alerts.enabled
+      enabled: false
+    - name: feature.synthetics.enabled
+      enabled: false
+    - name: feature.synthetic.smart.alerts.enabled
+      enabled: false
+    - name: syntheticSmartAlertsEnabled
+      enabled: false
+    - name: feature.synthetic.create.test.advance.mode.enabled
+      enabled: false
+    - name: feature.synthetic.browser.create.test.enabled
+      enabled: false
+    - name: feature.synthetic.browser.script.enabled
+      enabled: false
+    - name: feature.vsphere.enabled
+      enabled: false      
+    - name: feature.automation.enabled
+      enabled: false      
+    - name: feature.action.automation.enabled
+      enabled: false
+    - name: feature.logging.enabled
+      enabled: false
+    - name: feature.kubernetes.logging.enabled
+      enabled: false

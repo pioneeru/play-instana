@@ -50,7 +50,7 @@
                  - --config-file=/etc/clickhouse-keeper/keeper_config.xml
                resources:
                  requests:
-                   memory: "1Gi"
+                   memory: "2Gi"
            imagePullSecrets:
            - name: instana-registry
           ### for Kubernetes cluster (for OCP use SCC)

@@ -5,14 +5,14 @@ source ../credentials.env
 source ../artifacts-${INSTANA_PLATFORM}.env
 
 # Install NFS client - if needed
-if [[ -z "${NFS_SERVER_IP}" && -z "${NFS_SERVER_PATH}" ]]; then
+if [[ -z "${NFS_SERVER_IP}" || -z "${NFS_SERVER_PATH}" ]]; then
+   echo "Skipping install or upgrade for nfs-client..."
+else
    echo "Installing or upgrading nfs-subdir-external-provisioner-${NFS_CLIENT_HELM_CHART_VERSION}..."
    helm upgrade --install nfs-subdir-external-provisioner ${INSTANA_AIRGAPPED_FOLDER}/nfs-subdir-external-provisioner-${NFS_CLIENT_HELM_CHART_VERSION}.tgz \
       -n default \
       --set nfs.server=${NFS_SERVER_IP} \
       --set nfs.path=${NFS_SERVER_PATH}
-else
-   echo "Skipping install or upgrade for nfs-client..."
 fi
 
 # Install cert manager

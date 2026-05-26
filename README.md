@@ -22,7 +22,7 @@ Pay attention to:
 * INSTANA_ADMIN_PASSWORD
 * RWO_STORAGECLASS - for all databases
 * RWX_STORAGECLASS - for raw-spans and synthetics
-* TLS_CERTIFICATE_GENERATE - set NO if you have your own certificate. Put specified filenames to the same directory.
+* TLS_CERTIFICATE_GENERATE - set NO if you have your own certificate. Put specified filenames to the same directory with executable scripts (play-instana/ocp/).
 * CUSTOM_CONFIGS_FOLDER - use for customizations (outside of the git project to keep them during upgrades)
 ```bash
 vi ../credentials.env

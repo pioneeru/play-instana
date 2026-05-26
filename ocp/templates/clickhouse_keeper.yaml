@@ -8,7 +8,7 @@
      clusters:
        - name: "local"
          layout:
-           replicasCount: 1
+           replicasCount: 3
      settings:
          logger/level: "information"
          logger/console: "true"
@@ -50,7 +50,7 @@
                  - --config-file=/etc/clickhouse-keeper/keeper_config.xml
                resources:
                  requests:
-                   memory: "2Gi"
+                   memory: "1Gi"
            imagePullSecrets:
            - name: instana-registry
           ### for Kubernetes cluster (for OCP use SCC)

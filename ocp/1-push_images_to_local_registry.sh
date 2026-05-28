@@ -30,6 +30,16 @@ function copy_image {
 
 }
 
+### Copy Cert Manager images
+copy_image "artifact-public.instana.io/jetstack/cert-manager-cainjector:v${CERT_MANAGER_HELM_CHART_VERSION}" \
+        "${INSTANA_IMAGE_REGISTRY}/${CERT_MANAGER_IMAGE_REPOSITORY}/cert-manager-cainjector:v:${CERT_MANAGER_HELM_CHART_VERSION}"
+
+copy_image "artifact-public.instana.io/jetstack/cert-manager-controller:v${CERT_MANAGER_HELM_CHART_VERSION}" \
+        "${INSTANA_IMAGE_REGISTRY}/${CERT_MANAGER_IMAGE_REPOSITORY}/cert-manager-controller:v:${CERT_MANAGER_HELM_CHART_VERSION}"
+
+copy_image "artifact-public.instana.io/jetstack/cert-manager-webhook:v${CERT_MANAGER_HELM_CHART_VERSION}" \
+        "${INSTANA_IMAGE_REGISTRY}/${CERT_MANAGER_IMAGE_REPOSITORY}/cert-manager-webhook:v:${CERT_MANAGER_HELM_CHART_VERSION}"
+
 ### Copy Cassandra images
 copy_image "artifact-public.instana.io/self-hosted-images/3rd-party/operator/cass-operator:${CASSANDRA_OPERATOR_IMAGE_TAG}" \
         "${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/cass-operator:${CASSANDRA_OPERATOR_IMAGE_TAG}"

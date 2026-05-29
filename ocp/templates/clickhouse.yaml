@@ -156,8 +156,8 @@ spec:
         initContainers:
           - name: waiting-configmap
             image: ${CLICKHOUSE_IMAGE_NAME}
-            command: ['sh', '-c', 'echo Waiting for ConfigMap readiness && sleep 840']";
-`
+            command: ['sh', '-c', 'echo Waiting for ConfigMap readiness && sleep 840']
+"`
         # initContainers:
         #   - name: waiting-configmap
         #     image: ${CLICKHOUSE_IMAGE_NAME}

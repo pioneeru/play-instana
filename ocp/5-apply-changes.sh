@@ -124,8 +124,11 @@ helm upgrade --install cass-operator -n instana-cassandra --wait \
   --set imagePullSecrets[0].name=instana-registry \
   --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
   --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
-  --set imageConfig.systemLogger=${CASSANDRA_SYSTEMLOGGER_IMAGE_NAME}  \
-  --set imageConfig.k8ssandraClient=${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME} \
+  --set imageConfig.defaults.registry=${CASSANDRA_IMAGE_REGISTRY}  \
+  --set imageConfig.images.system-logger=${CASSANDRA_SYSTEMLOGGER_IMAGE_NAME}  \
+  --set imageConfig.images.k8ssandra-client.repository=${CASSANDRA_IMAGE_REPOSITORY} \
+  --set imageConfig.images.k8ssandra-client.name=k8ssandra-client \
+  --set imageConfig.images.k8ssandra-client.tag=${CASSANDRA_K8SSANDRACLIENT_IMAGE_TAG} \
   ${INSTANA_AIRGAPPED_FOLDER}/${CASSANDRA_HELM_CHART}
 
 ${KUBECTL} -n instana-cassandra apply -f ${MANIFEST_FILENAME_CASSANDRA} 

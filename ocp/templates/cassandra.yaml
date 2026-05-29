@@ -9,7 +9,7 @@ spec:
   # configBuilderImage: docker.io/datastax/cass-config-builder:1.0-ubi7
   serverImage: ${CASSANDRA_SERVER_IMAGE_NAME}
   systemLoggerImage: ${CASSANDRA_SYSTEMLOGGER_IMAGE_NAME}
-  k8ssandraClientImage: ${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME}
+  #k8ssandraClientImage: ${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME}
   serverVersion: ${CASSANDRA_SERVER_VERSION}
   imagePullPolicy: Always
   podTemplateSpec:

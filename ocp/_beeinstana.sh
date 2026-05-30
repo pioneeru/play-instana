@@ -19,8 +19,8 @@ function beeinstana_uninstall {
     beeinstana_delete_crd
     beeinstana_uninstall_operator
 
-    echo "Deleting instana-beeinstana namespace..."
-    ${KUBECTL} delete ns instana-beeinstana     
+    echo "Deleting beeinstana namespace..."
+    ${KUBECTL} delete ns beeinstana     
 }
 
 function beeinstana_install {

@@ -35,7 +35,7 @@ function clickhouse_uninstall {
     echo "Deleting instana-clickhouse namespace..."
     ${KUBECTL} delete ns instana-clickhouse
 
-    echo "Deleting SCC..."
+    echo "Deleting clickhouse SCC..."
     ${KUBECTL} delete scc clickhouse-scc
 }
 

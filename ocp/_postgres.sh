@@ -11,7 +11,7 @@ function postgres_delete_crd {
 
 function postgres_uninstall_operator {
     echo "Uninstalling postgres-operator..."
-    helm uninstall cnpg -n instana-postgres -wait
+    helm uninstall cnpg -n instana-postgres --wait
 }
 
 function postgres_uninstall {

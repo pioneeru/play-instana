@@ -11,7 +11,7 @@ function elasticsearch_delete_crd {
 
 function elasticsearch_uninstall_operator {
     echo "Uninstalling elastic-operator..."
-    helm uninstall elastic-operator -n instana-elastic -wait
+    helm uninstall elastic-operator -n instana-elastic --wait
 }
 
 function elasticsearch_uninstall {

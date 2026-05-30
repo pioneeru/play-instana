@@ -21,7 +21,7 @@ function cassandra_install {
       --docker-username=${INSTANA_IMAGE_REGISTRY_USERNAME} \
       --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD}
 
-    if [[ "${CASSANDRA_OPERATOR_IMAGE_TAG}" == "1.26.*" ]]; then
+    if [[ "${CASSANDRA_OPERATOR_IMAGE_TAG}" == 1.26.* ]]; then
         echo "Installing cassandra ppc64le..."
         helm upgrade --install cass-operator -n instana-cassandra --wait \
           --set securityContext.runAsGroup=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \

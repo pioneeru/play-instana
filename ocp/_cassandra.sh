@@ -4,9 +4,27 @@ echo "Reading credentials.env..."
 source ../credentials.env
 source ../artifacts-${INSTANA_PLATFORM}.env
 
-function cassandra_uninstall {
+function cassandra_delete_crd {
     echo "Deleting cassdc Cassandra..."
-    ${KUBECTL} -n instana-cassandra delete cassdc cassandra --wait=false
+    ${KUBECTL} -n instana-cassandra delete cassdc cassandra --wait=true
+}
+
+function cassandra_uninstall_operator {
+    echo "Uninstalling cassandra-operator..."
+    helm uninstall cass-operator -n instana-cassandra --wait
+}
+
+function cassandra_uninstall {
+
+    cassandra_delete_crd
+    cassandra_uninstall_operator
+
+    echo "Deleting instana-cassandra namespace..."
+    ${KUBECTL} delete ns instana-cassandra     
+
+    echo "Deleting Cassandra SCC..."
+    ${KUBECTL} delete scc cassandra-scc
+
 }
 
 function cassandra_install {
@@ -63,6 +81,12 @@ function cassandra_install {
 #### Install Cassandra operator and apply cassandra ######
 
 case "$1" in
+  delete|delete_crd)
+      cassandra_delete_crd $@
+      ;;
+  uninstall_operator)
+      cassandra_uninstall_operator $@
+      ;;
   uninstall)
       cassandra_uninstall $@
       ;;

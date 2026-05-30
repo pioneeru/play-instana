@@ -4,22 +4,39 @@ echo "Reading credentials.env..."
 source ../credentials.env
 source ../artifacts-${INSTANA_PLATFORM}.env
 
-function clickhouse_uninstall {
-    ### Clickhouse
-    echo "Deleting chi instana..."
-    ${KUBECTL} -n instana-clickhouse delete chi instana --wait=false
-    echo "Waiting for chi deletion..."
-    ${KUBECTL} -n instana-clickhouse wait --for=delete chi instana --timeout=3000s
-
+function clickhouse_delete_crd {
+    echo "Deleting Instana CHI CRD..."
+    ${KUBECTL} -n instana-clickhouse delete chi instana --wait=true
     if [[ "${INSTANA_PLATFORM}" == "s390x" ]]; then
         ### Zookeeper
         echo "Deleting Zookeeper cluster..."
-        ${KUBECTL} -n instana-clickhouse delete zk instana-zookeeper
+        ${KUBECTL} -n instana-clickhouse delete zk instana-zookeeper --wait=true
     else
         ### Clickhouse keeper
         echo "Deleting Clickhouse cluster..."
-        ${KUBECTL} -n instana-clickhouse delete chk clickhouse-keeper
+        ${KUBECTL} -n instana-clickhouse delete chk clickhouse-keeper --wait=true
     fi
+}
+
+function clickhouse_uninstall_operator {
+    echo "Uninstalling clickhouse-operator..."
+    helm uninstall clickhouse-operator -n instana-clickhouse --wait
+
+    if [[ "${INSTANA_PLATFORM}" == "s390x" ]]; then
+        echo "Uninstalling zookeeper operator..."
+        helm uninstall instana -n instana-zookeeper --wait
+    fi
+}
+
+function clickhouse_uninstall {
+    clickhouse_delete_crd
+    clickhouse_uninstall_operator
+
+    echo "Deleting instana-clickhouse namespace..."
+    ${KUBECTL} delete ns instana-clickhouse
+
+    echo "Deleting SCC..."
+    ${KUBECTL} delete scc clickhouse-scc
 }
 
 function clickhouse_install {
@@ -98,6 +115,12 @@ EOF
 
 #### Install operator and apply clickhouse ######
 case "$1" in
+  delete|delete_crd)
+      clickhouse_delete_crd $@
+      ;;
+  uninstall_operator)
+      clickhouse_uninstall_operator $@
+      ;;
   uninstall)
       clickhouse_uninstall $@
       ;;

@@ -4,10 +4,22 @@ echo "Reading credentials.env..."
 source ../credentials.env
 source ../artifacts-${INSTANA_PLATFORM}.env
 
-function elasticsearch_uninstall {
-    echo "Deleting es instana..."
-    ${KUBECTL} -n instana-elastic delete es instana --wait=false
+function elasticsearch_delete_crd {
+    echo "Deleting Instana Elasticsearch CRD..."
+    ${KUBECTL} -n instana-elastic delete es instana --wait=true
+}
 
+function elasticsearch_uninstall_operator {
+    echo "Uninstalling elastic-operator..."
+    helm uninstall elastic-operator -n instana-elastic -wait
+}
+
+function elasticsearch_uninstall {
+    elasticsearch_delete_crd
+    elasticsearch_uninstall_operator
+
+    echo "Deleting instana-elasticsearch namespace..."
+    ${KUBECTL} delete ns instana-elasticsearch     
 }
 
 function elasticsearch_install {
@@ -33,6 +45,12 @@ function elasticsearch_install {
 
 #### Install esk-operator and apply Elasticsearch ######
 case "$1" in
+  delete|delete_crd)
+      elasticsearch_delete_crd $@
+      ;;
+  uninstall_operator)
+      elasticsearch_uninstall_operator $@
+      ;;
   uninstall)
       elasticsearch_uninstall $@
       ;;

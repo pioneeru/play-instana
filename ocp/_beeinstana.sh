@@ -4,12 +4,23 @@ echo "Reading credentials.env..."
 source ../credentials.env
 source ../artifacts-${INSTANA_PLATFORM}.env
 
-function beeinstana_uninstall {
-    echo "Deleting beeinstana instance..."
-    ${KUBECTL} -n beeinstana delete beeinstana instance --wait=false
 
-    echo "Uninstaling beeinstana operator..."
-    helm uninstall beeinstana -n beeinstana
+function beeinstana_delete_crd {
+    echo "Deleting Beeinstana CRD..."
+    ${KUBECTL} -n beeinstana delete beeinstana instance --wait=true
+}
+
+function beeinstana_uninstall_operator {
+    echo "Uninstalling beeinstana operator..."
+    helm uninstall beeinstana -n beeinstana-wait
+}
+
+function beeinstana_uninstall {
+    beeinstana_delete_crd
+    beeinstana_uninstall_operator
+
+    echo "Deleting instana-beeinstana namespace..."
+    ${KUBECTL} delete ns instana-beeinstana     
 }
 
 function beeinstana_install {
@@ -65,6 +76,12 @@ function beeinstana_install {
 
 #### Install beeinstana operator and apply beeinstana ######
 case "$1" in
+  delete|delete_crd)
+      beeinstana_delete_crd $@
+      ;;
+  uninstall_operator)
+      beeinstana_uninstall_operator $@
+      ;;
   uninstall)
       beeinstana_uninstall $@
       ;;

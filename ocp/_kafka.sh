@@ -5,10 +5,23 @@ source ../credentials.env
 source ../artifacts-${INSTANA_PLATFORM}.env
 
 
+function kafka_delete_crd {
+    echo "Deleting Instana Kafka CRD..."
+    ${KUBECTL} -n instana-kafka delete k instana --wait=true
+    ${KUBECTL} -n instana-kafka delete knp controller broker kafka --wait=true
+}
+
+function kafka_uninstall_operator {
+    echo "Uninstalling strimzi-kafka-operator..."
+    helm uninstall strimzi-kafka-operator -n instana-kafka --wait
+}
+
 function kafka_uninstall {
-    echo "Deleteing Instana Kafka..."
-    ${KUBECTL} -n instana-kafka delete k instana --wait=false
-    ${KUBECTL} -n instana-kafka delete knp controller kafka --wait=false
+    kafka_delete_crd
+    kafka_uninstall_operator
+
+    echo "Deleting instana-kafka namespace..."
+    ${KUBECTL} delete ns instana-kafka     
 }
 
 function kafka_install {
@@ -46,6 +59,12 @@ function kafka_install {
 #### Install strimzi and apply kafka ######
 
 case "$1" in
+  delete|delete_crd)
+      kafka_delete_crd $@
+      ;;
+  uninstall_operator)
+      kafka_uninstall_operator $@
+      ;;
   uninstall)
       kafka_uninstall $@
       ;;

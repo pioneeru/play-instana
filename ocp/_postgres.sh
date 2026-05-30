@@ -4,10 +4,22 @@ echo "Reading credentials.env..."
 source ../credentials.env
 source ../artifacts-${INSTANA_PLATFORM}.env
 
+function postgres_delete_crd {
+    echo "Deleting Instana Elasticsearch CRD..."
+    ${KUBECTL} -n instana-postgres delete clusters.postgresql.cnpg.io postgres --wait=true
+}
+
+function postgres_uninstall_operator {
+    echo "Uninstalling postgres-operator..."
+    helm uninstall cnpg -n instana-postgres -wait
+}
+
 function postgres_uninstall {
-    ### Postgres
-    echo "Deleteing pg postgres..."
-    ${KUBECTL} -n instana-postgres delete clusters.postgresql.cnpg.io postgres --wait=false
+    postgres_delete_crd
+    postgres_uninstall_operator
+
+    echo "Deleting instana-postgres namespace..."
+    ${KUBECTL} delete ns instana-postgres     
 }
 
 function postgres_install {
@@ -51,6 +63,12 @@ EOF
 #### Install cnpg operator and apply postgres ######
 
 case "$1" in
+  delete|delete_crd)
+      postgres_delete_crd $@
+      ;;
+  uninstall_operator)
+      postgres_uninstall_operator $@
+      ;;
   uninstall)
       postgres_uninstall $@
       ;;

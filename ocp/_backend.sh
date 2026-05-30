@@ -5,18 +5,33 @@ source ../credentials.env
 source ../artifacts-${INSTANA_PLATFORM}.env
 
 
-function backend_uninstall {
+function backend_delete_crd {
     ### Units
     echo "Deleteing unit..."
-    ${KUBECTL} -n instana-units delete unit `${KUBECTL} -n instana-units get unit -o jsonpath='{.items[0].metadata.name}'` --wait=false
-    echo "Waiting for Unit pods deletion..."
-    ${KUBECTL} -n instana-units wait --for=delete pod --all --timeout=3000s
+    ${KUBECTL} -n instana-units delete unit `${KUBECTL} -n instana-units get unit -o jsonpath='{.items[0].metadata.name}'` --wait=true
 
     ### Core
     echo "Deleteing core..."
-    ${KUBECTL} -n instana-core delete core instana-core --wait=false
-    echo "Waiting for Core pods deletion..."
-    ${KUBECTL} -n instana-core wait --for=delete pod --all --timeout=3000s
+    ${KUBECTL} -n instana-core delete core instana-core --wait=true
+
+}
+
+function backend_uninstall_operator {
+    echo "Uninstaling instana operator..."
+    ${KUBECTL} instana operator template --namespace instana-operator --output-dir tempinstoper
+    ${KUBECTL} delete -f tempinstoper
+    rm -rf tempinstoper
+}
+
+function backend_uninstall {
+    backend_delete_crd
+    backend_uninstall_operator
+    echo "Deleting instana-units namespace..."
+    ${KUBECTL} delete ns instana-units 
+    echo "Deleting instana-core namespace..."
+    ${KUBECTL} delete ns instana-core 
+    echo "Deleting instana-operator namespace..."
+    ${KUBECTL} delete ns instana-operator 
 }
 
 
@@ -273,6 +288,12 @@ EOF
 #### Installing Instana operator and apply for backend ########
 
 case "$1" in
+  delete|delete_crd)
+      backend_delete_crd $@
+      ;;
+  uninstall_operator)
+      backend_uninstall_operator $@
+      ;;
   uninstall)
       backend_uninstall $@
       ;;

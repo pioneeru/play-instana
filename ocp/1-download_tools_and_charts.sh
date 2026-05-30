@@ -50,7 +50,10 @@ helm repo update
 helm pull nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --version=${NFS_CLIENT_HELM_CHART_VERSION} -d ${INSTANA_AIRGAPPED_FOLDER}
 
 helm pull instana/cert-manager --version=${CERT_MANAGER_HELM_CHART_VERSION} -d ${INSTANA_AIRGAPPED_FOLDER}
-#helm pull instana/zookeeper-operator --version=${ZOOKEEPER_HELM_CHART_VERSION} -d ${INSTANA_AIRGAPPED_FOLDER}
+
+if [[ "${INSTANA_PLATFORM}" == "s390x" ]]; then
+    helm pull instana/zookeeper-operator --version=${ZOOKEEPER_HELM_CHART_VERSION} -d ${INSTANA_AIRGAPPED_FOLDER}
+fi
 helm pull instana/strimzi-kafka-operator --version=${KAFKA_HELM_CHART_VERSION} -d ${INSTANA_AIRGAPPED_FOLDER}
 helm pull instana/eck-operator --version=${ELASTIC_HELM_CHART_VERSION} -d ${INSTANA_AIRGAPPED_FOLDER}
 helm pull instana/cloudnative-pg --version=${POSTGRES_HELM_CHART_VERSION} -d ${INSTANA_AIRGAPPED_FOLDER}

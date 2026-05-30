@@ -65,12 +65,13 @@ EOF
     if [[ "${INSTANA_PLATFORM}" == "s390x" ]]; then
 
         echo "Installing zookeeper..."
-        helm install instana ${ZOOKEEPER_HELM_CHART} -n instana-clickhouse \
+        helm upgrade --install instana -n instana-clickhouse \
         --create-namespace --wait \
         --set image.registry=${INSTANA_IMAGE_REGISTRY} \
         --set image.repository=${ZOOKEEPER_OPERATOR_IMAGE_NAME} \
         --set image.tag=${ZOOKEEPER_OPERATOR_IMAGE_TAG} \
-        --set global.imagePullSecrets={"instana-registry"}
+        --set global.imagePullSecrets={"instana-registry"} \
+        ${INSTANA_AIRGAPPED_FOLDER}/${ZOOKEEPER_HELM_CHART} 
 
         ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s
         ${KUBECTL} apply -f ${MANIFEST_FILENAME_ZOOKEEPER} -n instana-clickhouse

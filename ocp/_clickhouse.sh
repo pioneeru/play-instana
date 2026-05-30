@@ -82,6 +82,8 @@ function clickhouse_install {
         ${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lrelease=instana-zookeeper --timeout=3000s
 
     else
+        ${KUBECTL} create serviceaccount clickhousekeeper -n instana-clickhouse
+        
         ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_KEEPER}
         echo "Waiting for Clickhouse keeper pods to be running..."
         ${KUBECTL} wait -n instana-clickhouse --for=jsonpath='{status.status}'=Completed chk clickhouse-keeper --timeout=3000s
@@ -104,7 +106,6 @@ EOF
         else
         echo "chi-passwords secret already exists in instana-clickhouse namespace." 
         fi
-        ${KUBECTL} create serviceaccount clickhousekeeper -n instana-clickhouse
 
     fi
 

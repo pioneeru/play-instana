@@ -51,10 +51,10 @@ EOF
 #### Install cnpg operator and apply postgres ######
 
 case "$1" in
-  *|install)
-      postgres_install $@
-      ;;
   uninstall)
       postgres_uninstall $@
+      ;;
+  *|install)
+      postgres_install $@
       ;;
 esac

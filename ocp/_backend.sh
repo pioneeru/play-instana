@@ -264,11 +264,11 @@ EOF
 #### Installing Instana operator and apply for backend ########
 
 case "$1" in
-  *|install)
-      backend_install $@
-      ;;
   uninstall)
       backend_uninstall $@
+      ;;
+  *|install)
+      backend_install $@
       ;;
 esac
 

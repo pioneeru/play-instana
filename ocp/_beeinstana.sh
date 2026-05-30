@@ -65,10 +65,10 @@ function beeinstana_install {
 
 #### Install beeinstana operator and apply beeinstana ######
 case "$1" in
-  *|install)
-      beeinstana_install $@
-      ;;
   uninstall)
       beeinstana_uninstall $@
+      ;;
+  *|install)
+      beeinstana_install $@
       ;;
 esac

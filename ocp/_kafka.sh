@@ -46,10 +46,10 @@ function kafka_install {
 #### Install strimzi and apply kafka ######
 
 case "$1" in
-  *|install)
-      kafka_install $@
-      ;;
   uninstall)
       kafka_uninstall $@
+      ;;
+  *|install)
+      kafka_install $@
       ;;
 esac

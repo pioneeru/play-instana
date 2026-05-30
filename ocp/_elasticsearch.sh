@@ -33,10 +33,10 @@ function elasticsearch_install {
 
 #### Install esk-operator and apply Elasticsearch ######
 case "$1" in
-  *|install)
-      elasticsearch_install $@
-      ;;
   uninstall)
       elasticsearch_uninstall $@
+      ;;
+  *|install)
+      elasticsearch_install $@
       ;;
 esac

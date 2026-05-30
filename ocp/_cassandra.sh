@@ -45,10 +45,10 @@ function cassandra_install {
 #### Install Cassandra operator and apply cassandra ######
 
 case "$1" in
-  *|install)
-      cassandra_install $@
-      ;;
   uninstall)
       cassandra_uninstall $@
+      ;;
+  *|install)
+      cassandra_install $@
       ;;
 esac

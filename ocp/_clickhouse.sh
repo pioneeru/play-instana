@@ -94,10 +94,10 @@ EOF
 
 #### Install operator and apply clickhouse ######
 case "$1" in
-  *|install)
-      clickhouse_install $@
-      ;;
   uninstall)
       clickhouse_uninstall $@
+      ;;
+  *|install)
+      clickhouse_install $@
       ;;
 esac

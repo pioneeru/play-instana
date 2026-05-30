@@ -1,0 +1,45 @@
+ apiVersion: "zookeeper.pravega.io/v1beta1"
+ kind: "ZookeeperCluster"
+ metadata:
+   name: "instana-zookeeper"
+ spec:
+   # For parameters and default values, see https://github.com/pravega/zookeeper-operator/tree/master/charts/zookeeper#configuration
+   replicas: 3
+   image:
+     repository: ${ZOOKEEPER_IMAGE_NAME}
+     tag: ${ZOOKEEPER_TAG_NAME}
+   pod:
+     imagePullSecrets: [name: "instana-registry"]
+     serviceAccountName: "zookeeper"
+    #  tolerations:
+    #  - key: node.instana.io/monitor
+    #    operator: Equal
+    #    effect: NoSchedule
+    #    value: "true"
+    #  affinity:
+    #    nodeAffinity:
+    #      requiredDuringSchedulingIgnoredDuringExecution:
+    #        nodeSelectorTerms:
+    #          - matchExpressions:
+    #              - key: node-role.kubernetes.io/monitor
+    #                operator: In
+    #                values:
+    #                - "true"
+     # Add the following securityContext snippet for Kubernetes offerings other than OCP.
+     # securityContext:
+     #   runAsUser: 1000
+     #   fsGroup: 1000
+   config:
+     tickTime: 2000
+     initLimit: 10
+     syncLimit: 5
+     maxClientCnxns: 0
+     autoPurgeSnapRetainCount: 20
+     autoPurgePurgeInterval: 1
+   persistence:
+     reclaimPolicy: Delete
+     spec:
+       resources:
+         requests:
+           storage: "10Gi"
+       storageClassName: ${RWO_STORAGECLASS}

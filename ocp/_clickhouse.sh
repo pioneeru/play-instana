@@ -73,7 +73,7 @@ EOF
         --set global.imagePullSecrets={"instana-registry"} \
         ${INSTANA_AIRGAPPED_FOLDER}/${ZOOKEEPER_HELM_CHART} 
 
-        ${KUBECTL} -n instana-zookeeper wait --for=condition=Ready=true pod --all --timeout=3000s
+        ${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod --all --timeout=3000s
         ${KUBECTL} apply -f ${MANIFEST_FILENAME_ZOOKEEPER} -n instana-clickhouse
 
         echo "Waiting for Zookeeper pods to be running..."

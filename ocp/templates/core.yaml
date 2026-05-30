@@ -9,7 +9,9 @@ spec:
 
   # enables gateway-v2 and gateway-controller
   gatewayConfig:
-    enabled: true
+    gateway:
+      imageConfig:
+        tag: ${INSTANA_CORE_ENVOY_IMAGE_TAG}
 
 
   # Deprecated: Host and port for the agent acceptor, usually a subdomain of the base domain

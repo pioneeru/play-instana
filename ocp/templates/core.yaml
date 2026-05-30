@@ -246,9 +246,9 @@ spec:
     - name: feature.kubernetes.logging.enabled
       enabled: true
     - name: feature.internal.monitoring.unit
-      enabled: true
+      enabled: false
     - name: feature.plugin.metric.statistics.enabled
-      enabled: true
+      enabled: false
 '`
 
   # Use one of smtpConfig or sesConfig

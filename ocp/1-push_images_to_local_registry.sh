@@ -114,5 +114,13 @@ while IFS= read -r line; do
 
 done <<< `${KUBECTL} instana versions list-images -i ${INSTANA_CORE_IMAGE_TAG} -d ${DOWNLOAD_KEY}`
 
+
+### Fix for gateway-v2
+if [[ "${INSTANA_PLATFORM}" == "s390x" ]]; then
+        copy_image "artifact-public.instana.io/self-hosted-images/k8s/envoy:${INSTANA_CORE_ENVOY_IMAGE_TAG}" \
+                "${INSTANA_IMAGE_REGISTRY}/${INSTANA_K8S_IMAGE_REPOSITORY}/${envoy}:${INSTANA_CORE_ENVOY_IMAGE_TAG}"
+fi
+
+
 #echo "total: $i"
 

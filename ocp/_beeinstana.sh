@@ -12,7 +12,7 @@ function beeinstana_delete_crd {
 
 function beeinstana_uninstall_operator {
     echo "Uninstalling beeinstana operator..."
-    helm uninstall beeinstana -n beeinstana-wait
+    helm uninstall beeinstana -n beeinstana -wait
 }
 
 function beeinstana_uninstall {

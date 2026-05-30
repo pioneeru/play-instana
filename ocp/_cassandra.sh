@@ -22,6 +22,7 @@ function cassandra_install {
       --docker-password=${INSTANA_IMAGE_REGISTRY_PASSWORD}
 
     if [[ "${CASSANDRA_OPERATOR_IMAGE_TAG}" == "1.26.*" ]]; then
+        echo "Installing cassandra ppc64le..."
         helm upgrade --install cass-operator -n instana-cassandra --wait \
           --set securityContext.runAsGroup=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
           --set securityContext.runAsUser=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
@@ -37,6 +38,7 @@ function cassandra_install {
           --set imageConfig.k8ssandraClient=${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME} \
           ${INSTANA_AIRGAPPED_FOLDER}/${CASSANDRA_HELM_CHART}
     else
+        echo "Installing cassandra..."
         helm upgrade --install cass-operator -n instana-cassandra --wait \
           --set securityContext.runAsGroup=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \
           --set securityContext.runAsUser=`${KUBECTL} get namespace instana-cassandra -o jsonpath='{.metadata.annotations.openshift\.io\/sa\.scc\.uid-range}' | cut -d/ -f 1` \

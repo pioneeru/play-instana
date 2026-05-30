@@ -3,61 +3,24 @@
 echo "Reading credentials.env..."
 source ../credentials.env
 
-### Units
-echo "Deleteing unit..."
-${KUBECTL} -n instana-units delete unit `${KUBECTL} -n instana-units get unit -o jsonpath='{.items[0].metadata.name}'` --wait=false
-echo "Waiting for Unit pods deletion..."
-${KUBECTL} -n instana-units wait --for=delete pod --all --timeout=3000s
+./_backend.sh uninstall
 
-### Core
-echo "Deleteing core..."
-${KUBECTL} -n instana-core delete core instana-core --wait=false
-echo "Waiting for Core pods deletion..."
-${KUBECTL} -n instana-core wait --for=delete pod --all --timeout=3000s
+./_kafka.sh uninstall
 
-### Clickhouse
-echo "Deleteing chi instana..."
-${KUBECTL} -n instana-clickhouse delete chi instana --wait=false
+./_beeinstana.sh uninstall
+./_cassandra.sh uninstall
+./_elasticsearch.sh uninstall
+./_postgres.sh uninstall
 
-### Beeinstana
-echo "Deleteing beeinstana instance..."
-${KUBECTL} -n beeinstana delete beeinstana instance --wait=false
+./_clickhouse.sh uninstall
 
-echo "Uninstaling beeinstana operator..."
-helm uninstall beeinstana -n beeinstana
-
-### Cassandra
-echo "Deleteing cassdc Cassandra..."
-${KUBECTL} -n instana-cassandra delete cassdc cassandra --wait=false
-
-### Elasticsearch
-echo "Deleteing es instana..."
-${KUBECTL} -n instana-elastic delete es instana --wait=false
-
-### Postgres
-echo "Deleteing pg postgres..."
-${KUBECTL} -n instana-postgres delete clusters.postgresql.cnpg.io postgres --wait=false
-
-### Kafka
-echo "Deleteing k instana..."
-${KUBECTL} -n instana-kafka delete k instana --wait=false
-${KUBECTL} -n instana-kafka delete knp controller kafka --wait=false
-
-### Zookeeper
-echo "Waiting for chi deletion..."
-${KUBECTL} -n instana-clickhouse wait --for=delete chi instana --timeout=3000s
-echo "Deleteing Zookeeper & Clickhouse Keeper clusters..."
-${KUBECTL} -n instana-clickhouse delete zk instana-zookeeper
-${KUBECTL} -n instana-clickhouse delete chk clickhouse-keeper
-
-echo "Waiting for Clickhouse Keeper pods deletion..."
-#${KUBECTL} -n instana-clickhouse wait --for=delete pod -lrelease=instana-zookeeper --timeout=3000s
-${KUBECTL} -n instana-clickhouse wait --for=delete pod -lapp=clickhouse-keeper --timeout=3000s
-
-
-
-
-
+if [[ "${INSTANA_PLATFORM}" == "s390x" ]]; then
+    echo "Waiting for Zookeeper pods deletion..."
+    ${KUBECTL} -n instana-clickhouse wait --for=delete pod -lrelease=instana-zookeeper --timeout=3000s
+else
+    echo "Waiting for Clickhouse Keeper pods deletion..."
+    ${KUBECTL} -n instana-clickhouse wait --for=delete pod -lapp=clickhouse-keeper --timeout=3000s
+fi
 
 
 echo "Waiting for Elasticsearch pods deletion..."
@@ -95,8 +58,10 @@ helm uninstall cnpg -n instana-postgres
 echo "Uninstaling clickhouse-operator..."
 helm uninstall clickhouse-operator -n instana-clickhouse 
 
-echo "Uninstaling zookeeper operator..."
-helm uninstall instana -n instana-zookeeper 
+if [[ "${INSTANA_PLATFORM}" == "s390x" ]]; then
+    echo "Uninstaling zookeeper operator..."
+    helm uninstall instana -n instana-zookeeper 
+fi
 
 echo "Uninstaling instana operator..."
 ${KUBECTL} instana operator template --namespace instana-operator --output-dir tempinstoper

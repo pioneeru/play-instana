@@ -24,7 +24,7 @@ function copy_image {
     TARGET_IMAGE=$2
 
     echo "Image: ${SOURCE_IMAGE} -> ${TARGET_IMAGE}" 
-    podman pull ${SOURCE_IMAGE}
+    podman pull ${SOURCE_IMAGE} --arch ${INSTANA_PLATFORM}
     podman tag ${SOURCE_IMAGE} ${TARGET_IMAGE}
     podman push ${TARGET_IMAGE}
 
@@ -58,6 +58,16 @@ copy_image "artifact-public.instana.io/clickhouse-operator:${CLICKHOUSE_OPERATOR
         "${INSTANA_IMAGE_REGISTRY}/clickhouse-operator:${CLICKHOUSE_OPERATOR_IMAGE_TAG}"
 copy_image "artifact-public.instana.io/clickhouse-openssl:${CLICKHOUSE_IMAGE_TAG}" \
         "${INSTANA_IMAGE_REGISTRY}/clickhouse-openssl:${CLICKHOUSE_IMAGE_TAG}"
+
+if [[ "${INSTANA_PLATFORM}" == "s390x" ]]; then
+        ### Copy Zookeeper images
+        copy_image "artifact-public.instana.io/self-hosted-images/3rd-party/operator/zookeeper:${ZOOKEEPER_OPERATOR_IMAGE_TAG}" \
+                "${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_OPERATOR_IMAGE_REPOSITORY}/zookeeper:${ZOOKEEPER_OPERATOR_IMAGE_TAG}"
+        copy_image "artifact-public.instana.io/self-hosted-images/3rd-party/datastore/zookeeper:${ZOOKEEPER_TAG_NAME}" \
+                "${INSTANA_IMAGE_REGISTRY}/${INSTANA_DATASTORE_IMAGE_REPOSITORY}/zookeeper:${ZOOKEEPER_TAG_NAME}"
+        copy_image "artifact-public.instana.io/self-hosted-images/k8s/kubectl:${ZOOKEEPER_K8S_IMAGE_TAG}" \
+                "${INSTANA_IMAGE_REGISTRY}/${INSTANA_K8S_IMAGE_REPOSITORY}/kubectl:${ZOOKEEPER_K8S_IMAGE_TAG}"
+fi
 
 ### Copy Elasticsearch images
 copy_image "artifact-public.instana.io/self-hosted-images/3rd-party/operator/elasticsearch:${ELASTIC_OPERATOR_IMAGE_TAG}" \

@@ -33,7 +33,6 @@ function cassandra_install {
           --set image.tag=${CASSANDRA_OPERATOR_IMAGE_TAG} \
           --set imagePullSecrets[0].name=instana-registry \
           --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
-          --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
           --set imageConfig.systemLogger=${CASSANDRA_SYSTEMLOGGER_IMAGE_NAME} \
           --set imageConfig.k8ssandraClient=${CASSANDRA_K8SSANDRACLIENT_IMAGE_NAME} \
           ${INSTANA_AIRGAPPED_FOLDER}/${CASSANDRA_HELM_CHART}
@@ -48,7 +47,6 @@ function cassandra_install {
           --set image.repository=${CASSANDRA_OPERATOR_IMAGE_NAME} \
           --set image.tag=${CASSANDRA_OPERATOR_IMAGE_TAG} \
           --set imagePullSecrets[0].name=instana-registry \
-          --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
           --set appVersion=${CASSANDRA_OPERATOR_APP_VERSION} \
           --set global.imageConfig.defaults.registry=${CASSANDRA_IMAGE_REGISTRY}  \
           --set global.imageConfig.images.k8ssandra-client.repository=${CASSANDRA_IMAGE_REPOSITORY} \

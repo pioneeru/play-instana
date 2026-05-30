@@ -3,7 +3,7 @@
 echo "Reading credentials.env..."
 source ../credentials.env
 
-./_backend.sh uninstall &
+./_backend.sh uninstall
 
 ./_clickhouse.sh uninstall &
 ./_beeinstana.sh uninstall &

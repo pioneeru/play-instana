@@ -59,8 +59,12 @@ spec:
           shard: None
     zookeeper:
       nodes:
-        # - host: instana-zookeeper-headless.instana-clickhouse
-        - host: clickhouse-keeper-headless.instana-clickhouse
+`[[ $INSTANA_PLATFORM == 'x390s' ]] && echo "
+        - host: instana-zookeeper-headless.instana-clickhouse"
+`
+`[[ $INSTANA_PLATFORM == 'x390s' ]] && echo "
+        - host: clickhouse-keeper-headless.instana-clickhouse"
+`
     profiles:
       default/prefer_localhost_replica: 1
       default/max_memory_usage: 2000000000 # If memory limits are set, this value must be adjusted according to the limits.
@@ -156,8 +160,8 @@ spec:
         initContainers:
           - name: waiting-configmap
             image: ${CLICKHOUSE_IMAGE_NAME}
-            command: ['sh', '-c', 'echo Waiting for ConfigMap readiness && sleep 840']
-"`
+            command: ['sh', '-c', 'echo Waiting for ConfigMap readiness && sleep 840']"
+`
         # initContainers:
         #   - name: waiting-configmap
         #     image: ${CLICKHOUSE_IMAGE_NAME}

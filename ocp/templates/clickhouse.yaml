@@ -62,7 +62,7 @@ spec:
 `[[ $INSTANA_PLATFORM == 'x390s' ]] && echo "
         - host: instana-zookeeper-headless.instana-clickhouse"
 `
-`[[ $INSTANA_PLATFORM == 'x390s' ]] && echo "
+`[[ $INSTANA_PLATFORM != 'x390s' ]] && echo "
         - host: clickhouse-keeper-headless.instana-clickhouse"
 `
     profiles:

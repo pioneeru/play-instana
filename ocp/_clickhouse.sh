@@ -43,25 +43,6 @@ function clickhouse_install {
     ${INSTANA_AIRGAPPED_FOLDER}/${CLICKHOUSE_HELM_CHART} 
 
 
-    if ! ${KUBECTL} get secret chi-passwords -n instana-clickhouse &> /dev/null; then
-    echo "Generating chi-passwords secret in instana-clickhouse namespace..." 
-cat << EOF > clickhouse-secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: chi-passwords
-  namespace: instana-clickhouse
-type: Opaque
-stringData:
-  default_password: `openssl rand -base64 8 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
-  clickhouseuser_password: `openssl rand -base64 8 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
-EOF
-    ${KUBECTL} apply -f clickhouse-secret.yaml
-    else
-    echo "chi-passwords secret already exists in instana-clickhouse namespace." 
-    fi
-
-
     if [[ "${INSTANA_PLATFORM}" == "s390x" ]]; then
 
         echo "Installing zookeeper..."
@@ -84,14 +65,33 @@ EOF
         ${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lrelease=instana-zookeeper --timeout=3000s
 
     else
-        ${KUBECTL} create serviceaccount clickhousekeeper -n instana-clickhouse
-
         ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE_KEEPER}
         echo "Waiting for Clickhouse keeper pods to be running..."
         ${KUBECTL} wait -n instana-clickhouse --for=jsonpath='{status.status}'=Completed chk clickhouse-keeper --timeout=3000s
         ${KUBECTL} -n instana-clickhouse wait --for=condition=Ready=true pod -lapp=clickhouse-keeper --timeout=3000s
+
+        if ! ${KUBECTL} get secret chi-passwords -n instana-clickhouse &> /dev/null; then
+        echo "Generating chi-passwords secret in instana-clickhouse namespace..." 
+cat << EOF > clickhouse-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: chi-passwords
+  namespace: instana-clickhouse
+type: Opaque
+stringData:
+  default_password: `openssl rand -base64 8 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
+  clickhouseuser_password: `openssl rand -base64 8 | tr -cd 'a-zA-Z0-9' | head -c32; echo`
+EOF
+        ${KUBECTL} apply -f clickhouse-secret.yaml
+        else
+        echo "chi-passwords secret already exists in instana-clickhouse namespace." 
+        fi
+        ${KUBECTL} create serviceaccount clickhousekeeper -n instana-clickhouse
+
     fi
 
+    echo "Giving extra 30 seconds before creating clickhouse custom resource..." 
     sleep 30
     ${KUBECTL} -n instana-clickhouse apply -f ${MANIFEST_FILENAME_CLICKHOUSE}
 }

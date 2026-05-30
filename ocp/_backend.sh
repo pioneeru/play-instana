@@ -195,16 +195,25 @@ datastoreConfigs:
       adminPassword: "`${KUBECTL} get secret instana-superuser -n instana-cassandra --template='{{index .data.password | base64decode}}'`"
       user: instana-superuser
       password: "`${KUBECTL} get secret instana-superuser -n instana-cassandra --template='{{index .data.password | base64decode}}'`"
+EOF
+
+if [[ "${INSTANA_PLATFORM}" == "s390x" ]]; then
+cat >> core-config-base.yaml <<-EOF
   clickhouseConfigs:
-    # - adminUser: "${CLICKHOUSE_USER}"
-    #   adminPassword: "${CLICKHOUSE_USER_PASS}"
-    #   user: "${CLICKHOUSE_USER}"
-    #   password: "${CLICKHOUSE_USER_PASS}"
+    - adminUser: '${CLICKHOUSE_USER}'
+      adminPassword: '${CLICKHOUSE_USER_PASS}'
+      user: '${CLICKHOUSE_USER}'
+      password: '${CLICKHOUSE_USER_PASS}'
+EOF
+else
+cat >> core-config-base.yaml <<-EOF
+  clickhouseConfigs:
     - adminUser: "clickhouseuser"
       adminPassword: "`${KUBECTL} get secret chi-passwords -n instana-clickhouse --template='{{index .data.clickhouseuser_password | base64decode}}'`"
       user: "clickhouseuser"
       password: "`${KUBECTL} get secret chi-passwords -n instana-clickhouse --template='{{index .data.clickhouseuser_password | base64decode}}'`"
 EOF
+fi
 
     # Merge with custom core_config.yaml
     yq eval-all '. as $item ireduce ({}; . *+ $item)' core-config-base.yaml core_config.yaml > core-config.yaml

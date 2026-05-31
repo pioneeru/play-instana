@@ -4,6 +4,7 @@ The project is a set of bash scripts to automate Self-Hosted Custom Instana Edit
 - OCP version: v4.20, v4.21
 - Node architecture: amd64, ppc64le, s390x
 
+
 #### 1. Clone the project and copy `credentials.env.template` to `credentials.env`
 The following template is pre-populated with values but will not work as it is.
 ```bash

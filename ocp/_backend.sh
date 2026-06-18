@@ -260,22 +260,35 @@ EOF
     echo "Creating instana-core..."
     ${KUBECTL} apply -f ${MANIFEST_FILENAME_CORE}
 
-    echo "Waiting for Core datastore migration..."
-    sleep 30
-    ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.dbMigrationStatus}'=Ready core instana-core --timeout=3000s
+    # echo "Waiting for Core datastore migration..."
+    # sleep 30
+    # ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.dbMigrationStatus}'=Ready core instana-core --timeout=3000s
 
     echo "Waiting for Core to become ready..."
-    sleep 10
-    ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.componentsStatus}'=Ready core instana-core --timeout=3000s
+    # sleep 10
+    # ${KUBECTL} wait -n instana-core --for=jsonpath='{.status.componentsStatus}'=Ready core instana-core --timeout=3000s
+    ${KUBECTL} wait -n instana-core \
+        --for=jsonpath='{.status.version}'=${INSTANA_OPERATOR_IMAGE_TAG} \
+        --for=jsonpath='{.status.instanaVersion}'=${INSTANA_CORE_IMAGE_TAG} \
+        --for=jsonpath='{.status.dbMigrationStatus}'=Ready \
+        --for=jsonpath='{.status.componentsStatus}'=Ready \
+        core instana-core --timeout=3000s
+
 
     echo "Creating instana-unit..."
     ${KUBECTL} apply -f ${MANIFEST_FILENAME_UNIT}
-    sleep 10
-    echo "Waiting for unit datasore migration..."
-    ${KUBECTL} wait -n instana-units --for=jsonpath='{.status.dbMigrationStatus}'=Ready unit `${KUBECTL} -n instana-units get units -o jsonpath='{.items[0].metadata.name}'` --timeout=3000s
-    echo "Waiting for unit to become ready..."
-    ${KUBECTL} wait -n instana-units --for=jsonpath='{.status.componentsStatus}'=Ready unit `${KUBECTL} -n instana-units get units -o jsonpath='{.items[0].metadata.name}'` --timeout=3000s
+    # sleep 10
+    # echo "Waiting for unit datasore migration..."
+    # ${KUBECTL} wait -n instana-units --for=jsonpath='{.status.dbMigrationStatus}'=Ready unit `${KUBECTL} -n instana-units get units -o jsonpath='{.items[0].metadata.name}'` --timeout=3000s
 
+    echo "Waiting for unit to become ready..."
+    # ${KUBECTL} wait -n instana-units --for=jsonpath='{.status.componentsStatus}'=Ready unit `${KUBECTL} -n instana-units get units -o jsonpath='{.items[0].metadata.name}'` --timeout=3000s
+    ${KUBECTL} wait -n instana-units \
+        --for=jsonpath='{.status.version}'=${INSTANA_OPERATOR_IMAGE_TAG} \
+        --for=jsonpath='{.status.instanaVersion}'=${INSTANA_CORE_IMAGE_TAG} \
+        --for=jsonpath='{.status.dbMigrationStatus}'=Ready \
+        --for=jsonpath='{.status.componentsStatus}'=Ready \
+        unit ${INSTANA_TENANT_NAME}-${INSTANA_UNIT_NAME} --timeout=3000s
 
     echo "Creating routes..."
     ${KUBECTL} create route passthrough ui-client-tenant --hostname=${INSTANA_TENANT_DOMAIN} --service=gateway-v2 --port=https -n instana-core

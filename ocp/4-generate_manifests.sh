@@ -31,6 +31,10 @@ for FILE in templates/*; do
         # Merge same array items in the yaml
         case ${FILENAME} in
             clickhouse.yaml|clickhouse_keeper.yaml)
+                normalize_merged_yaml_arrays ".name" ".spec.configuration.clusters" "temp-merged.yaml" > temp-merged1.yaml
+                normalize_merged_yaml_arrays ".name" ".spec.templates.volumeClaimTemplates" "temp-merged1.yaml" > temp-merged.yaml
+                normalize_merged_yaml_arrays ".name" ".spec.templates.serviceTemplates" "temp-merged.yaml" > temp-merged1.yaml
+                normalize_merged_yaml_arrays ".name" ".spec.templates.podTemplates[].spec.containers" "temp-merged1.yaml" > temp-merged.yaml
                 normalize_merged_yaml_arrays ".name" ".spec.templates.podTemplates" "temp-merged.yaml" > ${FILENAME}
                 ;;
             elasticsearch.yaml)
@@ -52,6 +56,8 @@ for FILE in templates/*; do
             core.yaml)
                 normalize_merged_yaml_arrays ".name" ".spec.properties" "temp-merged.yaml" > temp-merged1.yaml
                 normalize_merged_yaml_arrays ".name" ".spec.featureFlags" "temp-merged1.yaml" > temp-merged.yaml
+                normalize_merged_yaml_arrays ".clusterName" ".spec.datastoreConfigs.clickhouseConfigs" "temp-merged.yaml" > temp-merged1.yaml
+                normalize_merged_yaml_arrays ".datacenter" ".spec.datastoreConfigs.cassandraConfigs" "temp-merged1.yaml" > temp-merged.yaml
                 normalize_merged_yaml_arrays ".name" ".spec.componentConfigs" "temp-merged.yaml" > ${FILENAME}
                 ;;
             unit.yaml)

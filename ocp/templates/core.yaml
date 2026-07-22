@@ -273,6 +273,17 @@ spec:
   storageConfigs:
   #   Use either s3Config, gcloudConfig, or pvcConfig
 
+    butlerKeystore: {}
+
+    eumSourceMaps:
+      pvcConfig:
+        accessModes:
+        - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: ${RWX_STORAGECLASS}
+
     ## External Storage for raw spans ##
     rawSpans:
       pvcConfig:
@@ -300,7 +311,7 @@ spec:
           requests:
             storage: 10Gi
         storageClassName: ${RWX_STORAGECLASS}
-        
+  
   #     s3Config:
   #       bucket:
   #       bucketLongTerm:
